@@ -15,9 +15,9 @@ namespace Data_Access_Layer.UnitOfWork
     public class UnitOfWork : IUnitOfWork
     {
         private readonly AppDbContext _context;
-        public IRepository <CustomerEntity> Customers { get; private set; }
-        public IRepository <ManagerEntity> Managers { get; private set; }
-        public IRepository <ServiceProviderEntity> ServiceProviders { get; private set; }
+        public IUserRepository<CustomerEntity> Customers { get; private set; }
+        public IUserRepository<ManagerEntity> Managers { get; private set; }
+        public IUserRepository<ServiceProviderEntity> ServiceProviders { get; private set; }
         public IRepository <PersonEntity> People { get; private set; }
         public IRepository<AddressEntity> Addresses { get; private set; }
         public IRepository<ContactInformationEntity> ContactInformations { get; private set; }
@@ -25,10 +25,10 @@ namespace Data_Access_Layer.UnitOfWork
         public UnitOfWork(AppDbContext dbContext)
         {
             _context = dbContext;
-            Customers = new GeneralRepository<CustomerEntity>(dbContext);
+            Customers = new UserRepository<CustomerEntity>(dbContext);
             People = new GeneralRepository<PersonEntity>(dbContext);
-            ServiceProviders = new GeneralRepository<ServiceProviderEntity>(dbContext);
-            Managers = new GeneralRepository<ManagerEntity>(dbContext);
+            ServiceProviders = new UserRepository<ServiceProviderEntity>(dbContext);
+            Managers = new UserRepository<ManagerEntity>(dbContext);
             Addresses = new GeneralRepository<AddressEntity>(dbContext);
             ContactInformations = new GeneralRepository<ContactInformationEntity>(dbContext);
 

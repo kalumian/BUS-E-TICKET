@@ -8,6 +8,7 @@ using Business_Logic_Layer.Services;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using BUS_E_TICKET.Utilities;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace BUS_E_TICKET.Controllers
 {
@@ -16,8 +17,11 @@ namespace BUS_E_TICKET.Controllers
     public class ManagerController : ControllerBase
     {
         private readonly ManagerService _managerService;
-        public ManagerController(ManagerService managerService) { 
+        private readonly IConfiguration configuration;
+
+        public ManagerController(ManagerService managerService, IConfiguration configuration) { 
             _managerService = managerService;
+            this.configuration = configuration;
         }
 
         [HttpPost("Register")]
@@ -36,17 +40,6 @@ namespace BUS_E_TICKET.Controllers
             //Result
             return Ok(ResponeHelper.GetApiRespone("Manager registered successfully", true, new { UserID }));
         }
-        [HttpPost("Login")]
-        public async Task<IActionResult> UserLogin([FromBody] UserLoginDTO LoginInfo)
-        {
-            //Validation
-            ValidationHelper.ModelsErrorCollector(ModelState);
 
-            //Try to sign In
-            string Token = await _managerService.Login(LoginInfo);
-
-            //Result
-            return Ok(ResponeHelper.GetApiRespone("Log-in successfully", true, new { Token }));
-        }
     }
 }

@@ -30,6 +30,7 @@ builder.Services.AddIdentity<AuthoUser, IdentityRole>().AddEntityFrameworkStores
 // AddScoped
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<ManagerService>();
+builder.Services.AddScoped<BaseUserService>();
 builder.Services.AddScoped<UserManager<AuthoUser>>();
 builder.Services.AddAutoMapper(typeof(Program));
 

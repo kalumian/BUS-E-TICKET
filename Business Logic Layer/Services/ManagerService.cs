@@ -10,7 +10,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -48,17 +50,6 @@ namespace Business_Logic_Layer.Services
             return resultUserID;
         }
 
-        public async Task<string> Login(UserLoginDTO LoginInfo)
-        {
-            // Cheack Username
-            AuthoUser? user = await _userManager.FindByNameAsync(LoginInfo.UserName) ??
-                throw new BadRequestException("Login faild. Please make sure Username Or Passworrd are correct.");
-
-            //Cheack Password
-            bool PasswordIsMatch = await _userManager.CheckPasswordAsync(user, LoginInfo.Password);
-            if (!PasswordIsMatch) throw new BadRequestException("Login faild. Please make sure Username Or Passworrd are correct.");
-
-            return "Token";
-        }
+       
     }
 }

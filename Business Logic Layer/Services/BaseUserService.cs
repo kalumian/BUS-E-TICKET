@@ -1,25 +1,25 @@
-﻿using Core_Layer.DTOs;
+﻿using Business_Logic_Layer.Utilities;
+using Core_Layer.DTOs;
 using Core_Layer.Entities.Actors;
 using Core_Layer.Enums;
 using Core_Layer.Exceptions;
 using Data_Access_Layer.UnitOfWork;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore.Infrastructure;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq.Expressions;
 
 namespace Business_Logic_Layer.Services
 {
-    public abstract class BaseUserService
+    public class BaseUserService
     {
         protected readonly  UserManager<AuthoUser> _userManager;
         private readonly IUnitOfWork _unitOfWork;
 
-        protected BaseUserService(UserManager<AuthoUser> userManager, IUnitOfWork unitOfWork)
+        public BaseUserService(UserManager<AuthoUser> userManager, IUnitOfWork unitOfWork)
         {
             _userManager = userManager;
             _unitOfWork = unitOfWork;
         }
-
         protected async Task<bool> IsUserExisitByEmail(string Email)
         {
             return await _userManager.FindByEmailAsync(Email) is not null;
@@ -52,11 +52,27 @@ namespace Business_Logic_Layer.Services
                 IdentityResult result = await _userManager.CreateAsync(authoUser, registerAccountDTO.Password);
             
                 // Error If Couldn't Create A User
-                if (!result.Succeeded) throw new ArgumentException(string.Join(", ", result.Errors.Select(e => e.Description)));
+                if (!result.Succeeded) throw new BadRequestException(string.Join(", ", result.Errors.Select(e => e.Description)));
 
                 return authoUser.Id;
         }
+        public async Task<JwtSecurityToken> Login(UserLoginDTO LoginInfo, TokenConfiguration config)
+        {
+            // Cheack Username
+            AuthoUser? user = await _userManager.FindByNameAsync(LoginInfo.UserName) ??
+                throw new BadRequestException("Login faild. Please make sure Username Or Passworrd are correct.");
 
-        //protected 
+            //Get User Role
+            EnUserRole UserRole = await _unitOfWork.Managers.GetUserRole(user.Id);
+
+            //Check 
+            LoginVerificationHelper.Check(UserRole);
+
+            // Create Token :
+            JwtSecurityToken token = LoginVerificationHelper.TokenHelper(config, user, UserRole);
+
+            return token;
+        }
+        //protected
     }
 }
