@@ -17,37 +17,31 @@ namespace Core_Layer.Entities.Actors
         public int CustomerID { get; set; }
 
         #region Foreign Keys
-
+        [Required(ErrorMessage = "Person is required.")]
         [ForeignKey("Person")]
-        public int PersonID { get; set; }
+        public required int PersonID { get; set; }
 
         [ForeignKey("Address")]
-        public int AddressID { get; set; }
+        [Required(ErrorMessage = "Address is required.")]
+        public required int AddressID { get; set; }
 
         [ForeignKey("ContactInformation")]
-        public int ContactInformationID { get; set; }
+        [Required(ErrorMessage = "Contact information is required.")]
+        public required int ContactInformationID { get; set; }
 
         [ForeignKey("Account")]
+        [Required(ErrorMessage = "Account is required.")]
         public required string AccountID { get; set; }
 
         #endregion
 
         #region Navigation Properties
 
-        [Required(ErrorMessage = "Person is required.")]
-        public required PersonEntity Person { get; set; }
-
-        [Required(ErrorMessage = "Address is required.")]
-        public required AddressEntity Address { get; set; }
-
-        [Required(ErrorMessage = "Contact information is required.")]
-        public required ContactInformationEntity ContactInformation { get; set; }
-
-        [Required(ErrorMessage = "Account is required.")]
-        public required AuthoUser Account { get; set; }
+        public PersonEntity? Person { get; set; }
+        public  AddressEntity? Address { get; set; }
+        public ContactInformationEntity? ContactInformation { get; set; }
+        public AuthoUser? Account { get; set; }
 
         #endregion
-
-
     }
 }

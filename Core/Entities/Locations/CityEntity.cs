@@ -18,15 +18,15 @@ namespace Core_Layer.Entities.Locations
         public required string CityName { get; set; }
         #region Foreign Keys
 
-        [ForeignKey("Country")]
-        [Required(ErrorMessage = "Country ID is required.")]
-        public required int CountryID { get; set; }
+        [ForeignKey("Region")]
+        [Required(ErrorMessage = "Region ID is required.")]
+        public required int RegionID { get; set; }
 
         #endregion
 
         #region Navigation Properties
 
-        public required CountryEntity Country { get; set; }
+        public required RegionEntity Region { get; set; }
 
         public IEnumerable<StreetEntity>? Streets { get; set; }
 

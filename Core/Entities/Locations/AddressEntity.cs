@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Core_Layer.Entities.Actors.ServiceProvider;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -17,19 +18,27 @@ namespace Core_Layer.Entities.Locations
         [StringLength(250, ErrorMessage = "Additional details cannot exceed 250 characters.")]
         public string? AdditionalDetails { get; set; }
 
+        [StringLength(700, ErrorMessage = "Location URL cannot exceed 700 characters.")]
+        public string? LocationURL { get; set; }
+
         #region Foreign Keys
 
         [ForeignKey("Street")]
-        [Required(ErrorMessage = "Street ID is required.")]
-        public required int StreetID { get; set; }
+        public int? StreetID { get; set; }  // Optional to allow manual entry
+
+        [ForeignKey("City")]
+        [Required(ErrorMessage = "City ID is required.")]
+        public int CityID { get; set; }
 
         #endregion
 
         #region Navigation Properties
 
-        public required StreetEntity Street { get; set; }
+        public StreetEntity? Street { get; set; }  // Optional navigation property
+        public CityEntity? City { get; set; }
+        public BusinessEntity? Business  { get; set; }
+
 
         #endregion
-
     }
 }

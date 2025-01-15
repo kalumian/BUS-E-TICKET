@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core_Layer.Entities.Registeration_Request
+namespace Core_Layer.Entities.Actors.ServiceProvider.Registeration_Request
 {
     public class SPRegResponseEntity
     {
@@ -22,7 +22,7 @@ namespace Core_Layer.Entities.Registeration_Request
         public DateTime ResponseDate { get; set; } = DateTime.Now;
 
         [Required(ErrorMessage = "Result is required.")]
-        public bool Result { get; set; } 
+        public bool Result { get; set; }
 
         // Foreign Keys
         [Required(ErrorMessage = "RequestID is required.")]
@@ -33,7 +33,7 @@ namespace Core_Layer.Entities.Registeration_Request
 
         // Navigations
         [ForeignKey("RespondedByID")]
-        public ManagerEntity? RespondedBy { get; set; } 
+        public ManagerEntity? RespondedBy { get; set; }
 
         [ForeignKey("RequestID")]
         public SPRegRequestEntity Request { get; set; } = null!;

@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Core_Layer.DTOs
 {
-    public class RegisterManagerAccountDTO : RegisterAccountDTO
+    public class RegisterManagerAccountDTO
     {
-        [Required(ErrorMessage = "CreatedByID Is Required")]
+        public required RegisterAccountDTO Account { get; set; }    
         public required int CreatedByID { get; set; }
     }
 }

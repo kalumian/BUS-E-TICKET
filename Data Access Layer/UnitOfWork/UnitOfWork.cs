@@ -1,5 +1,6 @@
 ﻿using Core_Layer.Entities;
 using Core_Layer.Entities.Actors;
+using Core_Layer.Entities.Actors.ServiceProvider;
 using Core_Layer.Entities.Locations;
 using Data_Access_Layer.Data;
 using Data_Access_Layer.Repositories;

@@ -4,6 +4,7 @@ using Data_Access_Layer.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data_Access_Layer.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250110180312_EditAddressSystem2")]
+    partial class EditAddressSystem2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -38,7 +41,6 @@ namespace Data_Access_Layer.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
@@ -69,9 +71,7 @@ namespace Data_Access_Layer.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
@@ -86,7 +86,6 @@ namespace Data_Access_Layer.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("UserName")
-                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
@@ -213,118 +212,7 @@ namespace Data_Access_Layer.Migrations
                     b.ToTable("People");
                 });
 
-            modelBuilder.Entity("Core_Layer.Entities.Actors.ServiceProvider.BusinessEntity", b =>
-                {
-                    b.Property<int>("BusinessID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BusinessID"));
-
-                    b.Property<int>("AddressID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("BusinessLicenseNumber")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("BusinessName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int>("ContactInformationID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LogoURL")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
-
-                    b.Property<string>("WebSiteLink")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("BusinessID");
-
-                    b.HasIndex("AddressID")
-                        .IsUnique();
-
-                    b.ToTable("Businesses");
-                });
-
-            modelBuilder.Entity("Core_Layer.Entities.Actors.ServiceProvider.Registeration_Request.SPRegRequestEntity", b =>
-                {
-                    b.Property<int>("SPRegRequestID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SPRegRequestID"));
-
-                    b.Property<int?>("BusinessEntityBusinessID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("BusinessID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<DateTime>("RequestDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.HasKey("SPRegRequestID");
-
-                    b.HasIndex("BusinessEntityBusinessID");
-
-                    b.ToTable("SPRegRequests");
-                });
-
-            modelBuilder.Entity("Core_Layer.Entities.Actors.ServiceProvider.Registeration_Request.SPRegResponseEntity", b =>
-                {
-                    b.Property<int>("ResponseID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ResponseID"));
-
-                    b.Property<int>("RequestID")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("RespondedByID")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("ResponseDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ResponseText")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<bool>("Result")
-                        .HasColumnType("bit");
-
-                    b.HasKey("ResponseID");
-
-                    b.HasIndex("RequestID");
-
-                    b.HasIndex("RespondedByID");
-
-                    b.ToTable("SPRegResponses");
-                });
-
-            modelBuilder.Entity("Core_Layer.Entities.Actors.ServiceProvider.ServiceProviderEntity", b =>
+            modelBuilder.Entity("Core_Layer.Entities.Actors.ServiceProviderEntity", b =>
                 {
                     b.Property<int>("ServiceProviderID")
                         .ValueGeneratedOnAdd()
@@ -336,14 +224,29 @@ namespace Data_Access_Layer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("BusinessID")
+                    b.Property<int>("AddressID")
                         .HasColumnType("int");
+
+                    b.Property<string>("BusinessName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("ContactInformationID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("LogoURL")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.HasKey("ServiceProviderID");
 
                     b.HasIndex("AccountID");
 
-                    b.HasIndex("BusinessID");
+                    b.HasIndex("AddressID");
+
+                    b.HasIndex("ContactInformationID");
 
                     b.ToTable("ServiceProviders");
                 });
@@ -373,6 +276,7 @@ namespace Data_Access_Layer.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("MobileNumber2")
+                        .IsRequired()
                         .HasMaxLength(15)
                         .HasColumnType("nvarchar(15)");
 
@@ -401,6 +305,7 @@ namespace Data_Access_Layer.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("LocationURL")
+                        .IsRequired()
                         .HasMaxLength(700)
                         .HasColumnType("nvarchar(700)");
 
@@ -677,6 +582,73 @@ namespace Data_Access_Layer.Migrations
                     b.HasIndex("ServiceProviderID");
 
                     b.ToTable("PaymentAccounts");
+                });
+
+            modelBuilder.Entity("Core_Layer.Entities.Registeration_Request.SPRegRequestEntity", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("RegistrationDocumentLink")
+                        .IsRequired()
+                        .HasMaxLength(2083)
+                        .HasColumnType("nvarchar(2083)");
+
+                    b.Property<DateTime>("RequestDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ServiceProviderID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ServiceProviderID");
+
+                    b.ToTable("SPRegRequests");
+                });
+
+            modelBuilder.Entity("Core_Layer.Entities.Registeration_Request.SPRegResponseEntity", b =>
+                {
+                    b.Property<int>("ResponseID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ResponseID"));
+
+                    b.Property<int>("RequestID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("RespondedByID")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ResponseDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ResponseText")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("Result")
+                        .HasColumnType("bit");
+
+                    b.HasKey("ResponseID");
+
+                    b.HasIndex("RequestID");
+
+                    b.HasIndex("RespondedByID");
+
+                    b.ToTable("SPRegResponses");
                 });
 
             modelBuilder.Entity("Core_Layer.Entities.Reservation.InvoiceEntity", b =>
@@ -1037,46 +1009,7 @@ namespace Data_Access_Layer.Migrations
                     b.Navigation("Person");
                 });
 
-            modelBuilder.Entity("Core_Layer.Entities.Actors.ServiceProvider.BusinessEntity", b =>
-                {
-                    b.HasOne("Core_Layer.Entities.Locations.AddressEntity", "Address")
-                        .WithOne("Business")
-                        .HasForeignKey("Core_Layer.Entities.Actors.ServiceProvider.BusinessEntity", "AddressID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Address");
-                });
-
-            modelBuilder.Entity("Core_Layer.Entities.Actors.ServiceProvider.Registeration_Request.SPRegRequestEntity", b =>
-                {
-                    b.HasOne("Core_Layer.Entities.Actors.ServiceProvider.BusinessEntity", "BusinessEntity")
-                        .WithMany()
-                        .HasForeignKey("BusinessEntityBusinessID")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("BusinessEntity");
-                });
-
-            modelBuilder.Entity("Core_Layer.Entities.Actors.ServiceProvider.Registeration_Request.SPRegResponseEntity", b =>
-                {
-                    b.HasOne("Core_Layer.Entities.Actors.ServiceProvider.Registeration_Request.SPRegRequestEntity", "Request")
-                        .WithMany("Responses")
-                        .HasForeignKey("RequestID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Core_Layer.Entities.Actors.ManagerEntity", "RespondedBy")
-                        .WithMany()
-                        .HasForeignKey("RespondedByID")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Request");
-
-                    b.Navigation("RespondedBy");
-                });
-
-            modelBuilder.Entity("Core_Layer.Entities.Actors.ServiceProvider.ServiceProviderEntity", b =>
+            modelBuilder.Entity("Core_Layer.Entities.Actors.ServiceProviderEntity", b =>
                 {
                     b.HasOne("Core_Layer.Entities.Actors.AuthoUser", "Account")
                         .WithMany("ServiceProviders")
@@ -1084,15 +1017,23 @@ namespace Data_Access_Layer.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Core_Layer.Entities.Actors.ServiceProvider.BusinessEntity", "Business")
+                    b.HasOne("Core_Layer.Entities.Locations.AddressEntity", "Address")
                         .WithMany()
-                        .HasForeignKey("BusinessID")
+                        .HasForeignKey("AddressID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Core_Layer.Entities.ContactInformationEntity", "ContactInformation")
+                        .WithMany()
+                        .HasForeignKey("ContactInformationID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Account");
 
-                    b.Navigation("Business");
+                    b.Navigation("Address");
+
+                    b.Navigation("ContactInformation");
                 });
 
             modelBuilder.Entity("Core_Layer.Entities.Locations.AddressEntity", b =>
@@ -1203,7 +1144,7 @@ namespace Data_Access_Layer.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Core_Layer.Entities.Actors.ServiceProvider.ServiceProviderEntity", "ServiceProvider")
+                    b.HasOne("Core_Layer.Entities.Actors.ServiceProviderEntity", "ServiceProvider")
                         .WithMany()
                         .HasForeignKey("ServiceProviderID")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1212,6 +1153,35 @@ namespace Data_Access_Layer.Migrations
                     b.Navigation("Currency");
 
                     b.Navigation("ServiceProvider");
+                });
+
+            modelBuilder.Entity("Core_Layer.Entities.Registeration_Request.SPRegRequestEntity", b =>
+                {
+                    b.HasOne("Core_Layer.Entities.Actors.ServiceProviderEntity", "ServiceProvider")
+                        .WithMany()
+                        .HasForeignKey("ServiceProviderID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ServiceProvider");
+                });
+
+            modelBuilder.Entity("Core_Layer.Entities.Registeration_Request.SPRegResponseEntity", b =>
+                {
+                    b.HasOne("Core_Layer.Entities.Registeration_Request.SPRegRequestEntity", "Request")
+                        .WithMany("Responses")
+                        .HasForeignKey("RequestID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Core_Layer.Entities.Actors.ManagerEntity", "RespondedBy")
+                        .WithMany()
+                        .HasForeignKey("RespondedByID")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Request");
+
+                    b.Navigation("RespondedBy");
                 });
 
             modelBuilder.Entity("Core_Layer.Entities.Reservation.InvoiceEntity", b =>
@@ -1263,7 +1233,7 @@ namespace Data_Access_Layer.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Core_Layer.Entities.Actors.ServiceProvider.ServiceProviderEntity", "ServiceProvider")
+                    b.HasOne("Core_Layer.Entities.Actors.ServiceProviderEntity", "ServiceProvider")
                         .WithMany()
                         .HasForeignKey("ServiceProviderID")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1369,16 +1339,6 @@ namespace Data_Access_Layer.Migrations
                     b.Navigation("Passengers");
                 });
 
-            modelBuilder.Entity("Core_Layer.Entities.Actors.ServiceProvider.Registeration_Request.SPRegRequestEntity", b =>
-                {
-                    b.Navigation("Responses");
-                });
-
-            modelBuilder.Entity("Core_Layer.Entities.Locations.AddressEntity", b =>
-                {
-                    b.Navigation("Business");
-                });
-
             modelBuilder.Entity("Core_Layer.Entities.Locations.CityEntity", b =>
                 {
                     b.Navigation("Streets");
@@ -1402,6 +1362,11 @@ namespace Data_Access_Layer.Migrations
             modelBuilder.Entity("Core_Layer.Entities.PaymentAccount.CurrencyEntity", b =>
                 {
                     b.Navigation("PaymentAccounts");
+                });
+
+            modelBuilder.Entity("Core_Layer.Entities.Registeration_Request.SPRegRequestEntity", b =>
+                {
+                    b.Navigation("Responses");
                 });
 
             modelBuilder.Entity("Core_Layer.Entities.Reservation.InvoiceEntity", b =>

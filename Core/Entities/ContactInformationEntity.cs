@@ -13,7 +13,6 @@ namespace Core_Layer.Entities
         [Key]
         public int ContactInformationID { get; set; }
 
-        [Required(ErrorMessage = "Mobile Number is required.")]
         [StringLength(15, ErrorMessage = "Mobile Number cannot exceed 15 characters.")]
         public string? MobileNumber2 { get; set; }
 

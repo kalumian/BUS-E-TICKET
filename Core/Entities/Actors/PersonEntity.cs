@@ -12,9 +12,10 @@ namespace Core_Layer.Entities.Actors
     public class PersonEntity : IPerson
     {
         [Key]
-        public required int PersonID { get; set; }
+        public int PersonID { get; set; }
 
         [Required(ErrorMessage = "National ID is required.")]
+        [RegularExpression("^[0-9]+$", ErrorMessage = "National ID must contain only numbers")]
         [StringLength(15, MinimumLength = 5, ErrorMessage = "National ID must be between 5 and 15 characters.")]
         public required string NationalID { get; set; }
 

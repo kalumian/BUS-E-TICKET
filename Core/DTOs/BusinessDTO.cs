@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core_Layer.Interfaces.Actors_Interfaces
+namespace Core_Layer.DTOs
 {
-    public interface IServiceProviderEntity
+    internal class BusinessDTO
     {
     }
 }

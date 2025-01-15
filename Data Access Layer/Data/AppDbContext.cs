@@ -3,10 +3,11 @@ using Core_Layer.Entities.Actors;
 using Core_Layer.Entities.Trip;
 using Core_Layer.Entities.Locations;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Core_Layer.Entities.Registeration_Request;
 using Core_Layer.Entities.Reservation;
 using Core_Layer.Entities.Payment;
 using Core_Layer.Entities.PaymentAccount;
+using Core_Layer.Entities.Actors.ServiceProvider.Registeration_Request;
+using Core_Layer.Entities.Actors.ServiceProvider;
 
 namespace Data_Access_Layer.Data
 {
@@ -17,6 +18,7 @@ namespace Data_Access_Layer.Data
         public DbSet<CustomerEntity> Customers { get; set; }
         public DbSet<AddressEntity> Addresses { get; set; }
         public DbSet<StreetEntity> Streets { get; set; }
+        public DbSet<RegionEntity> Regions { get; set; }
         public DbSet<CityEntity> Cities { get; set; }
         public DbSet<CountryEntity> Countries { get; set; }
         public DbSet<ServiceProviderEntity> ServiceProviders { get; set; }
@@ -34,6 +36,8 @@ namespace Data_Access_Layer.Data
         public DbSet<PayPalAccountEntity> PayPalAccounts { get; set; }
         public DbSet<InvoiceEntity> Invoices { get; set; }
         public DbSet<TicketEntity> Tickets { get; set; }
+        public DbSet<BusinessEntity> Businesses { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())

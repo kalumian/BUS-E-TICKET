@@ -22,10 +22,7 @@ namespace BUS_E_TICKET.Middlewares
             }
             catch (Exception ex)
             {
-                // تسجيل الخطأ
                 _logger.LogError(ex, "An unexpected error occurred.");
-
-                // إرسال استجابة خطأ 500
                 await HandleExceptionAsync(context, ex);
             }
         }

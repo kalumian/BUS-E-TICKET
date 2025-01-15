@@ -6,8 +6,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Core_Layer.Entities.Actors;
 using Core_Layer.Enums;
+using Core_Layer.Entities.Actors.ServiceProvider;
 
 namespace Core_Layer.Entities.Trip
 {

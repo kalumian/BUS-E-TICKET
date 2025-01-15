@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Business_Logic_Layer.Interfaces;
+using Business_Logic_Layer.Utilities;
 using Core_Layer.DTOs;
 using Core_Layer.Entities.Actors;
 using Core_Layer.Enums;
@@ -20,25 +21,18 @@ namespace Business_Logic_Layer.Services
 {
     public class ManagerService : BaseUserService
     {
-        private readonly IMapper _mapper;
-        private readonly IUnitOfWork _unitOfWork;
-
         public ManagerService(UserManager<AuthoUser> userManager, IUnitOfWork unitOfWork, IMapper Mapper) : base(userManager, unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _mapper = Mapper;
         }
-        
-
         public async Task<string> RegisterAsync(RegisterManagerAccountDTO registerManagerAccountDTO)
         {
 
             //Error If CreatedBy isn't Exists
-            CheckEntityExist<ManagerEntity>(i => i.ManagerID == registerManagerAccountDTO.CreatedByID, "Manager Creater");
+            CheckEntityExist<ManagerEntity>(i => i.ManagerID == registerManagerAccountDTO.CreatedByID);
 
             // Try to Create Account 
-            var accountDto = _mapper.Map<RegisterAccountDTO>(registerManagerAccountDTO);
-            string resultUserID = await RegisterAsync(accountDto);
+            string resultUserID = await RegisterAsync(registerManagerAccountDTO.Account);
             if (string.IsNullOrEmpty(resultUserID)) throw new BadRequestException("User's ID Have not Created");
 
             // Created Manager

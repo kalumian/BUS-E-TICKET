@@ -11,7 +11,7 @@ namespace Core_Layer.Interfaces.Actors_Interfaces
 {
     public interface IFollowableAccount
     {
-        AddressEntity Address { get; set; }
-        ContactInformationEntity ContactInformation { get; set; }
+        AddressEntity? Address { get; set; }
+        ContactInformationEntity? ContactInformation { get; set; }
     }
 }

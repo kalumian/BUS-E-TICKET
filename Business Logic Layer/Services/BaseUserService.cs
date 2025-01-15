@@ -10,36 +10,29 @@ using System.Linq.Expressions;
 
 namespace Business_Logic_Layer.Services
 {
-    public class BaseUserService
+    public class BaseUserService : GeneralService
     {
         protected readonly  UserManager<AuthoUser> _userManager;
-        private readonly IUnitOfWork _unitOfWork;
-
-        public BaseUserService(UserManager<AuthoUser> userManager, IUnitOfWork unitOfWork)
+        public BaseUserService(UserManager<AuthoUser> userManager, IUnitOfWork unitOfWork) : base(unitOfWork) 
         {
             _userManager = userManager;
-            _unitOfWork = unitOfWork;
         }
         protected async Task<bool> IsUserExisitByEmail(string Email)
         {
             return await _userManager.FindByEmailAsync(Email) is not null;
         }
-
-        protected void CheckEntityExist<T>(Expression<Func<T, bool>> prediction, string EntityName) where T : class {
-            bool exists = _unitOfWork.GetDynamicRepository<T>().Exists(prediction);
-
-            if (!exists)
-            {
-                EntityName ??= typeof(T).Name;
-                throw new BadRequestException($"{EntityName} does not exist.");
-            }
+        protected async Task<bool> IsUserExistByPhone(string phoneNumber)
+        {
+            return await Task.FromResult(_userManager.Users.Any(u => u.PhoneNumber == phoneNumber));
         }
-
         protected async Task<string> RegisterAsync(RegisterAccountDTO registerAccountDTO)
         {
+            // Check email
                 if (await IsUserExisitByEmail(registerAccountDTO.Email))
                 throw new BadRequestException("A user with the same email already exists.");
-
+            // Check phone
+                if (await IsUserExistByPhone(registerAccountDTO.PhoneNumber))
+                throw new BadRequestException("A user with the same Phone already exists.");
                 var authoUser = new AuthoUser
                     {
                         UserName = registerAccountDTO.UserName,
@@ -48,6 +41,8 @@ namespace Business_Logic_Layer.Services
                         RegisterationDate = DateTime.Now,
                         AccountStatus = EnAccountStatus.Active
                     };
+                // Entity Validation 
+                ValidationHelper.ValidateEntity(authoUser);
 
                 IdentityResult result = await _userManager.CreateAsync(authoUser, registerAccountDTO.Password);
             

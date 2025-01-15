@@ -18,7 +18,6 @@ namespace Core_Layer.Entities.Locations
         public required string CountryName { get; set; }
 
         // Navigation
-        public IEnumerable<CityEntity>? Cities { get; set; }
-        public IEnumerable<PayPalAccountEntity>? PayPalAccounts { get; set; }
+        public IEnumerable<RegionEntity>? Regions { get; set; }
     }
 }

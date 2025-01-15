@@ -9,6 +9,7 @@ using Core_Layer.Interfaces.Actors_Interfaces;
 using Business_Logic_Layer.Interfaces;
 using Microsoft.AspNetCore.Diagnostics;
 using BUS_E_TICKET.Middlewares;
+using Core_Layer.DTOs;
 
 var builder = WebApplication.CreateBuilder();
 
@@ -31,8 +32,12 @@ builder.Services.AddIdentity<AuthoUser, IdentityRole>().AddEntityFrameworkStores
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<ManagerService>();
 builder.Services.AddScoped<BaseUserService>();
+builder.Services.AddScoped<PersonService>();
+builder.Services.AddScoped<AddressService>();
+builder.Services.AddScoped<ContactInformationService>();
+builder.Services.AddScoped<CustomerService>();
 builder.Services.AddScoped<UserManager<AuthoUser>>();
-builder.Services.AddAutoMapper(typeof(Program));
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 
 var app = builder.Build();
