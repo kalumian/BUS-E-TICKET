@@ -5,6 +5,7 @@ using Core_Layer.Enums;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json.Linq;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace BUS_E_TICKET.Controllers
@@ -38,7 +39,7 @@ namespace BUS_E_TICKET.Controllers
             JwtSecurityToken Token = await _baseUserService.Login(LoginInfo, config);
 
             //Result
-            return Ok(ResponeHelper.GetApiRespone("Log-in successfully", true, new { Token }));
+            return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(Token) });
         }
     }
 }

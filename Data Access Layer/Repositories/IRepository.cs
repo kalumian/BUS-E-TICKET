@@ -18,8 +18,11 @@ namespace Data_Access_Layer.Repositories
         IEnumerable<T> GetAll();
         T? GetById(object id);
         IEnumerable<T> Find(Expression<Func<T, bool>> predicate);
+        Task<IEnumerable<T>> GetAllAsync();
         T? FirstOrDefault(Expression<Func<T, bool>> predicate);
         int Count();
         bool Exists(Expression<Func<T, bool>> predicate);
+        IQueryable<T> GetAllQueryable();
+
     }
 }

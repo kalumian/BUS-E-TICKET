@@ -36,6 +36,20 @@ namespace Core_Layer
                 .ForMember(dest => dest.AddressID, opt => opt.MapFrom(src => src.Address != null ? src.Address.AddressID : (int?)null))
                 .ForMember(dest => dest.ContactInformation, opt => opt.MapFrom(src => src.ContactInformation))
                 .ForMember(dest => dest.ContactInformationID, opt => opt.MapFrom(src => src.ContactInformation != null ? src.ContactInformation.ContactInformationID : (int?)null));
+
+
+            CreateMap<SPRegRequestEntity, SPRegRequestDTO>()
+                .ForMember(dest => dest.Business, opt => opt.MapFrom(src => src.Business));
+
+            // تعيين من BusinessEntity إلى BusinessDTO
+            CreateMap<BusinessEntity, BusinessDTO>()
+                .ForMember(dest => dest.ContactInformation, opt => opt.MapFrom(src => src.ContactInformation));
+
+            // تعيين من BusinessDTO إلى BusinessEntity
+            CreateMap<BusinessDTO, BusinessEntity>()
+                .ForMember(dest => dest.ContactInformation, opt => opt.MapFrom(src => src.ContactInformation))
+                .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address));
+
         }
     }
 }

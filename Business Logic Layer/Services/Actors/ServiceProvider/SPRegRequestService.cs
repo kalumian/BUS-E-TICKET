@@ -7,7 +7,9 @@ using Core_Layer.Entities.Actors;
 using Core_Layer.Entities.Actors.ServiceProvider;
 using Core_Layer.Entities.Actors.ServiceProvider.Registeration_Request;
 using Core_Layer.Entities.Locations;
+using Core_Layer.Enums;
 using Data_Access_Layer.UnitOfWork;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,11 +22,13 @@ namespace Business_Logic_Layer.Services.Actors.ServiceProvider
     {
         private IMapper _mapper;
         private AddressService _addressService;
+        private BaseUserService _baseUserService;
 
-        public SPRegRequestService(IUnitOfWork unitOfWork, IMapper mapper, AddressService addressService) : base(unitOfWork)
+        public SPRegRequestService(IUnitOfWork unitOfWork, IMapper mapper, AddressService addressService, BaseUserService baseUserService) : base(unitOfWork)
         {
             _mapper = mapper;
             _addressService = addressService;
+            _baseUserService = baseUserService;
         }
         public async Task<int> AddRequestAsync(SPRegRequestDTO RequestDTO ) {
             // Create Entites 
@@ -52,6 +56,23 @@ namespace Business_Logic_Layer.Services.Actors.ServiceProvider
 
             CheckCreatedState<SPRegRequestEntity>(Request.SPRegRequestID);
             return Request.SPRegRequestID;
+        }
+        public async Task<List<SPRegRequestDTO>> GetAllRegistrationRequestsAsync(EnRegisterationRequestStatus? status = null)
+        {
+            _baseUserService.CheckRole(EnUserRole.Admin.ToString());
+            IQueryable<SPRegRequestEntity> query = _unitOfWork.SPRegRequests.GetAllQueryable()
+                .Include(r => r.Business)
+                    .ThenInclude(b => b.ContactInformation)
+                .Include(r => r.Business)
+                    .ThenInclude(b => b.Address);
+
+            if (status.HasValue)
+            {
+                query = query.Where(r => r.Status == status.Value);
+            }
+            var requests = query.ToList();
+            if (CheckList(requests)) return new List<SPRegRequestDTO>();
+            return _mapper.Map<List<SPRegRequestDTO>>(requests);
         }
     }
 }

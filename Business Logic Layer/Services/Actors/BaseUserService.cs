@@ -4,18 +4,24 @@ using Core_Layer.Entities.Actors;
 using Core_Layer.Enums;
 using Core_Layer.Exceptions;
 using Data_Access_Layer.UnitOfWork;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq.Expressions;
+using System.Security.Claims;
 
 namespace Business_Logic_Layer.Services.Actors
 {
     public class BaseUserService : GeneralService
     {
         protected readonly UserManager<AuthoUser> _userManager;
-        public BaseUserService(UserManager<AuthoUser> userManager, IUnitOfWork unitOfWork) : base(unitOfWork)
+        protected readonly IHttpContextAccessor _httpContextAccessor;
+
+        public BaseUserService(UserManager<AuthoUser> userManager, IUnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor) : base(unitOfWork)
         {
             _userManager = userManager;
+            _httpContextAccessor = httpContextAccessor ?? throw new NotFoundException("_httpContextAccessor is null");
         }
         protected async Task<bool> IsUserExisitByEmail(string Email)
         {
@@ -68,6 +74,38 @@ namespace Business_Logic_Layer.Services.Actors
 
             return token;
         }
-        //protected
+
+        public EnUserRole GetCurrentUserRole()
+        {
+            // تحقق من أن _httpContextAccessor غير null
+            if (_httpContextAccessor == null || _httpContextAccessor.HttpContext == null)
+            {
+                throw new InvalidOperationException("HttpContext is not available.");
+            }
+
+            // احصل على دور المستخدم الحالي
+            var roleClaim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role);
+            if (roleClaim == null || string.IsNullOrEmpty(roleClaim.Value))
+            {
+                throw new UnauthorizedAccessException("User role claim not found.");
+            }
+
+            // تحويل الدور إلى النوع EnUserRole
+            if (Enum.TryParse(roleClaim.Value, out EnUserRole userRole))
+            {
+                return userRole;
+            }
+            else
+            {
+                throw new InvalidOperationException("Invalid user role.");
+            }
+        }
+        public void CheckRole(string role)
+        {
+            if (GetCurrentUserRole().ToString() != role)
+            {
+                new AuthorizationException("Unauthorized: Only managers can create other managers.");
+            }
+        }
     }
 }

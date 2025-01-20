@@ -82,6 +82,13 @@ namespace Data_Access_Layer.Repositories
         {
             return _dbSet.Any(predicate);
         }
-
+        public IQueryable<T> GetAllQueryable()
+        {
+            return _dbSet.AsQueryable();
+        }
+        public async Task<IEnumerable<T>> GetAllAsync()
+        {
+            return await _dbSet.ToListAsync();
+        }
     }
 }

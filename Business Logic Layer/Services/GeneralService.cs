@@ -1,9 +1,11 @@
-﻿using Business_Logic_Layer.Utilities;
+﻿using Azure.Core;
+using Business_Logic_Layer.Utilities;
 using Core_Layer.DTOs;
 using Core_Layer.Entities.Actors;
 using Core_Layer.Entities.Locations;
 using Core_Layer.Exceptions;
 using Data_Access_Layer.UnitOfWork;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -17,10 +19,10 @@ namespace Business_Logic_Layer.Services
     public abstract class GeneralService
     {
         protected IUnitOfWork _unitOfWork;
-
         public GeneralService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
+
         }
         protected void CheckEntityExist<T>(Expression<Func<T, bool>> prediction) where T : class
         {
@@ -44,6 +46,12 @@ namespace Business_Logic_Layer.Services
                 await _unitOfWork.SaveChangesAsync();
                 return Entity;
             }
+        }
+
+        protected bool CheckList<T>(IEnumerable<T> list)
+        {
+            return (list == null || !list.Any());
+          
         }
     }
 }

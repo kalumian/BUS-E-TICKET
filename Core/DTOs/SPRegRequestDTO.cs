@@ -17,6 +17,6 @@ namespace Core_Layer.DTOs
         public DateTime RequestDate { get; set; }
         public EnRegisterationRequestStatus Status { get; set; }
         public string? Notes { get; set; }
-        public BusinessDTO Business { get; set; }
+        public BusinessDTO? Business { get; set; }
     }
 }

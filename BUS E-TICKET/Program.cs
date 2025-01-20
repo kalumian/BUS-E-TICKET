@@ -17,7 +17,7 @@ builder.Services.AddControllers().AddNewtonsoftJson();
 
 // Register Swagger services for API documentation.
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggarWithJtwConfig();
 
 // Connection With Database
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -39,9 +39,9 @@ builder.Services.AddScoped<ContactInformationService>();
 builder.Services.AddScoped<CustomerService>();
 builder.Services.AddScoped<UserManager<AuthoUser>>();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
-
-// Customs
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddCustomJwtAuth(builder.Configuration);
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -57,8 +57,8 @@ app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
 app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllers();
 
 app.Run();

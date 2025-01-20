@@ -5,6 +5,7 @@ using Core_Layer.Entities.Actors;
 using Core_Layer.Enums;
 using Core_Layer.Exceptions;
 using Data_Access_Layer.UnitOfWork;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -20,13 +21,13 @@ namespace Business_Logic_Layer.Services.Actors
 {
     public class ManagerService : BaseUserService
     {
-        public ManagerService(UserManager<AuthoUser> userManager, IUnitOfWork unitOfWork, IMapper Mapper) : base(userManager, unitOfWork)
+        public ManagerService(UserManager<AuthoUser> userManager, IUnitOfWork unitOfWork, IMapper Mapper, IHttpContextAccessor httpContextAccessor) : base(userManager, unitOfWork, httpContextAccessor)
         {
             _unitOfWork = unitOfWork;
         }
         public async Task<string> RegisterAsync(RegisterManagerAccountDTO registerManagerAccountDTO)
         {
-
+            CheckRole(EnUserRole.Admin.ToString()); ;
             //Error If CreatedBy isn't Exists
             CheckEntityExist<ManagerEntity>(i => i.ManagerID == registerManagerAccountDTO.CreatedByID);
 

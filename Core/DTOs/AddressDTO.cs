@@ -10,12 +10,12 @@ namespace Core_Layer.DTOs
 {
     public class AddressDTO
     {
-        public int AddressID { get; set; }
+        public int? AddressID { get; set; }
         public string? AdditionalDetails { get; set; }
-        public required string LocationURL { get; set; }
+        public string? LocationURL { get; set; }
 
         public int? StreetID { get; set; } 
-        public required int CityID { get; set; }
+        public int? CityID { get; set; }
 
     }
 }

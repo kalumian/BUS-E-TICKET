@@ -8,6 +8,7 @@ using BUS_E_TICKET.Utilities;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.IdentityModel.Tokens.Jwt;
 using Business_Logic_Layer.Services.Actors;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BUS_E_TICKET.Controllers
 {
@@ -23,11 +24,11 @@ namespace BUS_E_TICKET.Controllers
             this.configuration = configuration;
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("Register")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-
         public async Task<IActionResult> RegisterNewManegerUser([FromBody] RegisterManagerAccountDTO User)
         {
             //Validation

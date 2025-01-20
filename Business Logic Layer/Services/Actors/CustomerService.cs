@@ -5,6 +5,7 @@ using Core_Layer.Entities;
 using Core_Layer.Entities.Actors;
 using Core_Layer.Entities.Locations;
 using Data_Access_Layer.UnitOfWork;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
 
@@ -18,7 +19,7 @@ namespace Business_Logic_Layer.Services.Actors
             UserManager<AuthoUser> userManager,
             IUnitOfWork unitOfWork,
             IMapper mapper,
-            ContactInformationService contactService) : base(userManager, unitOfWork)
+            ContactInformationService contactService, IHttpContextAccessor httpContextAccessor) : base(userManager, unitOfWork, httpContextAccessor)
         {
             _mapper = mapper;
         }

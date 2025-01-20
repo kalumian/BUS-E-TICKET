@@ -1,6 +1,8 @@
 ﻿using BUS_E_TICKET.Utilities;
 using Business_Logic_Layer.Services.Actors.ServiceProvider;
 using Core_Layer.DTOs;
+using Core_Layer.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch.Helpers;
 using Microsoft.AspNetCore.Mvc;
@@ -27,6 +29,17 @@ namespace BUS_E_TICKET.Controllers
 
             return Ok(ResponeHelper.GetApiRespone("Service Provider Registeration Requerst Was Created successfully", true, new { Request_ID }));
 
+        }
+        [Authorize(Roles = "Admin")]
+        [HttpGet("RegistrationRequests")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetAllServiceProviderRegistrationRequests([FromQuery] EnRegisterationRequestStatus? status)
+        {
+                var requests = await _SPRegRequestService.GetAllRegistrationRequestsAsync(status);
+
+                return Ok(requests);
         }
     }
 }
