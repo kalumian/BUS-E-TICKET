@@ -46,7 +46,7 @@ namespace BUS_E_TICKET.Middlewares
 
             var response = new
             {
-                Error = "An unexpected error occurred.",
+                Error = "An unexpected error occurred." + exception.Message,
                 StatusCode = 500
             };
 

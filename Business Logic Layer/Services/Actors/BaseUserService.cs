@@ -8,12 +8,12 @@ using Microsoft.AspNetCore.Identity;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq.Expressions;
 
-namespace Business_Logic_Layer.Services
+namespace Business_Logic_Layer.Services.Actors
 {
     public class BaseUserService : GeneralService
     {
-        protected readonly  UserManager<AuthoUser> _userManager;
-        public BaseUserService(UserManager<AuthoUser> userManager, IUnitOfWork unitOfWork) : base(unitOfWork) 
+        protected readonly UserManager<AuthoUser> _userManager;
+        public BaseUserService(UserManager<AuthoUser> userManager, IUnitOfWork unitOfWork) : base(unitOfWork)
         {
             _userManager = userManager;
         }
@@ -28,28 +28,28 @@ namespace Business_Logic_Layer.Services
         protected async Task<string> RegisterAsync(RegisterAccountDTO registerAccountDTO)
         {
             // Check email
-                if (await IsUserExisitByEmail(registerAccountDTO.Email))
+            if (await IsUserExisitByEmail(registerAccountDTO.Email))
                 throw new BadRequestException("A user with the same email already exists.");
             // Check phone
-                if (await IsUserExistByPhone(registerAccountDTO.PhoneNumber))
+            if (await IsUserExistByPhone(registerAccountDTO.PhoneNumber))
                 throw new BadRequestException("A user with the same Phone already exists.");
-                var authoUser = new AuthoUser
-                    {
-                        UserName = registerAccountDTO.UserName,
-                        Email = registerAccountDTO.Email,
-                        PhoneNumber = registerAccountDTO.PhoneNumber,
-                        RegisterationDate = DateTime.Now,
-                        AccountStatus = EnAccountStatus.Active
-                    };
-                // Entity Validation 
-                ValidationHelper.ValidateEntity(authoUser);
+            var authoUser = new AuthoUser
+            {
+                UserName = registerAccountDTO.UserName,
+                Email = registerAccountDTO.Email,
+                PhoneNumber = registerAccountDTO.PhoneNumber,
+                RegisterationDate = DateTime.Now,
+                AccountStatus = EnAccountStatus.Active
+            };
+            // Entity Validation 
+            ValidationHelper.ValidateEntity(authoUser);
 
-                IdentityResult result = await _userManager.CreateAsync(authoUser, registerAccountDTO.Password);
-            
-                // Error If Couldn't Create A User
-                if (!result.Succeeded) throw new BadRequestException(string.Join(", ", result.Errors.Select(e => e.Description)));
+            IdentityResult result = await _userManager.CreateAsync(authoUser, registerAccountDTO.Password);
 
-                return authoUser.Id;
+            // Error If Couldn't Create A User
+            if (!result.Succeeded) throw new BadRequestException(string.Join(", ", result.Errors.Select(e => e.Description)));
+
+            return authoUser.Id;
         }
         public async Task<JwtSecurityToken> Login(UserLoginDTO LoginInfo, TokenConfiguration config)
         {

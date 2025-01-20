@@ -8,8 +8,8 @@ namespace Core_Layer.Enums
 {
     public enum EnRegisterationRequestStatus
     {
-        Approved,
-        Pending,
-        Regected
+        Approved = 2,
+        Pending = 0,
+        Regected = 1
     }
 }

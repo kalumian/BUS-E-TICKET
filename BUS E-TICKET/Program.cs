@@ -4,12 +4,11 @@ using Core_Layer;
 using Microsoft.AspNetCore.Identity;
 using Core_Layer.Entities.Actors;
 using Business_Logic_Layer.Services;
-using Data_Access_Layer.UnitOfWork;
-using Core_Layer.Interfaces.Actors_Interfaces;
-using Business_Logic_Layer.Interfaces;
-using Microsoft.AspNetCore.Diagnostics;
 using BUS_E_TICKET.Middlewares;
-using Core_Layer.DTOs;
+using Business_Logic_Layer.Services.Actors;
+using Data_Access_Layer.UnitOfWork;
+using Business_Logic_Layer.Services.Actors.ServiceProvider;
+using BUS_E_TICKET.Extensions;
 
 var builder = WebApplication.CreateBuilder();
 
@@ -32,6 +31,8 @@ builder.Services.AddIdentity<AuthoUser, IdentityRole>().AddEntityFrameworkStores
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<ManagerService>();
 builder.Services.AddScoped<BaseUserService>();
+builder.Services.AddScoped<BusinessService>();
+builder.Services.AddScoped<SPRegRequestService>();
 builder.Services.AddScoped<PersonService>();
 builder.Services.AddScoped<AddressService>();
 builder.Services.AddScoped<ContactInformationService>();
@@ -39,7 +40,8 @@ builder.Services.AddScoped<CustomerService>();
 builder.Services.AddScoped<UserManager<AuthoUser>>();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
-
+// Customs
+builder.Services.AddCustomJwtAuth(builder.Configuration);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -56,7 +58,7 @@ app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
-
+app.UseAuthentication();
 app.MapControllers();
 
 app.Run();

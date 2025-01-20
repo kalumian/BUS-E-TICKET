@@ -3,12 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using Core_Layer.DTOs;
 using Core_Layer.Entities.Actors;
 using Core_Layer.Enums;
-using Business_Logic_Layer.Interfaces;
-using Business_Logic_Layer.Services;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using BUS_E_TICKET.Utilities;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.IdentityModel.Tokens.Jwt;
+using Business_Logic_Layer.Services.Actors;
 
 namespace BUS_E_TICKET.Controllers
 {

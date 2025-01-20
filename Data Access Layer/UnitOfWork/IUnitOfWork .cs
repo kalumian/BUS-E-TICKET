@@ -1,6 +1,7 @@
 ﻿using Core_Layer.Entities;
 using Core_Layer.Entities.Actors;
 using Core_Layer.Entities.Actors.ServiceProvider;
+using Core_Layer.Entities.Actors.ServiceProvider.Registeration_Request;
 using Core_Layer.Entities.Locations;
 using Data_Access_Layer.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +20,8 @@ namespace Data_Access_Layer.UnitOfWork
         IUserRepository<ServiceProviderEntity> ServiceProviders { get; }
         IUserRepository<ManagerEntity> Managers { get; }
         IRepository<AddressEntity> Addresses { get; }
+        IRepository<BusinessEntity> Businesses { get; }
+        IRepository<SPRegRequestEntity> SPRegRequests { get; }
         IRepository<ContactInformationEntity> ContactInformations { get; }
         public IRepository<T> GetDynamicRepository<T>() where T : class;
 

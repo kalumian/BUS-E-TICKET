@@ -1,0 +1,41 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using AutoMapper;
+using Core_Layer.DTOs;
+using Core_Layer.Entities;
+using Core_Layer.Entities.Actors;
+using Core_Layer.Entities.Actors.ServiceProvider;
+using Core_Layer.Entities.Actors.ServiceProvider.Registeration_Request;
+using Core_Layer.Entities.Locations;
+
+namespace Core_Layer
+{
+    public class MappingProfile : Profile
+    {
+        public MappingProfile()
+        {
+            CreateMap<RegisterManagerAccountDTO, RegisterAccountDTO>();
+
+            CreateMap<PersonEntity, PersonDTO>();
+            CreateMap<ContactInformationEntity, ContactInformationDTO>();
+            CreateMap<AddressEntity, AddressDTO>();
+     
+
+            CreateMap<PersonDTO, PersonEntity>();
+            CreateMap<ContactInformationDTO, ContactInformationEntity>();
+            CreateMap<AddressDTO, AddressEntity>();
+
+            CreateMap<SPRegRequestDTO, SPRegRequestEntity>()
+                .ForMember(dest => dest.Business, opt => opt.MapFrom(src => src.Business))
+                .ForMember(dest => dest.BusinessID, opt => opt.MapFrom(src => src.Business.BusinessID));
+            CreateMap<BusinessDTO, BusinessEntity>()
+                .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address))
+                .ForMember(dest => dest.AddressID, opt => opt.MapFrom(src => src.Address != null ? src.Address.AddressID : (int?)null))
+                .ForMember(dest => dest.ContactInformation, opt => opt.MapFrom(src => src.ContactInformation))
+                .ForMember(dest => dest.ContactInformationID, opt => opt.MapFrom(src => src.ContactInformation != null ? src.ContactInformation.ContactInformationID : (int?)null));
+        }
+    }
+}

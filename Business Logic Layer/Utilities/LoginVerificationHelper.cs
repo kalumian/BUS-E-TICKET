@@ -1,6 +1,7 @@
 ﻿using Core_Layer.DTOs;
 using Core_Layer.Entities.Actors;
 using Core_Layer.Enums;
+using Core_Layer.Exceptions;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -13,7 +14,14 @@ namespace Business_Logic_Layer.Utilities
         static public JwtSecurityToken TokenHelper(TokenConfiguration config, AuthoUser user, EnUserRole UserRole)
         {
             var claimes = new List<Claim>();
-            claimes.Add(new Claim(ClaimTypes.Name, user.UserName));
+            if (user != null && !string.IsNullOrEmpty(user.UserName))
+            {
+                claimes.Add(new Claim(ClaimTypes.Name, user.UserName));
+            }
+            else
+            {
+                throw new NotFoundException(nameof(user)  + " User or UserName cannot be null.");
+            }
             claimes.Add(new Claim(ClaimTypes.NameIdentifier, user.Id));
             claimes.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
             claimes.Add(new Claim(ClaimTypes.Role, UserRole.ToString()));

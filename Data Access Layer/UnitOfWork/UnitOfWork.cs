@@ -1,6 +1,7 @@
 ﻿using Core_Layer.Entities;
 using Core_Layer.Entities.Actors;
 using Core_Layer.Entities.Actors.ServiceProvider;
+using Core_Layer.Entities.Actors.ServiceProvider.Registeration_Request;
 using Core_Layer.Entities.Locations;
 using Data_Access_Layer.Data;
 using Data_Access_Layer.Repositories;
@@ -23,6 +24,10 @@ namespace Data_Access_Layer.UnitOfWork
         public IRepository<AddressEntity> Addresses { get; private set; }
         public IRepository<ContactInformationEntity> ContactInformations { get; private set; }
 
+        public IRepository<BusinessEntity> Businesses { get; private set; }
+
+        public IRepository<SPRegRequestEntity> SPRegRequests { get; private set; }
+
         public UnitOfWork(AppDbContext dbContext)
         {
             _context = dbContext;
@@ -30,6 +35,8 @@ namespace Data_Access_Layer.UnitOfWork
             People = new GeneralRepository<PersonEntity>(dbContext);
             ServiceProviders = new UserRepository<ServiceProviderEntity>(dbContext);
             Managers = new UserRepository<ManagerEntity>(dbContext);
+            SPRegRequests = new UserRepository<SPRegRequestEntity>(dbContext);
+            Businesses = new UserRepository<BusinessEntity>(dbContext);
             Addresses = new GeneralRepository<AddressEntity>(dbContext);
             ContactInformations = new GeneralRepository<ContactInformationEntity>(dbContext);
 

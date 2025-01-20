@@ -52,6 +52,7 @@ namespace Core_Layer.Entities.Actors.ServiceProvider
 
         // Navigation Properties
         public AddressEntity? Address { get; set; }
+        public ContactInformationEntity? ContactInformation { get; set; }
 
     }
 }

@@ -9,11 +9,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Business_Logic_Layer.Services
+namespace Business_Logic_Layer.Services.Actors
 {
     public class PersonService : GeneralService
     {
-        public PersonService(IUnitOfWork unitOfWork) : base(unitOfWork) {
+        public PersonService(IUnitOfWork unitOfWork) : base(unitOfWork)
+        {
         }
     }
 }

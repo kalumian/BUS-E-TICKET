@@ -28,7 +28,7 @@ namespace Core_Layer.Entities.Actors.ServiceProvider.Registeration_Request
         public int BusinessID { get; set; }
 
         // Navigation Properties
-        public BusinessEntity? BusinessEntity { get; set; }
+        public BusinessEntity? Business { get; set; }
         [Required(ErrorMessage = "Contact information is required.")]
         public ICollection<SPRegResponseEntity> Responses { get; set; } = new List<SPRegResponseEntity>();
 

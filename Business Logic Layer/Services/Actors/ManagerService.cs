@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Business_Logic_Layer.Interfaces;
 using Business_Logic_Layer.Utilities;
 using Core_Layer.DTOs;
 using Core_Layer.Entities.Actors;
@@ -17,7 +16,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Business_Logic_Layer.Services
+namespace Business_Logic_Layer.Services.Actors
 {
     public class ManagerService : BaseUserService
     {
@@ -44,6 +43,6 @@ namespace Business_Logic_Layer.Services
             return resultUserID;
         }
 
-       
+
     }
 }
