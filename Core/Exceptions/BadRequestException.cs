@@ -6,10 +6,7 @@ using System.Threading.Tasks;
 
 namespace Core_Layer.Exceptions
 {
-    public class BadRequestException : HttpException
+    public class BadRequestException(string message) : HttpException(400, message)
     {
-        public BadRequestException(string message) : base(400, message)
-        {
-        }
     }
 }

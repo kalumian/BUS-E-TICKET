@@ -4,6 +4,7 @@ using Data_Access_Layer.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data_Access_Layer.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250121181359_Fix-Business-3")]
+    partial class FixBusiness3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -253,8 +256,11 @@ namespace Data_Access_Layer.Migrations
 
                     b.HasKey("BusinessID");
 
-                    b.HasIndex("AddressID")
-                        .IsUnique();
+                    b.HasIndex("AddressID");
+
+                    b.HasIndex("BusinessLicenseNumber")
+                        .IsUnique()
+                        .HasFilter("[BusinessLicenseNumber] IS NOT NULL");
 
                     b.HasIndex("ContactInformationID");
 
@@ -396,6 +402,9 @@ namespace Data_Access_Layer.Migrations
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
+                    b.Property<int?>("BusinessID")
+                        .HasColumnType("int");
+
                     b.Property<int>("CityID")
                         .HasColumnType("int");
 
@@ -407,6 +416,8 @@ namespace Data_Access_Layer.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("AddressID");
+
+                    b.HasIndex("BusinessID");
 
                     b.HasIndex("CityID");
 
@@ -1039,8 +1050,8 @@ namespace Data_Access_Layer.Migrations
             modelBuilder.Entity("Core_Layer.Entities.Actors.ServiceProvider.BusinessEntity", b =>
                 {
                     b.HasOne("Core_Layer.Entities.Locations.AddressEntity", "Address")
-                        .WithOne("Business")
-                        .HasForeignKey("Core_Layer.Entities.Actors.ServiceProvider.BusinessEntity", "AddressID")
+                        .WithMany()
+                        .HasForeignKey("AddressID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -1105,6 +1116,10 @@ namespace Data_Access_Layer.Migrations
 
             modelBuilder.Entity("Core_Layer.Entities.Locations.AddressEntity", b =>
                 {
+                    b.HasOne("Core_Layer.Entities.Actors.ServiceProvider.BusinessEntity", "Business")
+                        .WithMany()
+                        .HasForeignKey("BusinessID");
+
                     b.HasOne("Core_Layer.Entities.Locations.CityEntity", "City")
                         .WithMany()
                         .HasForeignKey("CityID")
@@ -1115,6 +1130,8 @@ namespace Data_Access_Layer.Migrations
                         .WithMany("Address")
                         .HasForeignKey("StreetID")
                         .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Business");
 
                     b.Navigation("City");
 
@@ -1380,11 +1397,6 @@ namespace Data_Access_Layer.Migrations
             modelBuilder.Entity("Core_Layer.Entities.Actors.ServiceProvider.Registeration_Request.SPRegRequestEntity", b =>
                 {
                     b.Navigation("Responses");
-                });
-
-            modelBuilder.Entity("Core_Layer.Entities.Locations.AddressEntity", b =>
-                {
-                    b.Navigation("Business");
                 });
 
             modelBuilder.Entity("Core_Layer.Entities.Locations.CityEntity", b =>

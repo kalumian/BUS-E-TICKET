@@ -22,44 +22,82 @@ namespace Business_Logic_Layer.Services.Actors.ServiceProvider
 {
     public class SPRegRequestService : GeneralService
     {
-        private IMapper _mapper;
-        private AddressService _addressService;
-        private BaseUserService _baseUserService;
+        private readonly IMapper _mapper;
+        private readonly AddressService _addressService;
+        private readonly BaseUserService _baseUserService;
+        private readonly ServiceProviderService _serviceProviderService;
 
-        public SPRegRequestService(IUnitOfWork unitOfWork, IMapper mapper, AddressService addressService, BaseUserService baseUserService) : base(unitOfWork)
+        public SPRegRequestService(IUnitOfWork unitOfWork, IMapper mapper, AddressService addressService, BaseUserService baseUserService, ServiceProviderService serviceProviderService) : base(unitOfWork)
         {
             _mapper = mapper;
             _addressService = addressService;
             _baseUserService = baseUserService;
+            _serviceProviderService = serviceProviderService;
         }
-        public async Task<int> AddRequestAsync(SPRegRequestDTO RequestDTO ) {
-            // Create Entites 
-            ContactInformationEntity ContactInformation = _mapper.Map<ContactInformationEntity>(RequestDTO.Business.ContactInformation);
-            AddressEntity Address = _mapper.Map<AddressEntity>(RequestDTO.Business.Address);
-            BusinessEntity Business = _mapper.Map<BusinessEntity>(RequestDTO.Business);
-            SPRegRequestEntity Request = _mapper.Map<SPRegRequestEntity>( RequestDTO );
+        public async Task<int> AddRequestAsync(SPRegRequestDTO RequestDTO)
+        {
+            // Validate uniqueness of user information (email, phone, username)
+            if (await _serviceProviderService.IsUserInformationDuplicate(
+                email: RequestDTO.ServiceProvider.Account.Email,
+                phonenumber: RequestDTO.ServiceProvider.Account.PhoneNumber,
+                username: RequestDTO.ServiceProvider.Account.UserName))
+                throw new BadRequestException("Email, phone number, or username is already in use");
 
-            // Entites Validation
-            ValidationHelper.ValidateEntities(new List<object> { Request, Business, ContactInformation, Address });
+            // Check if there are approved or pending requests
+            IsThereApprovedOrPendingRequest(RequestDTO);
 
+            // Map DTOs to entities
+            var contactInformation = _mapper.Map<ContactInformationEntity>(RequestDTO.Business.ContactInformation);
+            var address = _mapper.Map<AddressEntity>(RequestDTO.Business.Address);
+            var business = _mapper.Map<BusinessEntity>(RequestDTO.Business);
+            var request = _mapper.Map<SPRegRequestEntity>(RequestDTO);
+            request.Status = EnRegisterationRequestStatus.Pending;
+            // Validate entities
+            ValidateEntities([request, business, contactInformation, address]);
 
-            //Insert ContactInfo, Address and Save
-            await CreateEntity(ContactInformation);
-            await _addressService.CreateEntity(Address);
+            // Persist entities to the database
+            await SaveContactInformationAndAddress(contactInformation, address);
+            await SaveBusinessAndRequest(business, address, contactInformation, request, RequestDTO);
 
-            //Insert Business and Save
-            Business.AddressID = Address.AddressID;
-            Business.ContactInformationID = ContactInformation.ContactInformationID;
-            await CreateEntity(Business);
+            // Verify the creation state
+            CheckCreatedState<SPRegRequestEntity>(request.SPRegRequestID);
 
-            //Insert Request and Save
-            Request.BusinessID = Business.BusinessID;
-            await CreateEntity(Request);
-
-            CheckCreatedState<SPRegRequestEntity>(Request.SPRegRequestID);
-            return Request.SPRegRequestID;
+            return request.SPRegRequestID;
         }
-        public async Task<List<SPRegRequestDTO>> GetAllRegistrationRequestsAsync(EnRegisterationRequestStatus? status = null)
+
+
+        private void ValidateEntities(IEnumerable<object> entities)
+        {
+            ValidationHelper.ValidateEntities(entities);
+        }
+
+        private async Task SaveContactInformationAndAddress(ContactInformationEntity contactInformation, AddressEntity address)
+        {
+            await _addressService.CreateEntity(address);
+            await CreateEntity(contactInformation);
+        }
+
+        private async Task SaveBusinessAndRequest(
+            BusinessEntity business,
+            AddressEntity address,
+            ContactInformationEntity contactInformation,
+            SPRegRequestEntity request,
+            SPRegRequestDTO RequestDTO)
+        {
+            // Link business with address and contact information
+            business.Address = address;
+            business.ContactInformation = contactInformation;
+            await CreateEntity(business);
+
+            // Link service provider with business
+            RequestDTO.ServiceProvider.BusinessID = business.BusinessID;
+            await _serviceProviderService.RegisterAsync(RequestDTO.ServiceProvider, EnAccountStatus.Inactive);
+
+            // Link request with business
+            request.Business = business;
+            await CreateEntity(request);
+        }
+        public List<SPRegRequestDTO> GetAllRegistrationRequestsAsync(EnRegisterationRequestStatus? status = null)
         {
             _baseUserService.CheckRole(EnUserRole.Admin.ToString());
             IQueryable<SPRegRequestEntity> query = _unitOfWork.SPRegRequests.GetAllQueryable()
@@ -76,52 +114,21 @@ namespace Business_Logic_Layer.Services.Actors.ServiceProvider
             if (CheckList(requests)) return new List<SPRegRequestDTO>();
             return _mapper.Map<List<SPRegRequestDTO>>(requests);
         }
-
-        public async Task AcceptRegistrationRequestAsync(SPRegResponseDTO Respone)
+        private void IsThereApprovedOrPendingRequest(SPRegRequestDTO RequestDTO)
         {
-            // Validate if the request and manager exist
-            ValidateEntitiesExistence(Respone);
+            SPRegRequestEntity? request = _unitOfWork.SPRegRequests
+                .GetAllQueryable()
+                .Include("Business")
+                .FirstOrDefault(i =>
+                    i.Business.BusinessLicenseNumber == RequestDTO.Business.BusinessLicenseNumber &&
+                    (i.Status == EnRegisterationRequestStatus.Approved ||
+                     i.Status == EnRegisterationRequestStatus.Pending));
 
-            // Fetch the related request
-            var request = await _unitOfWork.SPRegRequests.FirstOrDefaultAsync(e => e.SPRegRequestID == Respone.RequestID);
-            if (request == null) throw new NotFoundException("Request not found.");
-
-            // Check if a positive response already exists for the request
-            var existingPositiveResponse = await IsPositiveResponseExists(Respone.RequestID);
-
-            if (existingPositiveResponse)
-            {
-                throw new BadRequestException("Cannot add a negative response when a positive response already exists with status OK.");
-            }
-
-            // Map the response DTO to entity and save it
-            var ResponeEntity = _mapper.Map<SPRegResponseEntity>(Respone);
-            await CreateEntity(ResponeEntity);
-
-            // Update the status of the related request
-            await UpdateRequestStatus(Respone);
-        }
-        private void ValidateEntitiesExistence(SPRegResponseDTO Respone)
-        {
-            CheckEntityExist<SPRegRequestEntity>(i => i.SPRegRequestID == Respone.RequestID);
-            CheckEntityExist<ManagerEntity>(i => i.ManagerID == Respone.RespondedByID);
+            if (request != null)
+                throw new BadRequestException("There is an active, approved, or pending request with the entered BusinessLicenseNumber.");
         }
 
-        private async Task<bool> IsPositiveResponseExists(int requestId)
-        {
-            return await _unitOfWork.SPRegResponses.FirstOrDefaultAsync(r =>
-                r.SPRegRequestID == requestId && r.Status == EnRegisterationRequestStatus.Approved) != null;
 
-        }
 
-        private async Task UpdateRequestStatus(SPRegResponseDTO Respone)
-        {
-            var request = await _unitOfWork.SPRegRequests.FirstOrDefaultAsync(e => e.SPRegRequestID == Respone.RequestID);
-            if (request == null) throw new NotFoundException("Request not found.");
-
-            request.Status = Respone.Result ? EnRegisterationRequestStatus.Approved : EnRegisterationRequestStatus.Regected;
-            _unitOfWork.SPRegRequests.Update(request);
-            await _unitOfWork.SaveChangesAsync();
-        }
     }
 }

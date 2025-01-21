@@ -57,5 +57,9 @@ namespace Data_Access_Layer.UnitOfWork
         {
              _context.SaveChanges();
         }
+        public void Attach<T>(T entity) where T : class
+        {
+            _context.Attach(entity);
+        }
     }
 }

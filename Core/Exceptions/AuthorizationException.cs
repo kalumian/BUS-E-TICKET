@@ -6,10 +6,7 @@ using System.Threading.Tasks;
 
 namespace Core_Layer.Exceptions
 {
-    public class AuthorizationException : HttpException
+    public class AuthorizationException(string message) : HttpException(403, message)
     {
-        public AuthorizationException(string message) : base(403, message)
-        {
-        }
     }
 }

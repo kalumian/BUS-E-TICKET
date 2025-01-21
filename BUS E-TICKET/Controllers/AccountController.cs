@@ -12,16 +12,10 @@ namespace BUS_E_TICKET.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AccountController : ControllerBase
+    public class AccountController(BaseUserService baseUserService, IConfiguration configuration) : ControllerBase
     {
-        private BaseUserService _baseUserService;
-        private IConfiguration configuration;
-
-        public AccountController(BaseUserService baseUserService, IConfiguration configuration)
-        {
-            _baseUserService = baseUserService;
-            this.configuration = configuration;
-        }
+        private readonly BaseUserService _baseUserService = baseUserService;
+        private readonly IConfiguration configuration = configuration;
 
         [HttpPost("Login")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -29,9 +23,6 @@ namespace BUS_E_TICKET.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UserLogin([FromBody] UserLoginDTO LoginInfo)
         {
-            //Validation
-            ValidationHelper.ModelsErrorCollector(ModelState);
-
             // get configurations
             TokenConfiguration config = ResponeHelper.GetTokenConfiguration(configuration);
 

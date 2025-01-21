@@ -44,6 +44,8 @@ namespace Business_Logic_Layer.Services
                 ValidationHelper.ValidateEntity(Entity);
                 await _unitOfWork.GetDynamicRepository<T>().AddAsync(Entity);
                 await _unitOfWork.SaveChangesAsync();
+                _unitOfWork.Attach(Entity);
+
                 return Entity;
             }
         }
@@ -52,6 +54,18 @@ namespace Business_Logic_Layer.Services
         {
             return (list == null || !list.Any());
           
+        }
+
+        protected void CheckEntityIsNotNull<T>(T Entity)
+        {
+            if(Entity == null) 
+                throw new NotFoundException(typeof(T).ToString() + " Is Null");
+        }
+
+        protected void DeleteEntity<T>(T Entity) where T : class
+        {
+            _unitOfWork.GetDynamicRepository<T>().Remove(Entity);
+            _unitOfWork.SaveChanges();
         }
     }
 }

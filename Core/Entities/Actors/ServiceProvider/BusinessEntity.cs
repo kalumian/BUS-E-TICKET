@@ -36,8 +36,7 @@ namespace Core_Layer.Entities.Actors.ServiceProvider
         [Url]
         public string? WebSiteLink { get; set; }
 
-        [StringLength(20, MinimumLength = 5, ErrorMessage = "UserName must be between 5 and 20 characters")]
-        [RegularExpression(@"^[a-zA-Z0-9_]+$", ErrorMessage = "UserName can only contain letters, numbers, and underscores")]
+        [StringLength(20, MinimumLength = 5, ErrorMessage = "BusinessLicenseNumber must be between 5 and 20 characters")]
         public string? BusinessLicenseNumber {  get; set; }
 
 

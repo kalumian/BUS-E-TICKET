@@ -14,9 +14,11 @@ namespace BUS_E_TICKET.Controllers
     public class ServiceProviderController : ControllerBase
     {
         private SPRegRequestService _SPRegRequestService;
+        private SPRegResponseService _SPRegResponseService;
 
-        public ServiceProviderController(SPRegRequestService sPRegRequestService) {
-            _SPRegRequestService = sPRegRequestService; 
+        public ServiceProviderController(SPRegRequestService sPRegRequestService, SPRegResponseService sPRegResponseService) {
+            _SPRegRequestService = sPRegRequestService;
+            _SPRegResponseService = sPRegResponseService;
         }
         [HttpPost("registeration/request")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -35,11 +37,11 @@ namespace BUS_E_TICKET.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetAllServiceProviderRegistrationRequests([FromQuery] EnRegisterationRequestStatus? status)
+        public IActionResult GetAllServiceProviderRegistrationRequests([FromQuery] EnRegisterationRequestStatus? status)
         {
-                var requests = await _SPRegRequestService.GetAllRegistrationRequestsAsync(status);
+                var requests = _SPRegRequestService.GetAllRegistrationRequestsAsync(status);
 
-                return Ok(requests);
+                return Ok(new ApiResponse { IsSuccess= true, Message = "Data was fetched successfully", Data = new {Requests = requests}});
         }
 
         [Authorize(Roles = "Admin")]
@@ -49,10 +51,14 @@ namespace BUS_E_TICKET.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> AcceptRegistrationRequest(SPRegResponseDTO Respone)
         {
-          
-                await _SPRegRequestService.AcceptRegistrationRequestAsync(Respone);
-                return Ok(new { Message = "Registration request accepted successfully." });
-
+            var ResponseID = await _SPRegResponseService.AcceptRegistrationRequestAsync(Respone);
+            return Ok(new ApiResponse
+                {
+                    IsSuccess = true,
+                    Message = "Registration request accepted and created a Service Proivder Account Directly successfully.",
+                    Data = new { ResponseID }
+                }
+            );
         }
     }
 }

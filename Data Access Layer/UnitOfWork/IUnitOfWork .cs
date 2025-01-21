@@ -25,7 +25,7 @@ namespace Data_Access_Layer.UnitOfWork
         IRepository<SPRegRequestEntity> SPRegResponses { get; }
         IRepository<ContactInformationEntity> ContactInformations { get; }
         public IRepository<T> GetDynamicRepository<T>() where T : class;
-
+        void Attach<T>(T entity) where T : class;
         Task SaveChangesAsync();
         void SaveChanges();
 

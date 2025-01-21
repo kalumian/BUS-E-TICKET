@@ -21,13 +21,16 @@ namespace Business_Logic_Layer.Services.Actors
 {
     public class ManagerService : BaseUserService
     {
-        public ManagerService(UserManager<AuthoUser> userManager, IUnitOfWork unitOfWork, IMapper Mapper, IHttpContextAccessor httpContextAccessor) : base(userManager, unitOfWork, httpContextAccessor)
+        private IMapper _mapper;
+
+        public ManagerService(UserManager<AuthoUser> userManager, IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(userManager, unitOfWork, httpContextAccessor)
         {
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
         public async Task<string> RegisterAsync(RegisterManagerAccountDTO registerManagerAccountDTO)
         {
-            CheckRole(EnUserRole.Admin.ToString()); ;
+            CheckRole(EnUserRole.Admin.ToString()); 
             //Error If CreatedBy isn't Exists
             CheckEntityExist<ManagerEntity>(i => i.ManagerID == registerManagerAccountDTO.CreatedByID);
 
@@ -36,8 +39,9 @@ namespace Business_Logic_Layer.Services.Actors
             if (string.IsNullOrEmpty(resultUserID)) throw new BadRequestException("User's ID Have not Created");
 
             // Created Manager
-            var manager = new ManagerEntity { AccountID = resultUserID, CreatedByID = registerManagerAccountDTO.CreatedByID };
-
+            registerManagerAccountDTO.Account.AccountId = resultUserID;
+            var manager = _mapper.Map<ManagerEntity>(registerManagerAccountDTO);
+            
             await _unitOfWork.Managers.AddAsync(manager);
             await _unitOfWork.SaveChangesAsync();
 

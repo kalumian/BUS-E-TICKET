@@ -15,8 +15,10 @@ namespace Core_Layer.DTOs
     {
         public int SPRegRequestID { get; set; }
         public DateTime RequestDate { get; set; }
-        public EnRegisterationRequestStatus Status { get; set; }
         public string? Notes { get; set; }
-        public BusinessDTO? Business { get; set; }
+        public required BusinessDTO Business { get; set; }
+        public required RegisterServiceProviderDTO ServiceProvider { get; set; }
+
+
     }
 }

@@ -1,4 +1,5 @@
-﻿using Business_Logic_Layer.Utilities;
+﻿using Business_Logic_Layer.Services.Actors.ServiceProvider;
+using Business_Logic_Layer.Utilities;
 using Core_Layer.DTOs;
 using Core_Layer.Entities.Actors;
 using Core_Layer.Enums;
@@ -23,15 +24,26 @@ namespace Business_Logic_Layer.Services.Actors
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor ?? throw new NotFoundException("_httpContextAccessor is null");
         }
-        protected async Task<bool> IsUserExisitByEmail(string Email)
+        public async Task<bool> IsUserExisitByEmail(string Email)
         {
             return await _userManager.FindByEmailAsync(Email) is not null;
         }
-        protected async Task<bool> IsUserExistByPhone(string phoneNumber)
+        public async Task<bool> IsUserExistByPhone(string phoneNumber)
         {
             return await Task.FromResult(_userManager.Users.Any(u => u.PhoneNumber == phoneNumber));
         }
-        protected async Task<string> RegisterAsync(RegisterAccountDTO registerAccountDTO)
+        public async Task<bool> IsUserExistByUsername(string Username)
+        {
+            return await _userManager.FindByNameAsync(Username) is not null;
+        }
+        public async Task<bool> IsUserInformationDuplicate(string email, string phonenumber, string username)
+        {
+            return await IsUserExisitByEmail(email) ||
+                   await IsUserExistByPhone(phonenumber) ||
+                   await IsUserExistByUsername(username);
+        }
+
+        protected async Task<string> RegisterAsync(RegisterAccountDTO registerAccountDTO, EnAccountStatus Status = EnAccountStatus.Active)
         {
             // Check email
             if (await IsUserExisitByEmail(registerAccountDTO.Email))
@@ -45,11 +57,12 @@ namespace Business_Logic_Layer.Services.Actors
                 Email = registerAccountDTO.Email,
                 PhoneNumber = registerAccountDTO.PhoneNumber,
                 RegisterationDate = DateTime.Now,
-                AccountStatus = EnAccountStatus.Active
+                AccountStatus = Status
             };
             // Entity Validation 
             ValidationHelper.ValidateEntity(authoUser);
 
+            
             IdentityResult result = await _userManager.CreateAsync(authoUser, registerAccountDTO.Password);
 
             // Error If Couldn't Create A User
@@ -60,6 +73,7 @@ namespace Business_Logic_Layer.Services.Actors
         public async Task<JwtSecurityToken> Login(UserLoginDTO LoginInfo, TokenConfiguration config)
         {
             // Cheack Username
+            CheckEntityIsNotNull(LoginInfo.UserName);
             AuthoUser? user = await _userManager.FindByNameAsync(LoginInfo.UserName) ??
                 throw new BadRequestException("Login faild. Please make sure Username Or Passworrd are correct.");
 
@@ -77,13 +91,13 @@ namespace Business_Logic_Layer.Services.Actors
 
         public EnUserRole GetCurrentUserRole()
         {
-            // تحقق من أن _httpContextAccessor غير null
+            // verify httpContextAccessor isn't null
             if (_httpContextAccessor == null || _httpContextAccessor.HttpContext == null)
             {
                 throw new InvalidOperationException("HttpContext is not available.");
             }
 
-            // احصل على دور المستخدم الحالي
+            // Get Current User Role
             var roleClaim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role);
             if (roleClaim == null || string.IsNullOrEmpty(roleClaim.Value))
             {
@@ -107,5 +121,6 @@ namespace Business_Logic_Layer.Services.Actors
                 new AuthorizationException("Unauthorized: Only managers can create other managers.");
             }
         }
+
     }
 }

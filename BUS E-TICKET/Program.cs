@@ -29,7 +29,9 @@ builder.Services.AddIdentity<AuthoUser, IdentityRole>().AddEntityFrameworkStores
 
 // AddScoped
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<SPRegResponseService>();
 builder.Services.AddScoped<ManagerService>();
+builder.Services.AddScoped<ServiceProviderService>();
 builder.Services.AddScoped<BaseUserService>();
 builder.Services.AddScoped<BusinessService>();
 builder.Services.AddScoped<SPRegRequestService>();

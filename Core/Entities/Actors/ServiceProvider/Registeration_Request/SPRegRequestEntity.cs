@@ -25,7 +25,7 @@ namespace Core_Layer.Entities.Actors.ServiceProvider.Registeration_Request
         // Foregin Keys
         [ForeignKey("Business")]
         [Required(ErrorMessage = "BusinessID is required.")]
-        public int BusinessID { get; set; }
+        public required int BusinessID { get; set; }
 
         // Navigation Properties
         public BusinessEntity? Business { get; set; }
