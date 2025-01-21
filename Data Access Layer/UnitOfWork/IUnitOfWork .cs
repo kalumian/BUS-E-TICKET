@@ -22,6 +22,7 @@ namespace Data_Access_Layer.UnitOfWork
         IRepository<AddressEntity> Addresses { get; }
         IRepository<BusinessEntity> Businesses { get; }
         IRepository<SPRegRequestEntity> SPRegRequests { get; }
+        IRepository<SPRegRequestEntity> SPRegResponses { get; }
         IRepository<ContactInformationEntity> ContactInformations { get; }
         public IRepository<T> GetDynamicRepository<T>() where T : class;
 

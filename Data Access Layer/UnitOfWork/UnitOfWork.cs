@@ -28,6 +28,8 @@ namespace Data_Access_Layer.UnitOfWork
 
         public IRepository<SPRegRequestEntity> SPRegRequests { get; private set; }
 
+        public IRepository<SPRegRequestEntity> SPRegResponses { get; private set; }
+
         public UnitOfWork(AppDbContext dbContext)
         {
             _context = dbContext;
@@ -39,6 +41,7 @@ namespace Data_Access_Layer.UnitOfWork
             Businesses = new UserRepository<BusinessEntity>(dbContext);
             Addresses = new GeneralRepository<AddressEntity>(dbContext);
             ContactInformations = new GeneralRepository<ContactInformationEntity>(dbContext);
+            SPRegResponses = new GeneralRepository<SPRegRequestEntity>(dbContext);
 
         }
         public IRepository<T> GetDynamicRepository<T>() where T : class

@@ -41,5 +41,18 @@ namespace BUS_E_TICKET.Controllers
 
                 return Ok(requests);
         }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost("AcceptRegistrationRequest")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> AcceptRegistrationRequest(SPRegResponseDTO Respone)
+        {
+          
+                await _SPRegRequestService.AcceptRegistrationRequestAsync(Respone);
+                return Ok(new { Message = "Registration request accepted successfully." });
+
+        }
     }
 }

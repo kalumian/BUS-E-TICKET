@@ -62,6 +62,10 @@ namespace Data_Access_Layer.Repositories
         {
             return _dbSet.Find(id);
         }
+        //public T? GetGByIds(object id)
+        //{
+        //    return _dbSet.Get(id);
+        //}
 
         public IEnumerable<T> Find(Expression<Func<T, bool>> predicate)
         {
@@ -70,9 +74,13 @@ namespace Data_Access_Layer.Repositories
 
         public T? FirstOrDefault(Expression<Func<T, bool>> predicate)
         {
+            
             return _dbSet.FirstOrDefault(predicate);
         }
-
+        public async Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await _dbSet.FirstOrDefaultAsync(predicate);
+        }
         public int Count()
         {
             return _dbSet.Count();

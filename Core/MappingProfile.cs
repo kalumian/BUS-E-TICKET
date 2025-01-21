@@ -49,6 +49,10 @@ namespace Core_Layer
             CreateMap<BusinessDTO, BusinessEntity>()
                 .ForMember(dest => dest.ContactInformation, opt => opt.MapFrom(src => src.ContactInformation))
                 .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address));
+            CreateMap<SPRegResponseDTO, SPRegResponseEntity>();
+            CreateMap<SPRegRequestDTO, SPRegRequestEntity>().ReverseMap();
+
+
 
         }
     }
