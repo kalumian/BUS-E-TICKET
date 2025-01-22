@@ -20,7 +20,6 @@ namespace Business_Logic_Layer.Services
         {
             CheckEntityExist<CityEntity>(i=>i.CityID == Address.CityID);
             await CreateEntity<AddressEntity>(Address);
-            await _unitOfWork.SaveChangesAsync();
             return Address.AddressID;
         }
     }

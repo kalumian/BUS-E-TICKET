@@ -6,6 +6,8 @@ using Core_Layer.Entities.Locations;
 using Data_Access_Layer.Data;
 using Data_Access_Layer.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -57,9 +59,30 @@ namespace Data_Access_Layer.UnitOfWork
         {
              _context.SaveChanges();
         }
-        public void Attach<T>(T entity) where T : class
+        public void AttachEntity<T>(T entity) where T : class
         {
-            _context.Attach(entity);
+            if (_context.Entry(entity).State == EntityState.Detached)
+            {
+                _context.Attach(entity);
+            }
+        }
+        public EntityEntry<T> Entry<T>(T entity) where T : class
+        {
+            return _context.Entry(entity);
+        }
+        public async Task<IDbContextTransaction> BeginTransactionAsync()
+        {
+            return await _context.Database.BeginTransactionAsync();
+        }
+
+        public async Task CommitTransactionAsync()
+        {
+            await _context.Database.CommitTransactionAsync();
+        }
+
+        public async Task RollbackTransactionAsync()
+        {
+            await _context.Database.RollbackTransactionAsync();
         }
     }
 }

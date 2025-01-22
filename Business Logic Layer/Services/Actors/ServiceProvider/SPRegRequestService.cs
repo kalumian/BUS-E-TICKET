@@ -34,84 +34,88 @@ namespace Business_Logic_Layer.Services.Actors.ServiceProvider
             _baseUserService = baseUserService;
             _serviceProviderService = serviceProviderService;
         }
-        public async Task<int> AddRequestAsync(SPRegRequestDTO RequestDTO)
+        public async Task<SPRegRequestDTO> AddRequestAsync(SPRegRequestDTO RequestDTO)
         {
-            // Validate uniqueness of user information (email, phone, username)
+            // 1. Validate uniqueness of user information
             if (await _serviceProviderService.IsUserInformationDuplicate(
                 email: RequestDTO.ServiceProvider.Account.Email,
                 phonenumber: RequestDTO.ServiceProvider.Account.PhoneNumber,
                 username: RequestDTO.ServiceProvider.Account.UserName))
+            {
                 throw new BadRequestException("Email, phone number, or username is already in use");
+            }
 
-            // Check if there are approved or pending requests
+            // 2. Check if there are approved or pending requests
             IsThereApprovedOrPendingRequest(RequestDTO);
 
-            // Map DTOs to entities
+            // 3. Map DTOs to entities
             var contactInformation = _mapper.Map<ContactInformationEntity>(RequestDTO.Business.ContactInformation);
             var address = _mapper.Map<AddressEntity>(RequestDTO.Business.Address);
             var business = _mapper.Map<BusinessEntity>(RequestDTO.Business);
             var request = _mapper.Map<SPRegRequestEntity>(RequestDTO);
             request.Status = EnRegisterationRequestStatus.Pending;
-            // Validate entities
-            ValidateEntities([request, business, contactInformation, address]);
+            // 4. Validate entities
+            ValidationHelper.ValidateEntities(
+            (
+                        [
+                contactInformation,
+                address,
+                business,
+                request,
+                new AuthoUser(){
+                UserName = RequestDTO.ServiceProvider.Account.UserName,
+                Email = RequestDTO.ServiceProvider.Account.Email,
+                PhoneNumber = RequestDTO.ServiceProvider.Account.PhoneNumber,
+                 }
+            ]
+            ));
 
-            // Persist entities to the database
-            await SaveContactInformationAndAddress(contactInformation, address);
-            await SaveBusinessAndRequest(business, address, contactInformation, request, RequestDTO);
+            // 5. Insert Address and Contact Information
+            await _addressService.CreateEntity(address); // Create Address
+            await CreateEntity(contactInformation); // Create Contact Information
 
-            // Verify the creation state
-            CheckCreatedState<SPRegRequestEntity>(request.SPRegRequestID);
-
-            return request.SPRegRequestID;
-        }
-
-
-        private void ValidateEntities(IEnumerable<object> entities)
-        {
-            ValidationHelper.ValidateEntities(entities);
-        }
-
-        private async Task SaveContactInformationAndAddress(ContactInformationEntity contactInformation, AddressEntity address)
-        {
-            await _addressService.CreateEntity(address);
-            await CreateEntity(contactInformation);
-        }
-
-        private async Task SaveBusinessAndRequest(
-            BusinessEntity business,
-            AddressEntity address,
-            ContactInformationEntity contactInformation,
-            SPRegRequestEntity request,
-            SPRegRequestDTO RequestDTO)
-        {
-            // Link business with address and contact information
+            // 6. Link Business with Address and Contact Information
             business.Address = address;
             business.ContactInformation = contactInformation;
-            await CreateEntity(business);
+            await CreateEntity(business); // Save Business
 
-            // Link service provider with business
-            RequestDTO.ServiceProvider.BusinessID = business.BusinessID;
-            await _serviceProviderService.RegisterAsync(RequestDTO.ServiceProvider, EnAccountStatus.Inactive);
-
-            // Link request with business
+            // 7. Link Request with Business
             request.Business = business;
-            await CreateEntity(request);
+            await CreateEntity(request); // Save Request
+
+            // 8. Save changes and verify creation
+            await _unitOfWork.SaveChangesAsync();
+            CheckCreatedState<SPRegRequestEntity>(request.SPRegRequestID);
+
+            // 9. Create Service Provider
+            RequestDTO.ServiceProvider.BusinessID = business.BusinessID;
+            var serviceProviderDTO = await _serviceProviderService.RegisterAsync(RequestDTO.ServiceProvider);
+
+            // 10. Map results back to DTO
+            RequestDTO = _mapper.Map<SPRegRequestDTO>(request);
+            RequestDTO.ServiceProvider = serviceProviderDTO;
+
+            return RequestDTO;
         }
         public List<SPRegRequestDTO> GetAllRegistrationRequestsAsync(EnRegisterationRequestStatus? status = null)
         {
             _baseUserService.CheckRole(EnUserRole.Admin.ToString());
             IQueryable<SPRegRequestEntity> query = _unitOfWork.SPRegRequests.GetAllQueryable()
-                .Include(r => r.Business)
-                    .ThenInclude(b => b.ContactInformation)
-                .Include(r => r.Business)
-                    .ThenInclude(b => b.Address);
+            .Include(r => r.Business)
+            .ThenInclude(b => b.ServiceProvider)
+            .ThenInclude(sp => sp.Account) 
+            .Include(r => r.Business)
+                .ThenInclude(b => b.ContactInformation)
+            .Include(r => r.Business)
+                .ThenInclude(b => b.Address);
 
             if (status.HasValue)
             {
                 query = query.Where(r => r.Status == status.Value);
             }
             var requests = query.ToList();
-            if (CheckList(requests)) return new List<SPRegRequestDTO>();
+            if (CheckList(requests)) return [];
+
             return _mapper.Map<List<SPRegRequestDTO>>(requests);
         }
         private void IsThereApprovedOrPendingRequest(SPRegRequestDTO RequestDTO)

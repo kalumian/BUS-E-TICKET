@@ -8,9 +8,9 @@ namespace Core_Layer.Enums
 {
     public enum EnAccountStatus
     {
-        Active,
-        Inactive,
-        PendingVerification,
-        Deleted,
+        Active = 0,
+        Inactive = 1,
+        PendingVerification = 2,
+        Deleted = 3,
     }
 }

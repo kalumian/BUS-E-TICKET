@@ -11,27 +11,23 @@ namespace BUS_E_TICKET.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ServiceProviderController : ControllerBase
+    public class ServiceProviderController(SPRegRequestService sPRegRequestService, SPRegResponseService sPRegResponseService) : ControllerBase
     {
-        private SPRegRequestService _SPRegRequestService;
-        private SPRegResponseService _SPRegResponseService;
+        private SPRegRequestService _SPRegRequestService = sPRegRequestService;
+        private SPRegResponseService _SPRegResponseService = sPRegResponseService;
 
-        public ServiceProviderController(SPRegRequestService sPRegRequestService, SPRegResponseService sPRegResponseService) {
-            _SPRegRequestService = sPRegRequestService;
-            _SPRegResponseService = sPRegResponseService;
-        }
         [HttpPost("registeration/request")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> RegisterationRequest(SPRegRequestDTO RequestDTO)
         {
-            ValidationHelper.ModelsErrorCollector(ModelState);
+            var Request =  await _SPRegRequestService.AddRequestAsync(RequestDTO);
 
-            int Request_ID =  await _SPRegRequestService.AddRequestAsync(RequestDTO);
-
-            return Ok(ResponeHelper.GetApiRespone("Service Provider Registeration Requerst Was Created successfully", true, new { Request_ID }));
+            return Ok(ResponeHelper.GetApiRespone("Service Provider Registeration Requerst Was Created successfully", true, new { Request }));
 
         }
+
+
         [Authorize(Roles = "Admin")]
         [HttpGet("RegistrationRequests")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -43,6 +39,9 @@ namespace BUS_E_TICKET.Controllers
 
                 return Ok(new ApiResponse { IsSuccess= true, Message = "Data was fetched successfully", Data = new {Requests = requests}});
         }
+
+
+
 
         [Authorize(Roles = "Admin")]
         [HttpPost("AcceptRegistrationRequest")]

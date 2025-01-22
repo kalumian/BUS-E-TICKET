@@ -134,7 +134,7 @@ namespace Data_Access_Layer.Migrations
 
                     b.HasIndex("PersonID");
 
-                    b.ToTable("Customers");
+                    b.ToTable("Customers", (string)null);
                 });
 
             modelBuilder.Entity("Core_Layer.Entities.Actors.ManagerEntity", b =>
@@ -158,7 +158,7 @@ namespace Data_Access_Layer.Migrations
 
                     b.HasIndex("CreatedByID");
 
-                    b.ToTable("Managers");
+                    b.ToTable("Managers", (string)null);
                 });
 
             modelBuilder.Entity("Core_Layer.Entities.Actors.PassengerEntity", b =>
@@ -176,7 +176,7 @@ namespace Data_Access_Layer.Migrations
 
                     b.HasIndex("PersonID");
 
-                    b.ToTable("Passengers");
+                    b.ToTable("Passengers", (string)null);
                 });
 
             modelBuilder.Entity("Core_Layer.Entities.Actors.PersonEntity", b =>
@@ -210,7 +210,7 @@ namespace Data_Access_Layer.Migrations
 
                     b.HasKey("PersonID");
 
-                    b.ToTable("People");
+                    b.ToTable("People", (string)null);
                 });
 
             modelBuilder.Entity("Core_Layer.Entities.Actors.ServiceProvider.BusinessEntity", b =>
@@ -258,7 +258,7 @@ namespace Data_Access_Layer.Migrations
 
                     b.HasIndex("ContactInformationID");
 
-                    b.ToTable("Businesses");
+                    b.ToTable("Businesses", (string)null);
                 });
 
             modelBuilder.Entity("Core_Layer.Entities.Actors.ServiceProvider.Registeration_Request.SPRegRequestEntity", b =>
@@ -286,7 +286,7 @@ namespace Data_Access_Layer.Migrations
 
                     b.HasIndex("BusinessID");
 
-                    b.ToTable("SPRegRequests");
+                    b.ToTable("SPRegRequests", (string)null);
                 });
 
             modelBuilder.Entity("Core_Layer.Entities.Actors.ServiceProvider.Registeration_Request.SPRegResponseEntity", b =>
@@ -320,7 +320,7 @@ namespace Data_Access_Layer.Migrations
 
                     b.HasIndex("RespondedByID");
 
-                    b.ToTable("SPRegResponses");
+                    b.ToTable("SPRegResponses", (string)null);
                 });
 
             modelBuilder.Entity("Core_Layer.Entities.Actors.ServiceProvider.ServiceProviderEntity", b =>
@@ -344,7 +344,7 @@ namespace Data_Access_Layer.Migrations
 
                     b.HasIndex("BusinessID");
 
-                    b.ToTable("ServiceProviders");
+                    b.ToTable("ServiceProviders", (string)null);
                 });
 
             modelBuilder.Entity("Core_Layer.Entities.ContactInformationEntity", b =>
@@ -381,7 +381,7 @@ namespace Data_Access_Layer.Migrations
 
                     b.HasKey("ContactInformationID");
 
-                    b.ToTable("ContactInformationEntity");
+                    b.ToTable("ContactInformationEntity", (string)null);
                 });
 
             modelBuilder.Entity("Core_Layer.Entities.Locations.AddressEntity", b =>
@@ -412,7 +412,7 @@ namespace Data_Access_Layer.Migrations
 
                     b.HasIndex("StreetID");
 
-                    b.ToTable("Addresses");
+                    b.ToTable("Addresses", (string)null);
                 });
 
             modelBuilder.Entity("Core_Layer.Entities.Locations.CityEntity", b =>
@@ -435,7 +435,7 @@ namespace Data_Access_Layer.Migrations
 
                     b.HasIndex("RegionID");
 
-                    b.ToTable("Cities");
+                    b.ToTable("Cities", (string)null);
                 });
 
             modelBuilder.Entity("Core_Layer.Entities.Locations.CountryEntity", b =>
@@ -453,7 +453,7 @@ namespace Data_Access_Layer.Migrations
 
                     b.HasKey("CountryID");
 
-                    b.ToTable("Countries");
+                    b.ToTable("Countries", (string)null);
                 });
 
             modelBuilder.Entity("Core_Layer.Entities.Locations.LocationEntity", b =>
@@ -481,7 +481,7 @@ namespace Data_Access_Layer.Migrations
 
                     b.HasIndex("AddressID");
 
-                    b.ToTable("Locations");
+                    b.ToTable("Locations", (string)null);
                 });
 
             modelBuilder.Entity("Core_Layer.Entities.Locations.RegionEntity", b =>
@@ -504,7 +504,7 @@ namespace Data_Access_Layer.Migrations
 
                     b.HasIndex("CountryID");
 
-                    b.ToTable("Regions");
+                    b.ToTable("Regions", (string)null);
                 });
 
             modelBuilder.Entity("Core_Layer.Entities.Locations.StreetEntity", b =>
@@ -527,7 +527,7 @@ namespace Data_Access_Layer.Migrations
 
                     b.HasIndex("CityID");
 
-                    b.ToTable("Streets");
+                    b.ToTable("Streets", (string)null);
                 });
 
             modelBuilder.Entity("Core_Layer.Entities.Payment.PaymentEntity", b =>
@@ -562,7 +562,7 @@ namespace Data_Access_Layer.Migrations
 
                     b.HasIndex("ReservationID");
 
-                    b.ToTable("Payments");
+                    b.ToTable("Payments", (string)null);
                 });
 
             modelBuilder.Entity("Core_Layer.Entities.Payment.PaymentInfoEntity", b =>
@@ -587,7 +587,7 @@ namespace Data_Access_Layer.Migrations
 
                     b.HasKey("PaymentInfoID");
 
-                    b.ToTable("PaymentInfos");
+                    b.ToTable("PaymentInfos", (string)null);
                 });
 
             modelBuilder.Entity("Core_Layer.Entities.PaymentAccount.CurrencyEntity", b =>
@@ -610,7 +610,7 @@ namespace Data_Access_Layer.Migrations
 
                     b.HasKey("CurrencyID");
 
-                    b.ToTable("Currencys");
+                    b.ToTable("Currencys", (string)null);
                 });
 
             modelBuilder.Entity("Core_Layer.Entities.PaymentAccount.PayPalAccountEntity", b =>
@@ -638,7 +638,7 @@ namespace Data_Access_Layer.Migrations
 
                     b.HasIndex("PaymentAccountID");
 
-                    b.ToTable("PayPalAccounts");
+                    b.ToTable("PayPalAccounts", (string)null);
                 });
 
             modelBuilder.Entity("Core_Layer.Entities.PaymentAccount.PaymentAccountEntity", b =>
@@ -675,7 +675,7 @@ namespace Data_Access_Layer.Migrations
 
                     b.HasIndex("ServiceProviderID");
 
-                    b.ToTable("PaymentAccounts");
+                    b.ToTable("PaymentAccounts", (string)null);
                 });
 
             modelBuilder.Entity("Core_Layer.Entities.Reservation.InvoiceEntity", b =>
@@ -696,7 +696,7 @@ namespace Data_Access_Layer.Migrations
 
                     b.HasIndex("PaymentID");
 
-                    b.ToTable("Invoices");
+                    b.ToTable("Invoices", (string)null);
                 });
 
             modelBuilder.Entity("Core_Layer.Entities.Reservation.ReservationEntity", b =>
@@ -728,7 +728,7 @@ namespace Data_Access_Layer.Migrations
 
                     b.HasIndex("TripID");
 
-                    b.ToTable("Reservations");
+                    b.ToTable("Reservations", (string)null);
                 });
 
             modelBuilder.Entity("Core_Layer.Entities.Reservation.TicketEntity", b =>
@@ -754,7 +754,7 @@ namespace Data_Access_Layer.Migrations
 
                     b.HasIndex("InvoiceID");
 
-                    b.ToTable("Tickets");
+                    b.ToTable("Tickets", (string)null);
                 });
 
             modelBuilder.Entity("Core_Layer.Entities.Trip.TripEntity", b =>
@@ -820,7 +820,7 @@ namespace Data_Access_Layer.Migrations
 
                     b.HasIndex("StartLocationID");
 
-                    b.ToTable("Trips");
+                    b.ToTable("Trips", (string)null);
                 });
 
             modelBuilder.Entity("LocationEntityLocationEntity", b =>
@@ -835,7 +835,7 @@ namespace Data_Access_Layer.Migrations
 
                     b.HasIndex("StartLocationLocationID");
 
-                    b.ToTable("LocationEntityLocationEntity");
+                    b.ToTable("LocationEntityLocationEntity", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

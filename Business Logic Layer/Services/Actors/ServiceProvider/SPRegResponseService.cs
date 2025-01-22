@@ -12,8 +12,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Core_Layer.Entities.Actors.ServiceProvider;
 
-namespace Business_Logic_Layer.Services.Actors.ServiceProvider
-{
+namespace Business_Logic_Layer.Services.Actors.ServiceProvider { 
     public class SPRegResponseService(IUnitOfWork unitOfWork, IMapper mapper, ServiceProviderService serviceProviderService) : GeneralService(unitOfWork)
     {
         private readonly IMapper _mapper = mapper;
@@ -46,15 +45,34 @@ namespace Business_Logic_Layer.Services.Actors.ServiceProvider
 
             // Update the status of the related Request
             await UpdateRequestStatus(Respone);
-            await CheckAndDeleteSPAccount(ResponeEntity, RequestEntity);
+            
+            await UpdateSPStatus(ResponeEntity, RequestEntity);
             return _mapper.Map<SPRegResponseDTO>(ResponeEntity);
         }
-        private async Task CheckAndDeleteSPAccount(SPRegResponseEntity ResponeEntity, SPRegRequestEntity RequestEntity)
+        private async Task UpdateSPStatus(SPRegResponseEntity ResponeEntity, SPRegRequestEntity RequestEntity)
         {
             _ServiceProviderService.CheckRole("Admin");
-            if (ResponeEntity.Result) return;
+
             var ServiceProvider = await _ServiceProviderService.GetServiceProviderByBussinesID(RequestEntity.BusinessID);
-            _ServiceProviderService.DeletePassifServiceProviderAccount(ServiceProvider);
+
+            if (ServiceProvider == null)
+            {
+                throw new NotFoundException($"ServiceProvider not found for BusinessID {RequestEntity.BusinessID}");
+            }
+
+            if (ResponeEntity.Result)
+            {
+                if (string.IsNullOrEmpty(ServiceProvider.AccountID))
+                {
+                    throw new InvalidOperationException("ServiceProvider's AccountID is null or empty.");
+                }
+
+                _ServiceProviderService.ChangeUserStatus(EnAccountStatus.Active, ServiceProvider.AccountID);
+            }
+            else
+            {
+                _ServiceProviderService.DeletePassifServiceProviderAccount(ServiceProvider);
+            }
         }
         private void ValidateEntitiesExistence(SPRegResponseDTO Respone)
         {
@@ -73,7 +91,8 @@ namespace Business_Logic_Layer.Services.Actors.ServiceProvider
             var request = await _unitOfWork.SPRegRequests.FirstOrDefaultAsync(e => e.SPRegRequestID == Respone.RequestID) ?? throw new NotFoundException("Request not found.");
             request.Status = Respone.Result ? EnRegisterationRequestStatus.Approved : EnRegisterationRequestStatus.Regected;
             _unitOfWork.SPRegRequests.Update(request);
-            await _unitOfWork.SaveChangesAsync();
+
         }
+
     }
 }

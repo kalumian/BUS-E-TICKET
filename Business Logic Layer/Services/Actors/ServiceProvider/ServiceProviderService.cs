@@ -25,7 +25,7 @@ namespace Business_Logic_Layer.Services.Actors.ServiceProvider
         {
             _mapper = mapper;
         }
-        public async Task<string> RegisterAsync(RegisterServiceProviderDTO RegisterServicePRoviderAccountDTO, EnAccountStatus Status = EnAccountStatus.Inactive)
+        public async Task<RegisterServiceProviderDTO> RegisterAsync(RegisterServiceProviderDTO RegisterServicePRoviderAccountDTO, EnAccountStatus Status = EnAccountStatus.Inactive)
         {
             // Try to Create Account 
             string resultUserID = await RegisterAsync(RegisterServicePRoviderAccountDTO.Account, Status);
@@ -35,8 +35,8 @@ namespace Business_Logic_Layer.Services.Actors.ServiceProvider
             RegisterServicePRoviderAccountDTO.Account.AccountId = resultUserID;
             var ServiceProvider = _mapper.Map<ServiceProviderEntity>(RegisterServicePRoviderAccountDTO);
             await CreateEntity(ServiceProvider);
-
-            return ServiceProvider.AccountID;
+            await _unitOfWork.SaveChangesAsync();
+            return _mapper.Map<RegisterServiceProviderDTO>(ServiceProvider);
         }
         public async void DeletePassifServiceProviderAccount(ServiceProviderEntity serviceProvider)
         {
@@ -49,11 +49,11 @@ namespace Business_Logic_Layer.Services.Actors.ServiceProvider
         public async Task<ServiceProviderEntity?>? GetServiceProviderByBussinesID(int bussinesID)
         {
             CheckRole("Admin");
-            var ServiceProvider =  await _unitOfWork.ServiceProviders
-                .GetAllQueryable()
-                .Include(nameof(SPRegRequestEntity.Business))
-                .FirstOrDefaultAsync(i=> i.BusinessID == bussinesID) ?? null;
-            return ServiceProvider;
+            var serviceProvider = await _unitOfWork.ServiceProviders
+              .GetAllQueryable()
+              .Include(sp => sp.Business) 
+              .FirstOrDefaultAsync(sp => sp.BusinessID == bussinesID);
+            return serviceProvider;
         }
     }
 }

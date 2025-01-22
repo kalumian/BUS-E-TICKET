@@ -40,6 +40,12 @@ namespace Data_Access_Layer.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<BusinessEntity>()
+            .HasOne(b => b.ServiceProvider)
+            .WithOne(sp => sp.Business)
+            .HasForeignKey<ServiceProviderEntity>(sp => sp.BusinessID)
+            .OnDelete(DeleteBehavior.Restrict);
+
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
                 foreach (var foreignKey in entityType.GetForeignKeys()) 
                         foreignKey.DeleteBehavior = DeleteBehavior.Restrict;

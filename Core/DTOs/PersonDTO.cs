@@ -10,10 +10,12 @@ namespace Core_Layer.DTOs
 {
     public class PersonDTO
     {
-        public required string NationalID { get; set; }
-        public required string FirstName { get; set; }
-        public required string LastName { get; set; }
-        public DateTime BirthDate { get; set; }
-        public EnGender Gender { get; set; }
+        public int? PersonID { get; set; }
+        public string? NationalID { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public DateTime? BirthDate { get; set; }
+        public EnGender? Gender { get; set; }
+
     }
 }

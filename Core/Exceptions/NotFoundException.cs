@@ -6,10 +6,7 @@ using System.Threading.Tasks;
 
 namespace Core_Layer.Exceptions
 {
-    public class NotFoundException : HttpException
+    public class NotFoundException(string message) : HttpException(500, message)
     {
-        public NotFoundException(string message) : base(500, message)
-        {
-        }
     }
 }

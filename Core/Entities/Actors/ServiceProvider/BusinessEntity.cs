@@ -16,7 +16,7 @@ namespace Core_Layer.Entities.Actors.ServiceProvider
 
         [Required(ErrorMessage = "BusinessName is required.")]
         [StringLength(100, MinimumLength = 15, ErrorMessage = "Business Name must be between 15 and 100 digits.")]
-        public required string BusinessName { get; set; }
+        public string? BusinessName { get; set; }
 
         [Url]
         [Length(0, 800, ErrorMessage = "Logo link must be lower then 800 chrachtaers")]
@@ -24,13 +24,13 @@ namespace Core_Layer.Entities.Actors.ServiceProvider
 
         [Required(ErrorMessage = "Email is required")]
         [EmailAddress(ErrorMessage = "Invalid email address")]
-        public required string Email { get; set; }
+        public string? Email { get; set; }
 
         [Required(ErrorMessage = "Phone number is required")]
         [Phone(ErrorMessage = "Invalid phone number")]
         [StringLength(15, MinimumLength = 9, ErrorMessage = "Phone number must be between 9 and 15 digits.")]
         [RegularExpression(@"^\+?\d{9,15}$", ErrorMessage = "Phone number must contain only digits and can start with a '+' sign.")]
-        public required string PhoneNumber { get; set; }
+        public string? PhoneNumber { get; set; }
 
         [Length(0, 800, ErrorMessage = "Website link must be lower then 800 chrachtaers")]
         [Url]
@@ -52,6 +52,7 @@ namespace Core_Layer.Entities.Actors.ServiceProvider
         // Navigation Properties
         public AddressEntity? Address { get; set; }
         public ContactInformationEntity? ContactInformation { get; set; }
+        public ServiceProviderEntity? ServiceProvider { get; set; }
 
     }
 }

@@ -5,6 +5,8 @@ using Core_Layer.Entities.Actors.ServiceProvider.Registeration_Request;
 using Core_Layer.Entities.Locations;
 using Data_Access_Layer.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,9 +28,12 @@ namespace Data_Access_Layer.UnitOfWork
         IRepository<ContactInformationEntity> ContactInformations { get; }
         public IRepository<T> GetDynamicRepository<T>() where T : class;
         void Attach<T>(T entity) where T : class;
+        EntityEntry<T> Entry<T>(T entity) where T : class;
         Task SaveChangesAsync();
         void SaveChanges();
-
-
+        Task<IDbContextTransaction> BeginTransactionAsync();
+        Task CommitTransactionAsync();
+        Task RollbackTransactionAsync();
+        public void AttachEntity<T>(T entity) where T : class;
     }
 }

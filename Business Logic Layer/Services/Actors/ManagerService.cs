@@ -28,7 +28,7 @@ namespace Business_Logic_Layer.Services.Actors
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
-        public async Task<string> RegisterAsync(RegisterManagerAccountDTO registerManagerAccountDTO)
+        public async Task<RegisterManagerAccountDTO> RegisterAsync(RegisterManagerAccountDTO registerManagerAccountDTO)
         {
             CheckRole(EnUserRole.Admin.ToString()); 
             //Error If CreatedBy isn't Exists
@@ -45,7 +45,7 @@ namespace Business_Logic_Layer.Services.Actors
             await _unitOfWork.Managers.AddAsync(manager);
             await _unitOfWork.SaveChangesAsync();
 
-            return resultUserID;
+            return _mapper.Map< RegisterManagerAccountDTO>(manager);
         }
 
 

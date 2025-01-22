@@ -42,33 +42,46 @@ namespace Business_Logic_Layer.Services.Actors
                    await IsUserExistByPhone(phonenumber) ||
                    await IsUserExistByUsername(username);
         }
-
-        protected async Task<string> RegisterAsync(RegisterAccountDTO registerAccountDTO, EnAccountStatus Status = EnAccountStatus.Active)
+        protected async Task<string> RegisterAsync(RegisterAccountDTO registerAccountDTO, EnAccountStatus status = EnAccountStatus.Active)
         {
-            // Check email
-            if (await IsUserExisitByEmail(registerAccountDTO.Email))
-                throw new BadRequestException("A user with the same email already exists.");
-            // Check phone
-            if (await IsUserExistByPhone(registerAccountDTO.PhoneNumber))
-                throw new BadRequestException("A user with the same Phone already exists.");
+            // Validate input
+            await ValidateAccountAsync(registerAccountDTO);
+
+            // Map DTO to AuthoUser entity
             var authoUser = new AuthoUser
             {
                 UserName = registerAccountDTO.UserName,
                 Email = registerAccountDTO.Email,
                 PhoneNumber = registerAccountDTO.PhoneNumber,
                 RegisterationDate = DateTime.Now,
-                AccountStatus = Status
+                AccountStatus = status,
             };
-            // Entity Validation 
+
+            // Validate the entity
             ValidationHelper.ValidateEntity(authoUser);
 
-            
-            IdentityResult result = await _userManager.CreateAsync(authoUser, registerAccountDTO.Password);
+            // Attempt to create the user
+            var result = await _userManager.CreateAsync(authoUser, registerAccountDTO.Password);
 
-            // Error If Couldn't Create A User
-            if (!result.Succeeded) throw new BadRequestException(string.Join(", ", result.Errors.Select(e => e.Description)));
+            // Handle errors
+            if (!result.Succeeded)
+            {
+                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                throw new BadRequestException($"Failed to register user: {errors}");
+            }
 
+            // Return the new user ID
             return authoUser.Id;
+        }
+
+        private async Task ValidateAccountAsync(RegisterAccountDTO registerAccountDTO)
+        {
+            if (await IsUserExisitByEmail(registerAccountDTO.Email))
+                throw new BadRequestException("A user with the same email already exists.");
+            if (await IsUserExistByPhone(registerAccountDTO.PhoneNumber))
+                throw new BadRequestException("A user with the same phone number already exists.");
+            if (await IsUserExistByUsername(registerAccountDTO.UserName))
+                throw new BadRequestException("A user with the same username already exists.");
         }
         public async Task<JwtSecurityToken> Login(UserLoginDTO LoginInfo, TokenConfiguration config)
         {
@@ -121,6 +134,22 @@ namespace Business_Logic_Layer.Services.Actors
                 new AuthorizationException("Unauthorized: Only managers can create other managers.");
             }
         }
+        public async Task ChangeUserStatus(EnAccountStatus Status, string userID)
+        {
+            var user = await _userManager.FindByIdAsync(userID);
+            if (user == null)
+            {
+                throw new NotFoundException($"User with ID '{userID}' not found.");
+            }
+            user.AccountStatus = Status;
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+            {
+                throw new InvalidOperationException("Failed to update user status.");
+            }
+            _unitOfWork.SaveChanges();
+        }
+        
 
     }
 }

@@ -23,11 +23,9 @@ namespace BUS_E_TICKET.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> RegisterNewCustomerUser([FromBody] RegisterCustomerAccountDTO user)
         {
-            ValidationHelper.ModelsErrorCollector(ModelState);
+            var Customer = await _customerService.RegisterAsync(user);
 
-            string userId = await _customerService.RegisterAsync(user);
-
-            return Ok(ResponeHelper.GetApiRespone("Customer registered successfully", true, new { userId }));
+            return Ok(ResponeHelper.GetApiRespone("Customer registered successfully", true, new { Customer }));
         }
     }
 }

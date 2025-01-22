@@ -14,16 +14,9 @@ namespace BUS_E_TICKET.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ManagerController : ControllerBase
+    public class ManagerController(ManagerService managerService) : ControllerBase
     {
-        private readonly ManagerService _managerService;
-        private readonly IConfiguration configuration;
-
-        public ManagerController(ManagerService managerService, IConfiguration configuration) { 
-            _managerService = managerService;
-            this.configuration = configuration;
-        }
-
+        private readonly ManagerService _managerService = managerService;
         [Authorize(Roles = "Admin")]
         [HttpPost("Register")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -35,10 +28,10 @@ namespace BUS_E_TICKET.Controllers
             ValidationHelper.ModelsErrorCollector(ModelState);
 
             //Registering
-            string UserID = await _managerService.RegisterAsync(User);
+            var Manager = await _managerService.RegisterAsync(User);
 
             //Result
-            return Ok(ResponeHelper.GetApiRespone("Manager registered successfully", true, new { UserID }));
+            return Ok(ResponeHelper.GetApiRespone("Manager registered successfully", true, new { Manager }));
         }
 
     }

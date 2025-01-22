@@ -22,11 +22,9 @@ namespace Core_Layer
             CreateMap<PersonEntity, PersonDTO>();
             CreateMap<ContactInformationEntity, ContactInformationDTO>();
             CreateMap<AddressEntity, AddressDTO>();
-
-
-            CreateMap<PersonDTO, PersonEntity>();
-            CreateMap<ContactInformationDTO, ContactInformationEntity>();
-            CreateMap<AddressDTO, AddressEntity>();
+            CreateMap<PersonEntity, PersonDTO>().ReverseMap();
+            CreateMap<ContactInformationEntity, ContactInformationDTO>().ReverseMap();
+            CreateMap<AddressEntity, AddressDTO>().ReverseMap();
 
             CreateMap<SPRegRequestDTO, SPRegRequestEntity>()
                 .ForMember(dest => dest.Business, opt => opt.MapFrom(src => src.Business))
@@ -78,6 +76,11 @@ namespace Core_Layer
                 .ForMember(dest => dest.Business, opt => opt.Ignore())
                 .ForMember(dest => dest.Account, opt => opt.Ignore());
 
+            CreateMap<RegisterServiceProviderDTO, ServiceProviderEntity>()
+                .ForMember(dest => dest.ServiceProviderID, opt => opt.MapFrom(src => src.ServiceProviderID))
+                .ForMember(dest => dest.AccountID, opt => opt.MapFrom(src => src.Account != null ? src.Account.AccountId : (string?)null))
+                .ForMember(dest => dest.BusinessID, opt => opt.MapFrom(src => src.BusinessID)).ReverseMap();
+
             CreateMap<RegisterManagerAccountDTO, ManagerEntity>()
                 .ForMember(dest => dest.AccountID, opt => opt.MapFrom(src => src.Account.AccountId))
                 .ForMember(dest => dest.CreatedByID, opt => opt.MapFrom(src => src.CreatedByID))
@@ -85,8 +88,28 @@ namespace Core_Layer
                 .ForMember(dest => dest.Account, opt => opt.Ignore())
                 .ForMember(dest => dest.Managers, opt => opt.Ignore());
 
+            CreateMap<RegisterManagerAccountDTO, ManagerEntity>()
+                .ForMember(dest => dest.AccountID, opt => opt.MapFrom(src => src.Account.AccountId))
+                .ForMember(dest => dest.CreatedByID, opt => opt.MapFrom(src => src.CreatedByID))
+                .ForMember(dest => dest.CreatedBy, opt => opt.Ignore())
+                .ForMember(dest => dest.Account, opt => opt.Ignore())
+                .ForMember(dest => dest.Managers, opt => opt.Ignore()).ReverseMap();
 
+            CreateMap<RegisterCustomerAccountDTO, CustomerEntity>()
+                .ForMember(dest => dest.AccountID, opt => opt.MapFrom(src => src.Account.AccountId))
+                .ForMember(dest => dest.AddressID, opt => opt.MapFrom(src => src.Address.AddressID))
+                .ForMember(dest => dest.PersonID, opt => opt.MapFrom(src => src.Person.PersonID))
+                .ForMember(dest => dest.ContactInformationID, opt => opt.MapFrom(src => src.ContactInformation.ContactInformationID));
 
+            CreateMap<RegisterCustomerAccountDTO, CustomerEntity>()
+                .ForMember(dest => dest.AccountID, opt => opt.MapFrom(src => src.Account.AccountId))
+                .ForMember(dest => dest.AddressID, opt => opt.MapFrom(src => src.Address.AddressID))
+                .ForMember(dest => dest.PersonID, opt => opt.MapFrom(src => src.Person.PersonID))
+                .ForMember(dest => dest.ContactInformationID, opt => opt.MapFrom(src => src.ContactInformation.ContactInformationID))
+                .ReverseMap();
+
+            CreateMap<AuthoUser, RegisterAccountDTO>();
+            CreateMap<AuthoUser, RegisterAccountDTO>().ReverseMap();
 
         }
     }

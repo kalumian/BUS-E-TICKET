@@ -9,18 +9,17 @@ namespace Core_Layer.Entities.Actors.ServiceProvider
     public class ServiceProviderEntity : IServiceProviderEntity
     {
         [Key]
-
         public int ServiceProviderID { get; set; }
 
         #region Foreign Keys
         [Required(ErrorMessage = "AccountID is required.")]
         [ForeignKey("Account")]
-        public required string AccountID { get; set; }
+        public string? AccountID { get; set; }
 
         [Required(ErrorMessage = "AccountID is required.")]
 
         [ForeignKey("Business")]
-        public required int BusinessID { get; set; }
+        public int? BusinessID { get; set; }
         #endregion
 
         #region Navigation Properties

@@ -38,17 +38,14 @@ namespace Business_Logic_Layer.Services
             if (EntityID <= 0)
                 throw new NotFoundException($"{typeof(T).Name} created faild.");
         }
-        protected async Task<T> CreateEntity<T>(T Entity) where T : class
+        protected async Task<T> CreateEntityAsync<T>(T entity, bool saveChanges = true) where T : class
         {
-            {
-                ValidationHelper.ValidateEntity(Entity);
-                await _unitOfWork.GetDynamicRepository<T>().AddAsync(Entity);
-                await _unitOfWork.SaveChangesAsync();
-                _unitOfWork.Attach(Entity);
-
-                return Entity;
-            }
+            ValidationHelper.ValidateEntity(entity);
+            await _unitOfWork.GetDynamicRepository<T>().AddAsync(entity);
+            if (saveChanges) await _unitOfWork.SaveChangesAsync();
+            return entity;
         }
+
 
         protected bool CheckList<T>(IEnumerable<T> list)
         {
@@ -67,5 +64,6 @@ namespace Business_Logic_Layer.Services
             _unitOfWork.GetDynamicRepository<T>().Remove(Entity);
             _unitOfWork.SaveChanges();
         }
+
     }
 }
