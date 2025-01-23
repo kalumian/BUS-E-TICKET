@@ -11,59 +11,65 @@ namespace Business_Logic_Layer.Utilities
 {
     internal class LoginVerificationHelper
     {
-        static public JwtSecurityToken TokenHelper(TokenConfiguration config, AuthoUser user, EnUserRole UserRole)
+        public static JwtSecurityToken TokenHelper(TokenConfiguration config, AuthoUser user, EnUserRole userRole)
         {
-            var claimes = new List<Claim>();
-            if (user != null && !string.IsNullOrEmpty(user.UserName))
-            {
-                claimes.Add(new Claim(ClaimTypes.Name, user.UserName));
-            }
-            else
-            {
-                throw new NotFoundException(nameof(user)  + " User or UserName cannot be null.");
-            }
-            claimes.Add(new Claim(ClaimTypes.NameIdentifier, user.Id));
-            claimes.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
-            claimes.Add(new Claim(ClaimTypes.Role, UserRole.ToString()));
-            // - Create Key
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.SecretKey));
-            var sc = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var token = new JwtSecurityToken(
-               issuer: config.Issuer,
-               audience: config.Audience,
-               claims: claimes,
-               expires: DateTime.UtcNow.AddHours(3),
-               signingCredentials: sc
+            // Validate input
+            if (user == null || string.IsNullOrEmpty(user.UserName))
+                throw new NotFoundException("User or UserName cannot be null.");
+
+                // Create claims
+                var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.Name, user.UserName),
+            new Claim(ClaimTypes.NameIdentifier, user.Id),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new Claim(ClaimTypes.Role, userRole.ToString())
+        };
+
+                // Create key and signing credentials
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.SecretKey));
+                var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+                // Create the token
+                return new JwtSecurityToken(
+                    issuer: config.Issuer,
+                    audience: config.Audience,
+                    claims: claims,
+                expires: DateTime.UtcNow.AddHours(3),
+                signingCredentials: signingCredentials
             );
-            return token;
         }
-        static public void Check(EnUserRole role)
+        public static void Check(EnUserRole role)
         {
-            switch (role) {
+            switch (role)
+            {
                 case EnUserRole.Admin:
-                    _CheckManager();
+                    EnsureManagerAccess();
                     break;
                 case EnUserRole.Provider:
-                    _CheckServiceProvider();
+                    EnsureServiceProviderAccess();
                     break;
                 case EnUserRole.Customer:
-                    _CheckCustomer();
+                    EnsureCustomerAccess();
                     break;
                 default:
-                    break;
+                    throw new UnauthorizedAccessException("Invalid user role.");
             }
         }
-        static private void _CheckManager()
+        // Helper methods for role-specific checks
+        private static void EnsureManagerAccess()
         {
-
+            // Add manager-specific validation logic
         }
-        static private void _CheckServiceProvider()
-        {
 
+        private static void EnsureServiceProviderAccess()
+        {
+            // Add service provider-specific validation logic
         }
-        static private void _CheckCustomer()
-        {
 
+        private static void EnsureCustomerAccess()
+        {
+            // Add customer-specific validation logic
         }
     }
 }

@@ -1,29 +1,14 @@
-﻿using Azure.Core;
-using Business_Logic_Layer.Utilities;
-using Core_Layer.DTOs;
-using Core_Layer.Entities.Actors;
-using Core_Layer.Entities.Locations;
+﻿using Business_Logic_Layer.Utilities;
 using Core_Layer.Exceptions;
 using Data_Access_Layer.UnitOfWork;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Business_Logic_Layer.Services
 {
-    public abstract class GeneralService
+    public abstract class GeneralService(IUnitOfWork unitOfWork)
     {
-        protected IUnitOfWork _unitOfWork;
-        public GeneralService(IUnitOfWork unitOfWork)
-        {
-            _unitOfWork = unitOfWork;
+        protected IUnitOfWork _unitOfWork = unitOfWork;
 
-        }
         protected void CheckEntityExist<T>(Expression<Func<T, bool>> prediction) where T : class
         {
             bool exists = _unitOfWork.GetDynamicRepository<T>().Exists(prediction);
@@ -38,7 +23,7 @@ namespace Business_Logic_Layer.Services
             if (EntityID <= 0)
                 throw new NotFoundException($"{typeof(T).Name} created faild.");
         }
-        protected async Task<T> CreateEntityAsync<T>(T entity, bool saveChanges = true) where T : class
+        protected async Task<T> CreateEntityAsync<T>(T entity, bool saveChanges = false) where T : class
         {
             ValidationHelper.ValidateEntity(entity);
             await _unitOfWork.GetDynamicRepository<T>().AddAsync(entity);

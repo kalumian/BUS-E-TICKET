@@ -13,18 +13,16 @@ namespace BUS_E_TICKET.Controllers
     [ApiController]
     public class ServiceProviderController(SPRegRequestService sPRegRequestService, SPRegResponseService sPRegResponseService) : ControllerBase
     {
-        private SPRegRequestService _SPRegRequestService = sPRegRequestService;
-        private SPRegResponseService _SPRegResponseService = sPRegResponseService;
+        private readonly SPRegRequestService _SPRegRequestService = sPRegRequestService;
+        private readonly SPRegResponseService _SPRegResponseService = sPRegResponseService;
 
-        [HttpPost("registeration/request")]
+        [HttpPost("registration/request")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> RegisterationRequest(SPRegRequestDTO RequestDTO)
+        public async Task<IActionResult> RegistrationRequest(SPRegRequestDTO requestDTO)
         {
-            var Request =  await _SPRegRequestService.AddRequestAsync(RequestDTO);
-
-            return Ok(ResponeHelper.GetApiRespone("Service Provider Registeration Requerst Was Created successfully", true, new { Request }));
-
+            var request = await _SPRegRequestService.CreateRequestAsync(requestDTO);
+            return Ok(ResponeHelper.GetApiRespone("Service Provider Registration Request created successfully", true, new { request }));
         }
 
 
@@ -35,29 +33,32 @@ namespace BUS_E_TICKET.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public IActionResult GetAllServiceProviderRegistrationRequests([FromQuery] EnRegisterationRequestStatus? status)
         {
-                var requests = _SPRegRequestService.GetAllRegistrationRequestsAsync(status);
+            var requests = _SPRegRequestService.GetAllRegistrationRequests(status);
 
-                return Ok(new ApiResponse { IsSuccess= true, Message = "Data was fetched successfully", Data = new {Requests = requests}});
+            return Ok(new ApiResponse
+            {
+                IsSuccess = true,
+                Message = "Data fetched successfully.",
+                Data = new { Requests = requests }
+            });
         }
-
-
-
 
         [Authorize(Roles = "Admin")]
         [HttpPost("AcceptRegistrationRequest")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> AcceptRegistrationRequest(SPRegResponseDTO Respone)
+        public async Task<IActionResult> AcceptRegistrationRequest(SPRegResponseDTO response)
         {
-            var ResponseID = await _SPRegResponseService.AcceptRegistrationRequestAsync(Respone);
+            var responseId = await _SPRegResponseService.AcceptRegistrationRequestAsync(response);
+
             return Ok(new ApiResponse
-                {
-                    IsSuccess = true,
-                    Message = "Registration request accepted and created a Service Proivder Account Directly successfully.",
-                    Data = new { ResponseID }
-                }
-            );
+            {
+                IsSuccess = true,
+                Message = "Registration request accepted and created a Service Provider Account successfully.",
+                Data = new { ResponseID = responseId }
+            });
         }
+
     }
 }

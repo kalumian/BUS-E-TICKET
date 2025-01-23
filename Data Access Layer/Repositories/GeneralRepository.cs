@@ -98,5 +98,13 @@ namespace Data_Access_Layer.Repositories
         {
             return await _dbSet.ToListAsync();
         }
+        public async Task<bool> AnyAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await _dbSet.AnyAsync(predicate);
+        }
+        public async Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await _dbSet.AnyAsync(predicate);
+        }
     }
 }

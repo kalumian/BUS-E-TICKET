@@ -17,43 +17,64 @@ using System.Threading.Tasks;
 
 namespace Business_Logic_Layer.Services.Actors.ServiceProvider
 {
-    public class ServiceProviderService : BaseUserService
+    public class ServiceProviderService(UserManager<AuthoUser> userManager, IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor) : BaseUserService(userManager, unitOfWork, httpContextAccessor)
     {
-        private IMapper _mapper;
+        private IMapper _mapper = mapper;
 
-        public ServiceProviderService(UserManager<AuthoUser> userManager, IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(userManager, unitOfWork, httpContextAccessor)
+        public async Task<RegisterServiceProviderDTO> RegisterAsync(
+            RegisterServiceProviderDTO registerServiceProviderDTO,
+            EnAccountStatus status = EnAccountStatus.Inactive)
         {
-            _mapper = mapper;
-        }
-        public async Task<RegisterServiceProviderDTO> RegisterAsync(RegisterServiceProviderDTO RegisterServicePRoviderAccountDTO, EnAccountStatus Status = EnAccountStatus.Inactive)
-        {
-            // Try to Create Account 
-            string resultUserID = await RegisterAsync(RegisterServicePRoviderAccountDTO.Account, Status);
-            if (string.IsNullOrEmpty(resultUserID)) throw new BadRequestException("User's ID Have not Created");
+            // Step 1: Create user account
+            AuthoUser user = await CreateUserAccountAsync(registerServiceProviderDTO.Account, status);
+            _unitOfWork.AttachEntity(user);
 
-            // Created Manager
-            RegisterServicePRoviderAccountDTO.Account.AccountId = resultUserID;
-            var ServiceProvider = _mapper.Map<ServiceProviderEntity>(RegisterServicePRoviderAccountDTO);
-            await CreateEntity(ServiceProvider);
-            await _unitOfWork.SaveChangesAsync();
-            return _mapper.Map<RegisterServiceProviderDTO>(ServiceProvider);
+            // Step 2: Map DTO to Entity
+            var serviceProviderEntity = _mapper.Map<ServiceProviderEntity>(registerServiceProviderDTO);
+            serviceProviderEntity.AccountID = user.Id;
+            serviceProviderEntity.Account = user;
+
+
+            // Step 3: Save Service Provider entity
+            await CreateEntityAsync(serviceProviderEntity, saveChanges: true);
+
+            // Step 4: Return the mapped result
+            return _mapper.Map<RegisterServiceProviderDTO>(serviceProviderEntity);
         }
-        public async void DeletePassifServiceProviderAccount(ServiceProviderEntity serviceProvider)
+
+        private async Task<AuthoUser> CreateUserAccountAsync(RegisterAccountDTO accountDTO, EnAccountStatus status)
         {
-            CheckRole("Admin");
-            AuthoUser? user = await _userManager.FindByIdAsync(serviceProvider.AccountID) ?? throw new NotFoundException("User of Pre-ServiceProvider Isn't Founded");
-            if (user.AccountStatus == EnAccountStatus.Inactive) throw new SystemException("Service Provider Account Cannot be deleted");
+            // Attempt to register user account
+            AuthoUser user = await RegisterAsync(accountDTO, status);
+
+            // Throw exception if user creation failed
+            if (string.IsNullOrEmpty(user.Id))
+                throw new BadRequestException("Failed to create user account.");
+
+            return user;
+        }
+        public async Task DeletePassifServiceProviderAccountAsync(ServiceProviderEntity serviceProvider)
+        {
+            var user = await _userManager.FindByIdAsync(serviceProvider.AccountID)
+                ?? throw new NotFoundException("User of Pre-ServiceProvider isn't found.");
+
+            if (user.AccountStatus != EnAccountStatus.Inactive)
+                throw new InvalidOperationException("Service Provider Account cannot be deleted unless it is inactive.");
+
+            // حذف الحساب
             DeleteEntity(serviceProvider);
             await _userManager.DeleteAsync(user);
         }
+
         public async Task<ServiceProviderEntity?>? GetServiceProviderByBussinesID(int bussinesID)
         {
-            CheckRole("Admin");
+            EnsureAdminRole();
             var serviceProvider = await _unitOfWork.ServiceProviders
               .GetAllQueryable()
               .Include(sp => sp.Business) 
               .FirstOrDefaultAsync(sp => sp.BusinessID == bussinesID);
             return serviceProvider;
         }
+        
     }
 }

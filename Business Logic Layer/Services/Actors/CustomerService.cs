@@ -29,7 +29,7 @@ namespace Business_Logic_Layer.Services.Actors
 
 
         // Main Registration Flow
-        protected async Task<RegisterCustomerAccountDTO> RegisterAsync(RegisterCustomerAccountDTO registerCustomerAccountDTO)
+        public async Task<RegisterCustomerAccountDTO> RegisterAsync(RegisterCustomerAccountDTO registerCustomerAccountDTO)
         {
             using var transaction = await _unitOfWork.BeginTransactionAsync();
             try
@@ -43,22 +43,22 @@ namespace Business_Logic_Layer.Services.Actors
                 ValidationHelper.ValidateEntities([person, address, contactInfo]);
 
                 // Register user
-                string userId = await RegisterAsync(registerCustomerAccountDTO.Account);
+                AuthoUser user = await CreateUserAccountAsync(registerCustomerAccountDTO.Account);
 
                 // Use CreateEntityAsync for dynamic entity creation
-                await CreateEntityAsync(person, saveChanges: false);
-                await CreateEntityAsync(address, saveChanges: false);
-                await CreateEntityAsync(contactInfo, saveChanges: false);
+                await CreateEntityAsync(person);
+                await CreateEntityAsync(address);
+                await CreateEntityAsync(contactInfo);
 
                 // Map and set customer entity
                 var customer = _mapper.Map<CustomerEntity>(registerCustomerAccountDTO);
-                customer.AccountID = userId;
+                customer.Account = user;
                 customer.Person = person;
                 customer.Address = address;
                 customer.ContactInformation = contactInfo;
 
                 // Save customer entity
-                await CreateEntityAsync(customer, saveChanges: false);
+                await CreateEntityAsync(customer);
 
                 // Save all changes in one transaction
                 await _unitOfWork.SaveChangesAsync();

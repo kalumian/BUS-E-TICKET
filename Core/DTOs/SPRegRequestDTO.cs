@@ -18,7 +18,7 @@ namespace Core_Layer.DTOs
         public string? Notes { get; set; }
         public required BusinessDTO Business { get; set; }
         public required RegisterServiceProviderDTO ServiceProvider { get; set; }
-
+        public SPRegResponseDTO? Response { get; set; }
 
     }
 }

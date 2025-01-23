@@ -11,6 +11,8 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using Core_Layer.Entities.Actors.ServiceProvider;
+using Azure;
+using Azure.Core;
 
 namespace Business_Logic_Layer.Services.Actors.ServiceProvider { 
     public class SPRegResponseService(IUnitOfWork unitOfWork, IMapper mapper, ServiceProviderService serviceProviderService) : GeneralService(unitOfWork)
@@ -18,80 +20,93 @@ namespace Business_Logic_Layer.Services.Actors.ServiceProvider {
         private readonly IMapper _mapper = mapper;
         private  readonly ServiceProviderService _ServiceProviderService = serviceProviderService;
 
-        public async Task<SPRegResponseDTO> AcceptRegistrationRequestAsync(SPRegResponseDTO Respone)
+        public async Task<SPRegResponseDTO> AcceptRegistrationRequestAsync(SPRegResponseDTO response)
         {
-            _ServiceProviderService.CheckRole("Admin");
-
-            // Validate if the request and manager exist
-            ValidateEntitiesExistence(Respone);
-
-
-            // Fetch the related request
-            var RequestEntity = await _unitOfWork.SPRegRequests.FirstOrDefaultAsync(e => e.SPRegRequestID == Respone.RequestID)
-                ?? throw new NotFoundException("Request not found.");
-
-            if (RequestEntity.Status == EnRegisterationRequestStatus.Regected)
-                throw new BadRequestException("Rejected requests cannot be approved.");
-
-            // Check if a positive response already exists for the Request
-            var existingPositiveResponse = await IsPositiveResponseExists(Respone.RequestID);
-
-            if (existingPositiveResponse)
-                throw new BadRequestException("Cannot add a negative response when a positive response already exists with status OK.");
-
-            // Map the response DTO, ServiceProivder to entity and save it
-            SPRegResponseEntity? ResponeEntity = _mapper.Map<SPRegResponseEntity>(Respone);
-            await CreateEntity(ResponeEntity);
-
-            // Update the status of the related Request
-            await UpdateRequestStatus(Respone);
-            
-            await UpdateSPStatus(ResponeEntity, RequestEntity);
-            return _mapper.Map<SPRegResponseDTO>(ResponeEntity);
-        }
-        private async Task UpdateSPStatus(SPRegResponseEntity ResponeEntity, SPRegRequestEntity RequestEntity)
-        {
-            _ServiceProviderService.CheckRole("Admin");
-
-            var ServiceProvider = await _ServiceProviderService.GetServiceProviderByBussinesID(RequestEntity.BusinessID);
-
-            if (ServiceProvider == null)
+            using var transaction = await _unitOfWork.BeginTransactionAsync();
+            try
             {
-                throw new NotFoundException($"ServiceProvider not found for BusinessID {RequestEntity.BusinessID}");
+                // Check if the user has Admin role
+                _ServiceProviderService.EnsureAdminRole();
+
+                // Fetch the related request
+                var requestEntity = await GetRequestEntityAsync(response.RequestID);
+
+                // Validate the existence of related entities
+                await ValidateEntitiesExistenceAsync(response);
+
+                // Validate the request status
+                ValidateRequestStatus(requestEntity);
+
+                // Check for existing positive response
+                await ValidatePositiveResponseAsync(response.RequestID);
+
+                // Map response DTO to entity and save it
+                var responseEntity = await CreateResponseEntityAsync(response);
+
+                // Update the status of the related request
+                await UpdateRequestStatusAsync(response, requestEntity);
+
+                // Update the status of the related Service Provider
+                await UpdateServiceProviderStatusAsync(responseEntity, requestEntity);
+
+                await _unitOfWork.SaveChangesAsync();
+                await transaction.CommitAsync();
+                return _mapper.Map<SPRegResponseDTO>(responseEntity);
             }
-
-            if (ResponeEntity.Result)
+            catch
             {
-                if (string.IsNullOrEmpty(ServiceProvider.AccountID))
-                {
-                    throw new InvalidOperationException("ServiceProvider's AccountID is null or empty.");
-                }
+                await transaction.RollbackAsync();
+                throw;
+            }
+        }
+        private async Task ValidateEntitiesExistenceAsync(SPRegResponseDTO response)
+        {
+            var managerExists = await _unitOfWork.Managers.ExistsAsync(m => m.ManagerID == response.RespondedByID);
+            if (!managerExists)
+                throw new NotFoundException($"Manager with ID {response.RespondedByID} not found.");
+        }
+        private async Task<SPRegRequestEntity> GetRequestEntityAsync(int requestId)
+        {
+            return await _unitOfWork.SPRegRequests.FirstOrDefaultAsync(r => r.SPRegRequestID == requestId)
+                ?? throw new NotFoundException($"Request with ID {requestId} not found.");
+        }
+        private void ValidateRequestStatus(SPRegRequestEntity request)
+        {
+            if (request.Status == EnRegisterationRequestStatus.Regected)
+                throw new BadRequestException("Rejected requests cannot be approved or responded to again.");
+        }
+        private async Task ValidatePositiveResponseAsync(int requestId)
+        {
+            var positiveResponseExists = await _unitOfWork.SPRegResponses.AnyAsync(r =>
+                r.RequestID == requestId && r.Result);
+            if (positiveResponseExists)
+                throw new BadRequestException("Cannot add a new response when a positive response already exists.");
+        }
+        private async Task<SPRegResponseEntity> CreateResponseEntityAsync(SPRegResponseDTO response)
+        {
+            var responseEntity = _mapper.Map<SPRegResponseEntity>(response);
+            await CreateEntityAsync(responseEntity, saveChanges: true);
+            return responseEntity;
+        }
+        private async Task UpdateRequestStatusAsync(SPRegResponseDTO response, SPRegRequestEntity request)
+        {
+            request.Status = response.Result ? EnRegisterationRequestStatus.Approved : EnRegisterationRequestStatus.Regected;
+            _unitOfWork.SPRegRequests.Update(request);
+            await _unitOfWork.SaveChangesAsync();
+        }
+        private async Task UpdateServiceProviderStatusAsync(SPRegResponseEntity responseEntity, SPRegRequestEntity requestEntity)
+        {
+            _ServiceProviderService.EnsureAdminRole();
 
-                _ServiceProviderService.ChangeUserStatus(EnAccountStatus.Active, ServiceProvider.AccountID);
+            var serviceProvider = await _ServiceProviderService.GetServiceProviderByBussinesID(requestEntity.BusinessID) ?? throw new NotFoundException($"ServiceProvider not found for BusinessID {requestEntity.BusinessID}");
+            if (responseEntity.Result)
+            {
+                await _ServiceProviderService.ChangeUserStatusAsync(EnAccountStatus.Active, serviceProvider.AccountID);
             }
             else
             {
-                _ServiceProviderService.DeletePassifServiceProviderAccount(ServiceProvider);
+                await _ServiceProviderService.DeletePassifServiceProviderAccountAsync(serviceProvider);
             }
-        }
-        private void ValidateEntitiesExistence(SPRegResponseDTO Respone)
-        {
-            CheckEntityExist<SPRegRequestEntity>(i => i.SPRegRequestID == Respone.RequestID);
-            CheckEntityExist<ManagerEntity>(i => i.ManagerID == Respone.RespondedByID);
-        }
-
-        private async Task<bool> IsPositiveResponseExists(int requestId)
-        {
-            return await _unitOfWork.SPRegResponses.FirstOrDefaultAsync(r =>
-                r.SPRegRequestID == requestId && r.Status == EnRegisterationRequestStatus.Approved) != null;
-        }
-
-        private async Task UpdateRequestStatus(SPRegResponseDTO Respone)
-        {
-            var request = await _unitOfWork.SPRegRequests.FirstOrDefaultAsync(e => e.SPRegRequestID == Respone.RequestID) ?? throw new NotFoundException("Request not found.");
-            request.Status = Respone.Result ? EnRegisterationRequestStatus.Approved : EnRegisterationRequestStatus.Regected;
-            _unitOfWork.SPRegRequests.Update(request);
-
         }
 
     }

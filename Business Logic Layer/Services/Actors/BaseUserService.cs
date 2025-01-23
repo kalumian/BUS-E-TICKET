@@ -42,7 +42,7 @@ namespace Business_Logic_Layer.Services.Actors
                    await IsUserExistByPhone(phonenumber) ||
                    await IsUserExistByUsername(username);
         }
-        protected async Task<string> RegisterAsync(RegisterAccountDTO registerAccountDTO, EnAccountStatus status = EnAccountStatus.Active)
+        protected async Task<AuthoUser> RegisterAsync(RegisterAccountDTO registerAccountDTO, EnAccountStatus status = EnAccountStatus.Active)
         {
             // Validate input
             await ValidateAccountAsync(registerAccountDTO);
@@ -57,23 +57,32 @@ namespace Business_Logic_Layer.Services.Actors
                 AccountStatus = status,
             };
 
-            // Validate the entity
-            ValidationHelper.ValidateEntity(authoUser);
-
             // Attempt to create the user
             var result = await _userManager.CreateAsync(authoUser, registerAccountDTO.Password);
 
-            // Handle errors
             if (!result.Succeeded)
             {
                 var errors = string.Join(", ", result.Errors.Select(e => e.Description));
                 throw new BadRequestException($"Failed to register user: {errors}");
             }
 
-            // Return the new user ID
-            return authoUser.Id;
+            // Attach the user to the current context
+            _unitOfWork.AttachEntity(authoUser);
+
+            return authoUser;
         }
 
+        protected async Task<AuthoUser> CreateUserAccountAsync(RegisterAccountDTO accountDTO, EnAccountStatus status = EnAccountStatus.Active)
+        {
+            // Attempt to register user account
+            AuthoUser user = await RegisterAsync(accountDTO, status);
+
+            // Throw exception if user creation failed
+            if (string.IsNullOrEmpty(user.Id))
+                throw new BadRequestException("Failed to create user account.");
+
+            return user;
+        }
         private async Task ValidateAccountAsync(RegisterAccountDTO registerAccountDTO)
         {
             if (await IsUserExisitByEmail(registerAccountDTO.Email))
@@ -83,50 +92,49 @@ namespace Business_Logic_Layer.Services.Actors
             if (await IsUserExistByUsername(registerAccountDTO.UserName))
                 throw new BadRequestException("A user with the same username already exists.");
         }
-        public async Task<JwtSecurityToken> Login(UserLoginDTO LoginInfo, TokenConfiguration config)
+        public async Task<JwtSecurityToken> Login(UserLoginDTO loginInfo, TokenConfiguration config)
         {
-            // Cheack Username
-            CheckEntityIsNotNull(LoginInfo.UserName);
-            AuthoUser? user = await _userManager.FindByNameAsync(LoginInfo.UserName) ??
-                throw new BadRequestException("Login faild. Please make sure Username Or Passworrd are correct.");
+            // Validate login information
+            if (string.IsNullOrWhiteSpace(loginInfo.UserName))
+                throw new BadRequestException("Username cannot be null or empty.");
 
-            //Get User Role
-            EnUserRole UserRole = await _unitOfWork.Managers.GetUserRole(user.Id);
+            // Retrieve user by username
+            var user = await _userManager.FindByNameAsync(loginInfo.UserName)
+                ?? throw new BadRequestException("Login failed. Please check your username or password.");
 
-            //Check 
-            LoginVerificationHelper.Check(UserRole);
+            // Check if account is active
+            if (user.AccountStatus != EnAccountStatus.Active)
+                throw new BadRequestException("Login failed. Your account is not active.");
 
-            // Create Token :
-            JwtSecurityToken token = LoginVerificationHelper.TokenHelper(config, user, UserRole);
+            // Get user role
+            var userRole = await _unitOfWork.Managers.GetUserRole(user.Id);
+
+            // Verify user role
+            LoginVerificationHelper.Check(userRole);
+
+            // Generate token
+            var token = LoginVerificationHelper.TokenHelper(config, user, userRole);
 
             return token;
         }
 
         public EnUserRole GetCurrentUserRole()
         {
-            // verify httpContextAccessor isn't null
-            if (_httpContextAccessor == null || _httpContextAccessor.HttpContext == null)
-            {
+            // Ensure HttpContext is available
+            if (_httpContextAccessor?.HttpContext == null)
                 throw new InvalidOperationException("HttpContext is not available.");
-            }
 
-            // Get Current User Role
+            // Retrieve the role claim
             var roleClaim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role);
             if (roleClaim == null || string.IsNullOrEmpty(roleClaim.Value))
-            {
                 throw new UnauthorizedAccessException("User role claim not found.");
-            }
 
-            // تحويل الدور إلى النوع EnUserRole
-            if (Enum.TryParse(roleClaim.Value, out EnUserRole userRole))
-            {
-                return userRole;
-            }
-            else
-            {
-                throw new InvalidOperationException("Invalid user role.");
-            }
+            // Parse the role to EnUserRole
+            return Enum.TryParse(roleClaim.Value, out EnUserRole userRole)
+                ? userRole
+                : throw new InvalidOperationException("Invalid user role.");
         }
+
         public void CheckRole(string role)
         {
             if (GetCurrentUserRole().ToString() != role)
@@ -149,7 +157,32 @@ namespace Business_Logic_Layer.Services.Actors
             }
             _unitOfWork.SaveChanges();
         }
-        
 
+        public void EnsureAdminRole() {
+            CheckRole("Admin");
+        }
+        public void EnsureCustomerRole()
+        {
+            CheckRole("Customer");
+        }
+        public void EnsureServiceProvider()
+        {
+            CheckRole("ServiceProvider");
+        }
+        public async Task ChangeUserStatusAsync(EnAccountStatus newStatus, string accountId)
+        {
+            var user = await _userManager.FindByIdAsync(accountId) ?? throw new NotFoundException($"User with ID {accountId} not found.");
+
+            if (user.AccountStatus == newStatus)
+                throw new InvalidOperationException($"User is already in the '{newStatus}' status.");
+
+            user.AccountStatus = newStatus;
+
+            var result = await _userManager.UpdateAsync(user);
+
+            if (!result.Succeeded)
+                throw new InvalidOperationException("Failed to update user status. " +
+                    string.Join(", ", result.Errors.Select(e => e.Description)));
+        }
     }
 }

@@ -24,9 +24,6 @@ namespace BUS_E_TICKET.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> RegisterNewManegerUser([FromBody] RegisterManagerAccountDTO User)
         {
-            //Validation
-            ValidationHelper.ModelsErrorCollector(ModelState);
-
             //Registering
             var Manager = await _managerService.RegisterAsync(User);
 

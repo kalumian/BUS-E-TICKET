@@ -46,6 +46,11 @@ namespace Data_Access_Layer.Data
             .HasForeignKey<ServiceProviderEntity>(sp => sp.BusinessID)
             .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<PayPalAccountEntity>()
+           .HasIndex(p => p.AccountEmail)
+           .IsUnique()
+           .HasDatabaseName("IX_Unique_AccountEmail");
+
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
                 foreach (var foreignKey in entityType.GetForeignKeys()) 
                         foreignKey.DeleteBehavior = DeleteBehavior.Restrict;

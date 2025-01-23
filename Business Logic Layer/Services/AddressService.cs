@@ -16,10 +16,11 @@ namespace Business_Logic_Layer.Services
         public AddressService(IUnitOfWork unitOfWork) : base(unitOfWork)
         {
         }
-        public async Task<int> CreateEntity(AddressEntity Address)
+        public async Task<int> CreateEntityAsync(AddressEntity Address, bool saveChanges = false)
         {
+            
             CheckEntityExist<CityEntity>(i=>i.CityID == Address.CityID);
-            await CreateEntity<AddressEntity>(Address);
+            await CreateEntityAsync<AddressEntity>(Address, saveChanges);
             return Address.AddressID;
         }
     }

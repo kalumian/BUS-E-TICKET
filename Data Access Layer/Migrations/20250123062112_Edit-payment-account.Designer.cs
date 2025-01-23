@@ -4,6 +4,7 @@ using Data_Access_Layer.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data_Access_Layer.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250123062112_Edit-payment-account")]
+    partial class Editpaymentaccount
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -633,10 +636,6 @@ namespace Data_Access_Layer.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("PayPalAccountID");
-
-                    b.HasIndex("AccountEmail")
-                        .IsUnique()
-                        .HasDatabaseName("IX_Unique_AccountEmail");
 
                     b.HasIndex("PaymentAccountID");
 

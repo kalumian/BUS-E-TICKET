@@ -30,22 +30,35 @@ namespace Business_Logic_Layer.Services.Actors
         }
         public async Task<RegisterManagerAccountDTO> RegisterAsync(RegisterManagerAccountDTO registerManagerAccountDTO)
         {
-            CheckRole(EnUserRole.Admin.ToString()); 
-            //Error If CreatedBy isn't Exists
-            CheckEntityExist<ManagerEntity>(i => i.ManagerID == registerManagerAccountDTO.CreatedByID);
+            using var transaction = await _unitOfWork.BeginTransactionAsync();
+            try
+            {
+                // Verify role
+                EnsureAdminRole();
 
-            // Try to Create Account 
-            string resultUserID = await RegisterAsync(registerManagerAccountDTO.Account);
-            if (string.IsNullOrEmpty(resultUserID)) throw new BadRequestException("User's ID Have not Created");
+                // Verify creator exists
+                CheckEntityExist<ManagerEntity>(i => i.ManagerID == registerManagerAccountDTO.CreatedByID);
 
-            // Created Manager
-            registerManagerAccountDTO.Account.AccountId = resultUserID;
-            var manager = _mapper.Map<ManagerEntity>(registerManagerAccountDTO);
-            
-            await _unitOfWork.Managers.AddAsync(manager);
-            await _unitOfWork.SaveChangesAsync();
+                AuthoUser user = await CreateUserAccountAsync(registerManagerAccountDTO.Account);
 
-            return _mapper.Map< RegisterManagerAccountDTO>(manager);
+                // Map and set the manager entity
+                var manager = _mapper.Map<ManagerEntity>(registerManagerAccountDTO);
+                manager.Account = user;
+                // Add manager entity
+                await CreateEntityAsync(manager, saveChanges: false);
+
+                // Save all changes
+                await _unitOfWork.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                // Return the DTO
+                return _mapper.Map<RegisterManagerAccountDTO>(manager);
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
 
 

@@ -9,6 +9,7 @@ using Business_Logic_Layer.Services.Actors;
 using Data_Access_Layer.UnitOfWork;
 using Business_Logic_Layer.Services.Actors.ServiceProvider;
 using BUS_E_TICKET.Extensions;
+using Business_Logic_Layer.Services.Payment;
 
 var builder = WebApplication.CreateBuilder();
 
@@ -21,8 +22,8 @@ builder.Services.AddSwaggarWithJtwConfig();
 
 // Connection With Database
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(DatabaseConnectionSettings.DatabaseStringConnection));
-
+    options.UseSqlServer(DatabaseConnectionSettings.DatabaseStringConnection),
+    ServiceLifetime.Scoped);
 
 // Identity Service Initilization
 builder.Services.AddIdentity<AuthoUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>();
@@ -43,6 +44,7 @@ builder.Services.AddScoped<UserManager<AuthoUser>>();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddCustomJwtAuth(builder.Configuration);
+builder.Services.AddScoped<PaymentAccountService>();
 
 var app = builder.Build();
 

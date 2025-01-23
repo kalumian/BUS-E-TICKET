@@ -24,5 +24,8 @@ namespace Data_Access_Layer.Repositories
         bool Exists(Expression<Func<T, bool>> predicate);
         IQueryable<T> GetAllQueryable();
         Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate);
+        Task<bool> AnyAsync(Expression<Func<T, bool>> predicate);
+        Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate);
+
     }
 }

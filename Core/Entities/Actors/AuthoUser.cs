@@ -41,7 +41,7 @@ namespace Core_Layer.Entities.Actors
         [Required(ErrorMessage = "Phone number is required")]
         [Phone(ErrorMessage = "Invalid phone number")]
         [StringLength(15, MinimumLength = 9, ErrorMessage = "Phone number must be between 9 and 15 digits.")]
-        [RegularExpression(@"^\+?\d{9,15}$", ErrorMessage = "Phone number must contain only digits and can start with a '+' sign.")]
+        [RegularExpression(@"^\+?\d{9,15}$", ErrorMessage = "Phone number must contain only digits and can start with a '+' sign and must be between 9 and 15 digits")]
         public override string? PhoneNumber { get; set; }
 
         // Navigation properties for related entities

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Core_Layer.Entities.Locations;
+using Microsoft.EntityFrameworkCore;
 
 namespace Core_Layer.Entities.PaymentAccount
 {
@@ -28,18 +29,11 @@ namespace Core_Layer.Entities.PaymentAccount
         [Required(ErrorMessage = "PaymentAccountID is required.")]
         [ForeignKey("PaymentAccount")]
         public required int PaymentAccountID { get; set; }
-
-        [Required(ErrorMessage = "CountryID is required.")]
-        [ForeignKey("Country")]
-        public required int CountryID { get; set; }
-
         #endregion
 
         #region Navigation Properties
 
         public PaymentAccountEntity? PaymentAccount { get; set; }
-        public CountryEntity? Country { get; set; }
-
 
         #endregion
     }

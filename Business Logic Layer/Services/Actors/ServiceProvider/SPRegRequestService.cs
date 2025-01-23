@@ -20,119 +20,130 @@ using System.Threading.Tasks;
 
 namespace Business_Logic_Layer.Services.Actors.ServiceProvider
 {
-    public class SPRegRequestService : GeneralService
+    public class SPRegRequestService(IUnitOfWork unitOfWork, IMapper mapper, AddressService addressService, BaseUserService baseUserService, ServiceProviderService serviceProviderService) : GeneralService(unitOfWork)
     {
-        private readonly IMapper _mapper;
-        private readonly AddressService _addressService;
-        private readonly BaseUserService _baseUserService;
-        private readonly ServiceProviderService _serviceProviderService;
+        private readonly IMapper _mapper = mapper;
+        private readonly AddressService _addressService = addressService;
+        private readonly BaseUserService _baseUserService = baseUserService;
+        private readonly ServiceProviderService _serviceProviderService = serviceProviderService;
 
-        public SPRegRequestService(IUnitOfWork unitOfWork, IMapper mapper, AddressService addressService, BaseUserService baseUserService, ServiceProviderService serviceProviderService) : base(unitOfWork)
+        public async Task<SPRegRequestDTO> CreateRequestAsync(SPRegRequestDTO requestDTO)
         {
-            _mapper = mapper;
-            _addressService = addressService;
-            _baseUserService = baseUserService;
-            _serviceProviderService = serviceProviderService;
-        }
-        public async Task<SPRegRequestDTO> AddRequestAsync(SPRegRequestDTO RequestDTO)
-        {
-            // 1. Validate uniqueness of user information
-            if (await _serviceProviderService.IsUserInformationDuplicate(
-                email: RequestDTO.ServiceProvider.Account.Email,
-                phonenumber: RequestDTO.ServiceProvider.Account.PhoneNumber,
-                username: RequestDTO.ServiceProvider.Account.UserName))
+            using var transaction = await _unitOfWork.BeginTransactionAsync();
+            try
             {
-                throw new BadRequestException("Email, phone number, or username is already in use");
+                // Check for existing approved or pending requests
+                ValidateExistingRequests(requestDTO);
+
+                // Validate uniqueness of user information
+                await ValidateUserInformationAsync(requestDTO);
+
+                // Map DTOs to entities
+                var contactInformation = _mapper.Map<ContactInformationEntity>(requestDTO.Business.ContactInformation);
+                var address = _mapper.Map<AddressEntity>(requestDTO.Business.Address);
+                var business = _mapper.Map<BusinessEntity>(requestDTO.Business);
+                var request = _mapper.Map<SPRegRequestEntity>(requestDTO);
+                request.Status = EnRegisterationRequestStatus.Pending;
+
+                // Validate and save entities
+                await ValidateAndSaveEntitiesAsync(contactInformation, address, business, request);
+
+                // Link and save service provider
+                requestDTO.ServiceProvider.BusinessID = business.BusinessID;
+                var serviceProviderDTO = await _serviceProviderService.RegisterAsync(requestDTO.ServiceProvider);
+
+                // Map back results to DTO
+                requestDTO = _mapper.Map<SPRegRequestDTO>(request);
+                requestDTO.ServiceProvider = serviceProviderDTO;
+
+                await transaction.CommitAsync();
+                return requestDTO;
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
             }
 
-            // 2. Check if there are approved or pending requests
-            IsThereApprovedOrPendingRequest(RequestDTO);
+        }
+        private async Task ValidateUserInformationAsync(SPRegRequestDTO requestDTO)
+        {
+            if (await _serviceProviderService.IsUserInformationDuplicate(
+                    requestDTO.ServiceProvider.Account.Email,
+                    requestDTO.ServiceProvider.Account.PhoneNumber,
+                    requestDTO.ServiceProvider.Account.UserName))
+            {
+                throw new BadRequestException("Email, phone number, or username is already in use.");
+            }
+        }
 
-            // 3. Map DTOs to entities
-            var contactInformation = _mapper.Map<ContactInformationEntity>(RequestDTO.Business.ContactInformation);
-            var address = _mapper.Map<AddressEntity>(RequestDTO.Business.Address);
-            var business = _mapper.Map<BusinessEntity>(RequestDTO.Business);
-            var request = _mapper.Map<SPRegRequestEntity>(RequestDTO);
-            request.Status = EnRegisterationRequestStatus.Pending;
-            // 4. Validate entities
-            ValidationHelper.ValidateEntities(
-            (
-                        [
-                contactInformation,
-                address,
-                business,
-                request,
-                new AuthoUser(){
-                UserName = RequestDTO.ServiceProvider.Account.UserName,
-                Email = RequestDTO.ServiceProvider.Account.Email,
-                PhoneNumber = RequestDTO.ServiceProvider.Account.PhoneNumber,
-                 }
-            ]
-            ));
+        private void ValidateExistingRequests(SPRegRequestDTO requestDTO)
+        {
+            var existingRequest = _unitOfWork.SPRegRequests
+                .GetAllQueryable()
+                .Include(r => r.Business)
+                .FirstOrDefault(r =>
+                    r.Business.BusinessLicenseNumber == requestDTO.Business.BusinessLicenseNumber &&
+                    (r.Status == EnRegisterationRequestStatus.Approved || r.Status == EnRegisterationRequestStatus.Pending));
 
-            // 5. Insert Address and Contact Information
-            await _addressService.CreateEntity(address); // Create Address
-            await CreateEntity(contactInformation); // Create Contact Information
+            if (existingRequest != null)
+            {
+                throw new BadRequestException("An active, approved, or pending request with the same BusinessLicenseNumber already exists.");
+            }
+        }
 
-            // 6. Link Business with Address and Contact Information
+        private async Task ValidateAndSaveEntitiesAsync(
+            ContactInformationEntity contactInformation,
+            AddressEntity address,
+            BusinessEntity business,
+            SPRegRequestEntity request)
+        {
+            ValidationHelper.ValidateEntities([contactInformation, address, business, request]);
+
+            await _addressService.CreateEntityAsync(address);
+            await CreateEntityAsync(contactInformation);
+
             business.Address = address;
             business.ContactInformation = contactInformation;
-            await CreateEntity(business); // Save Business
+            await CreateEntityAsync(business);
 
-            // 7. Link Request with Business
             request.Business = business;
-            await CreateEntity(request); // Save Request
+            await CreateEntityAsync(request);
 
-            // 8. Save changes and verify creation
             await _unitOfWork.SaveChangesAsync();
             CheckCreatedState<SPRegRequestEntity>(request.SPRegRequestID);
-
-            // 9. Create Service Provider
-            RequestDTO.ServiceProvider.BusinessID = business.BusinessID;
-            var serviceProviderDTO = await _serviceProviderService.RegisterAsync(RequestDTO.ServiceProvider);
-
-            // 10. Map results back to DTO
-            RequestDTO = _mapper.Map<SPRegRequestDTO>(request);
-            RequestDTO.ServiceProvider = serviceProviderDTO;
-
-            return RequestDTO;
         }
-        public List<SPRegRequestDTO> GetAllRegistrationRequestsAsync(EnRegisterationRequestStatus? status = null)
-        {
-            _baseUserService.CheckRole(EnUserRole.Admin.ToString());
-            IQueryable<SPRegRequestEntity> query = _unitOfWork.SPRegRequests.GetAllQueryable()
-            .Include(r => r.Business)
-            .ThenInclude(b => b.ServiceProvider)
-            .ThenInclude(sp => sp.Account) 
-            .Include(r => r.Business)
-                .ThenInclude(b => b.ContactInformation)
-            .Include(r => r.Business)
-                .ThenInclude(b => b.Address);
 
-            if (status.HasValue)
-            {
-                query = query.Where(r => r.Status == status.Value);
-            }
+        public List<SPRegRequestDTO> GetAllRegistrationRequests(EnRegisterationRequestStatus? status = null)
+        {
+            // Step 1: Ensure the user has the correct role
+            _baseUserService.CheckRole(EnUserRole.Admin.ToString());
+
+            // Step 2: Build the query with includes
+            var query = BuildRegistrationRequestQuery();
+
+            // Step 3: Filter by status if provided
+            if (status.HasValue) query = query.Where(r => r.Status == status.Value);
+
+            // Step 4: Execute query and map results
             var requests = query.ToList();
-            if (CheckList(requests)) return [];
+            if (requests.Count == 0) return [];
 
             return _mapper.Map<List<SPRegRequestDTO>>(requests);
         }
-        private void IsThereApprovedOrPendingRequest(SPRegRequestDTO RequestDTO)
+
+        private IQueryable<SPRegRequestEntity> BuildRegistrationRequestQuery()
         {
-            SPRegRequestEntity? request = _unitOfWork.SPRegRequests
-                .GetAllQueryable()
-                .Include("Business")
-                .FirstOrDefault(i =>
-                    i.Business.BusinessLicenseNumber == RequestDTO.Business.BusinessLicenseNumber &&
-                    (i.Status == EnRegisterationRequestStatus.Approved ||
-                     i.Status == EnRegisterationRequestStatus.Pending));
-
-            if (request != null)
-                throw new BadRequestException("There is an active, approved, or pending request with the entered BusinessLicenseNumber.");
+            return _unitOfWork.SPRegRequests.GetAllQueryable()
+              .Include(r => r.Business)
+                  .ThenInclude(b => b.ServiceProvider)
+                  .ThenInclude(sp => sp.Account)
+              .Include(r => r.Business)
+                  .ThenInclude(b => b.ContactInformation)
+              .Include(r => r.Business)
+                  .ThenInclude(b => b.Address)
+              .Include(r => r.Response);
         }
-
-
-
     }
 }
+
