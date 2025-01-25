@@ -3,17 +3,16 @@ using Core_Layer.Entities.Actors;
 using Core_Layer.Entities.Trip;
 using Core_Layer.Entities.Locations;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Core_Layer.Entities.Reservation;
 using Core_Layer.Entities.Payment;
-using Core_Layer.Entities.PaymentAccount;
 using Core_Layer.Entities.Actors.ServiceProvider.Registeration_Request;
 using Core_Layer.Entities.Actors.ServiceProvider;
+using Core_Layer.Entities;
+using Core_Layer.Entities.Actors.ServiceProvider.PaymentAccount;
+using Core_Layer.Entities.Trip.Reservation;
 
 namespace Data_Access_Layer.Data
 {
-    public class AppDbContext : IdentityDbContext<AuthoUser>    {
-       public AppDbContext(DbContextOptions<AppDbContext> option) : base(option) { 
-       }
+    public class AppDbContext(DbContextOptions<AppDbContext> option) : IdentityDbContext<AuthoUser>(option)    {
         public DbSet<PersonEntity> People { get; set; }
         public DbSet<CustomerEntity> Customers { get; set; }
         public DbSet<AddressEntity> Addresses { get; set; }
@@ -37,7 +36,7 @@ namespace Data_Access_Layer.Data
         public DbSet<InvoiceEntity> Invoices { get; set; }
         public DbSet<TicketEntity> Tickets { get; set; }
         public DbSet<BusinessEntity> Businesses { get; set; }
-
+        public DbSet<ContactInformationEntity> ContactInformations {  get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<BusinessEntity>()

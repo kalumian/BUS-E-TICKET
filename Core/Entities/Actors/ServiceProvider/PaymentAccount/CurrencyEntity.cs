@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core_Layer.Entities.PaymentAccount
+namespace Core_Layer.Entities.Actors.ServiceProvider.PaymentAccount
 {
     public class CurrencyEntity
     {

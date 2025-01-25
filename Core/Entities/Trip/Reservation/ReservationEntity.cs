@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using Core_Layer.Entities.Actors;
 using Core_Layer.Entities.Trip;
 
-namespace Core_Layer.Entities.Reservation
+namespace Core_Layer.Entities.Trip.Reservation
 {
     public class ReservationEntity
     {

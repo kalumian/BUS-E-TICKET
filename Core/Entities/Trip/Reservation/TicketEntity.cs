@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-namespace Core_Layer.Entities.Reservation
+namespace Core_Layer.Entities.Trip.Reservation
 {
     public class TicketEntity
     {

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Core_Layer.Entities.Locations;
 using Microsoft.EntityFrameworkCore;
 
-namespace Core_Layer.Entities.PaymentAccount
+namespace Core_Layer.Entities.Actors.ServiceProvider.PaymentAccount
 {
     public class PayPalAccountEntity
     {

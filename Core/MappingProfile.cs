@@ -3,9 +3,9 @@ using Core_Layer.DTOs;
 using Core_Layer.Entities;
 using Core_Layer.Entities.Actors;
 using Core_Layer.Entities.Actors.ServiceProvider;
+using Core_Layer.Entities.Actors.ServiceProvider.PaymentAccount;
 using Core_Layer.Entities.Actors.ServiceProvider.Registeration_Request;
 using Core_Layer.Entities.Locations;
-using Core_Layer.Entities.PaymentAccount;
 
 namespace Core_Layer
 {

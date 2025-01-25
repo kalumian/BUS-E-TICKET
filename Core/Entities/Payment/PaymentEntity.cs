@@ -1,5 +1,4 @@
-﻿using Core_Layer.Entities.Reservation;
-using Core_Layer.Enums;
+﻿using Core_Layer.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -7,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Core_Layer.Entities.Trip.Reservation;
 
 namespace Core_Layer.Entities.Payment
 {

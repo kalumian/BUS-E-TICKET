@@ -24,6 +24,18 @@ namespace BUS_E_TICKET.Controllers
                 Data = payPalAccountDto
             });
         }
+        [Authorize(Roles = "Provider")]
+        [HttpGet("GetAllAccounts/{serviceProviderId}")]
+        public async Task<IActionResult> GetAllAccounts(int serviceProviderId)
+        {
+            var accounts = await _paymentAccountService.GetAllAccountsByServiceProviderAsync(serviceProviderId);
 
+            return Ok(new
+            {
+                IsSuccess = true,
+                Message = "Accounts retrieved successfully.",
+                Data = accounts
+            });
+        }
     }
 }

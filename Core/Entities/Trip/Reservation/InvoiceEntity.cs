@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core_Layer.Entities.Reservation
+namespace Core_Layer.Entities.Trip.Reservation
 {
     public class InvoiceEntity
     {

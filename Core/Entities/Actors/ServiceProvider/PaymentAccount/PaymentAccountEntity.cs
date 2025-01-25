@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Core_Layer.Entities.Actors.ServiceProvider;
 
-namespace Core_Layer.Entities.PaymentAccount
+namespace Core_Layer.Entities.Actors.ServiceProvider.PaymentAccount
 {
     public class PaymentAccountEntity
     {
