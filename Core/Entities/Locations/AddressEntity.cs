@@ -17,10 +17,6 @@ namespace Core_Layer.Entities.Locations
 
         [StringLength(250, ErrorMessage = "Additional details cannot exceed 250 characters.")]
         public string? AdditionalDetails { get; set; }
-
-        [StringLength(700, ErrorMessage = "Location URL cannot exceed 700 characters.")]
-        public string? LocationURL { get; set; }
-
         #region Foreign Keys
 
         [ForeignKey("Street")]

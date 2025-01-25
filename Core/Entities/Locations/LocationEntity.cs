@@ -18,10 +18,10 @@ namespace Core_Layer.Entities.Locations
         [StringLength(100, ErrorMessage = "Location Name cannot exceed 100 characters.")]
         public required string LocationName { get; set; }
 
-
-        [Required(ErrorMessage = "Map Location is required.")]
-        [StringLength(250, ErrorMessage = "Map Location cannot exceed 250 characters.")]
-        public required string MapLocation { get; set; }
+        [Required(ErrorMessage = "Location URL is required.")]
+        [StringLength(100, ErrorMessage = "Location Name cannot exceed 700 characters.")]
+        [Url]
+        public required string LocationURL { get; set; }
 
         #region Foreign Keys
         [Required(ErrorMessage = "Address ID is required.")]
@@ -30,8 +30,8 @@ namespace Core_Layer.Entities.Locations
         #endregion
         #region Navigation Properties
         public required AddressEntity Address { get; set; }
-        public IEnumerable<LocationEntity>? StartLocation { get; set; }
-        public IEnumerable<LocationEntity>? EndLocation { get; set; }
+
         #endregion
+
     }
 }

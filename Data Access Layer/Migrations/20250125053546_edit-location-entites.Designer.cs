@@ -4,6 +4,7 @@ using Data_Access_Layer.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data_Access_Layer.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250125053546_edit-location-entites")]
+    partial class editlocationentites
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -489,6 +492,10 @@ namespace Data_Access_Layer.Migrations
                     b.Property<int>("CityID")
                         .HasColumnType("int");
 
+                    b.Property<string>("LocationURL")
+                        .HasMaxLength(700)
+                        .HasColumnType("nvarchar(700)");
+
                     b.Property<int?>("StreetID")
                         .HasColumnType("int");
 
@@ -554,11 +561,6 @@ namespace Data_Access_Layer.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("LocationName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("LocationURL")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");

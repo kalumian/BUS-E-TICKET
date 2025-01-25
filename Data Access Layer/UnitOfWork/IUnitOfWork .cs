@@ -22,6 +22,7 @@ namespace Data_Access_Layer.UnitOfWork
         IUserRepository<ServiceProviderEntity> ServiceProviders { get; }
         IUserRepository<ManagerEntity> Managers { get; }
         IRepository<AddressEntity> Addresses { get; }
+        IRepository<LocationEntity> Locations { get; }
         IRepository<BusinessEntity> Businesses { get; }
         IRepository<SPRegRequestEntity> SPRegRequests { get; }
         IRepository<SPRegResponseEntity> SPRegResponses { get; }

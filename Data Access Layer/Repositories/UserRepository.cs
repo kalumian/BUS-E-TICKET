@@ -11,12 +11,8 @@ using System.Threading.Tasks;
 
 namespace Data_Access_Layer.Repositories
 {
-    public class UserRepository<T> : GeneralRepository<T>, IUserRepository<T> where T : class
+    public class UserRepository<T>(DbContext context) : GeneralRepository<T>(context), IUserRepository<T> where T : class
     {
-        public UserRepository(DbContext context) : base(context)
-        {
-        }
-        
         public async Task<EnUserRole> GetUserRole(string UserId)
         {
             using(var connection = new SqlConnection(DatabaseConnectionSettings.DatabaseStringConnection))

@@ -40,6 +40,7 @@ builder.Services.AddScoped<PersonService>();
 builder.Services.AddScoped<AddressService>();
 builder.Services.AddScoped<ContactInformationService>();
 builder.Services.AddScoped<CustomerService>();
+builder.Services.AddScoped<TripService>();
 builder.Services.AddScoped<UserManager<AuthoUser>>();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddHttpContextAccessor();

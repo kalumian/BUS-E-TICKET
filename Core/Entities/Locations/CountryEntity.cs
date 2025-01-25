@@ -1,4 +1,4 @@
-﻿using Core_Layer.Entities.PaymentAccount;
+﻿using Core_Layer.Entities.Payment;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

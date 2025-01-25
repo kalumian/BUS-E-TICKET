@@ -3,9 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Core_Layer.Enums;
 using Core_Layer.Entities.Actors.ServiceProvider;
 
@@ -14,7 +11,7 @@ namespace Core_Layer.Entities.Trip
     public class TripEntity
     {
         [Key]
-        public int TripID { get; set; } 
+        public int TripID { get; set; }
 
         [Required(ErrorMessage = "Vehicle Information is required.")]
         [StringLength(250, ErrorMessage = "Vehicle Information cannot exceed 250 characters.")]
@@ -22,26 +19,32 @@ namespace Core_Layer.Entities.Trip
 
         [Required(ErrorMessage = "Driver Information is required.")]
         [StringLength(250, ErrorMessage = "Driver Information cannot exceed 250 characters.")]
-        public string DriverInfo { get; set; } = string.Empty; 
+        public string DriverInfo { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Start Date is required.")]
+        [DataType(DataType.DateTime, ErrorMessage = "Invalid Start Date format.")]
         public DateTime StartDate { get; set; }
-        [Required(ErrorMessage = "EndDate is required.")]
-        public DateTime EndDate { get; set; } 
+
+        [Required(ErrorMessage = "End Date is required.")]
+        [DataType(DataType.DateTime, ErrorMessage = "Invalid End Date format.")]
+        public DateTime EndDate { get; set; }
 
         [Required(ErrorMessage = "Total Seats is required.")]
-        public short TotalSeats { get; set; } 
+        [Range(1, short.MaxValue, ErrorMessage = "Total Seats must be greater than 0.")]
+        public short TotalSeats { get; set; }
 
         [Required(ErrorMessage = "Price is required.")]
-        [Range(0, float.MaxValue, ErrorMessage = "Price must be a positive number.")]
-        public decimal Price { get; set; } 
+        [Range(0.01, float.MaxValue, ErrorMessage = "Price must be a positive number.")]
+        public decimal Price { get; set; }
 
         [Required(ErrorMessage = "Trip State is required.")]
         public EnTripStatus TripStatus { get; set; }
 
         public DateTime? EstimatedArrivalDate { get; set; }
-        [Required(ErrorMessage = "TripDuration is required.")]
-        public TimeSpan TripDuration { get; set; } 
+
+        [Required(ErrorMessage = "Trip Duration is required.")]
+        [Range(typeof(TimeSpan), "00:01:00", "1.00:00:00", ErrorMessage = "Trip duration must be between 1 minute and 1 day.")]
+        public TimeSpan TripDuration { get; set; }
 
         [Required(ErrorMessage = "Available Seats Count is required.")]
         [Range(0, int.MaxValue, ErrorMessage = "Available Seats Count cannot be negative.")]
@@ -52,6 +55,7 @@ namespace Core_Layer.Entities.Trip
 
         #region Foreign Keys
 
+        [ForeignKey("ServiceProvider")]
         [Required(ErrorMessage = "ServiceProviderID is required.")]
         public int ServiceProviderID { get; set; }
 
@@ -61,20 +65,18 @@ namespace Core_Layer.Entities.Trip
 
         [ForeignKey("EndLocation")]
         [Required(ErrorMessage = "End Location is required.")]
-        public required int EndLocationID { get; set; } 
+        public required int EndLocationID { get; set; }
 
         #endregion
 
         #region Navigation Properties
 
-        [ForeignKey("ServiceProviderID")]
-        public ServiceProviderEntity? ServiceProvider { get; set; } 
+        public ServiceProviderEntity? ServiceProvider { get; set; }
 
-        public LocationEntity? StartLocation { get; set; } 
+        public LocationEntity? StartLocation { get; set; }
 
-        public LocationEntity? EndLocation { get; set; } // العلاقة مع الكيان LocationEntity (نهاية الرحلة)
+        public LocationEntity? EndLocation { get; set; }
 
         #endregion
-
     }
 }

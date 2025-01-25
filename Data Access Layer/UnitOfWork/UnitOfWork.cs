@@ -20,6 +20,7 @@ namespace Data_Access_Layer.UnitOfWork
     {
         private readonly AppDbContext _context;
         public IUserRepository<CustomerEntity> Customers { get; private set; }
+        public IRepository<LocationEntity> Locations { get; }
         public IUserRepository<ManagerEntity> Managers { get; private set; }
         public IUserRepository<ServiceProviderEntity> ServiceProviders { get; private set; }
         public IRepository <PersonEntity> People { get; private set; }
@@ -44,6 +45,7 @@ namespace Data_Access_Layer.UnitOfWork
             Addresses = new GeneralRepository<AddressEntity>(dbContext);
             ContactInformations = new GeneralRepository<ContactInformationEntity>(dbContext);
             SPRegResponses = new GeneralRepository<SPRegResponseEntity>(dbContext);
+            Locations = new GeneralRepository<LocationEntity>(dbContext);
 
         }
         public IRepository<T> GetDynamicRepository<T>() where T : class

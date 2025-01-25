@@ -6,6 +6,7 @@ using Core_Layer.Entities.Actors.ServiceProvider;
 using Core_Layer.Entities.Actors.ServiceProvider.PaymentAccount;
 using Core_Layer.Entities.Actors.ServiceProvider.Registeration_Request;
 using Core_Layer.Entities.Locations;
+using Core_Layer.Entities.Trip;
 
 namespace Core_Layer
 {
@@ -83,6 +84,24 @@ namespace Core_Layer
             CreateMap<PayPalAccountDTO, PayPalAccountEntity>()
                 .ForMember(dest => dest.PaymentAccount, opt => opt.Ignore())
                 .ReverseMap();
+
+            // Map TripEntity to TripRegistrationDTO
+            CreateMap<TripEntity, TripRegistrationDTO>()
+                .ForMember(dest => dest.StartLocation, opt => opt.MapFrom(src => src.StartLocation))
+                .ForMember(dest => dest.EndLocation, opt => opt.MapFrom(src => src.EndLocation));
+
+            // Map TripRegistrationDTO to TripEntity
+            CreateMap<TripRegistrationDTO, TripEntity>()
+                .ForMember(dest => dest.StartLocation, opt => opt.Ignore()) // يتم تعيين المواقع يدويًا
+                .ForMember(dest => dest.EndLocation, opt => opt.Ignore());
+
+            // Map LocationEntity to LocationDTO
+            CreateMap<LocationEntity, LocationDTO>()
+                .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address));
+
+            // Map LocationDTO to LocationEntity
+            CreateMap<LocationDTO, LocationEntity>()
+                .ForMember(dest => dest.Address, opt => opt.Ignore()); // يتم تعيين العنوان يدويًا
         }
     }
 }

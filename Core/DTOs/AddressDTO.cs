@@ -12,8 +12,6 @@ namespace Core_Layer.DTOs
     {
         public int? AddressID { get; set; }
         public string? AdditionalDetails { get; set; }
-        public string? LocationURL { get; set; }
-
         public int? StreetID { get; set; } 
         public int? CityID { get; set; }
 

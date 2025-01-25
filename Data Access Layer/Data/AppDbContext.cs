@@ -37,6 +37,7 @@ namespace Data_Access_Layer.Data
         public DbSet<TicketEntity> Tickets { get; set; }
         public DbSet<BusinessEntity> Businesses { get; set; }
         public DbSet<ContactInformationEntity> ContactInformations {  get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<BusinessEntity>()
