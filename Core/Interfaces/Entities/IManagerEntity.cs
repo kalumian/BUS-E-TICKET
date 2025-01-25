@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Core_Layer.Interfaces.Actors_Interfaces
 {
-    public interface IManagerEntity
+    public interface IManagerEntity : IAccount
     {
         int CreatedByID { get; set; }
     }

@@ -10,6 +10,8 @@ public class TripController(TripService tripService) : ControllerBase
     private readonly TripService _tripService = tripService;
 
     [Authorize(Roles = "Provider")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpPost("AddTrip")]
     public async Task<IActionResult> AddTrip(TripRegistrationDTO tripDTO)
     {
@@ -22,4 +24,18 @@ public class TripController(TripService tripService) : ControllerBase
             Data = createdTrip
         });
     }
+    [HttpGet("GetAllTrips")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetAllTrips()
+    {
+        var trips = await _tripService.GetAllTripsAsync();
+        return Ok(new ApiResponse
+        {
+            IsSuccess = true,
+            Message = "Trips fetched successfully.",
+            Data = trips
+        });
+    }
+
 }

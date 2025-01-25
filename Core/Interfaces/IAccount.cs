@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core_Layer.Interfaces.Actors_Interfaces
+namespace Core_Layer.Interfaces
 {
-    internal interface ICustomerEntity : IFollowableAccount, IAccount
+    public interface IAccount
     {
+        string AccountID { get; set; }
     }
 }

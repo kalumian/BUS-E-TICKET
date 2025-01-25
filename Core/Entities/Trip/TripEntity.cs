@@ -67,15 +67,18 @@ namespace Core_Layer.Entities.Trip
         [Required(ErrorMessage = "End Location is required.")]
         public required int EndLocationID { get; set; }
 
+        [ForeignKey("Currency")]
+        [Required(ErrorMessage = "End CurrencyID is required.")]
+        public required int CurrencyID { get; set; }
+
         #endregion
 
         #region Navigation Properties
 
         public ServiceProviderEntity? ServiceProvider { get; set; }
-
         public LocationEntity? StartLocation { get; set; }
-
         public LocationEntity? EndLocation { get; set; }
+        public CurrencyEntity? Currency { get; set; }
 
         #endregion
     }

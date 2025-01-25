@@ -3,6 +3,7 @@ using Core_Layer.Entities.Actors;
 using Core_Layer.Entities.Actors.ServiceProvider;
 using Core_Layer.Entities.Actors.ServiceProvider.Registeration_Request;
 using Core_Layer.Entities.Locations;
+using Core_Layer.Entities.Trip;
 using Data_Access_Layer.Data;
 using Data_Access_Layer.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -25,6 +26,7 @@ namespace Data_Access_Layer.UnitOfWork
         public IUserRepository<ServiceProviderEntity> ServiceProviders { get; private set; }
         public IRepository <PersonEntity> People { get; private set; }
         public IRepository<AddressEntity> Addresses { get; private set; }
+        public IRepository<TripEntity> Trips { get; private set; }
         public IRepository<ContactInformationEntity> ContactInformations { get; private set; }
 
         public IRepository<BusinessEntity> Businesses { get; private set; }
@@ -45,8 +47,8 @@ namespace Data_Access_Layer.UnitOfWork
             Addresses = new GeneralRepository<AddressEntity>(dbContext);
             ContactInformations = new GeneralRepository<ContactInformationEntity>(dbContext);
             SPRegResponses = new GeneralRepository<SPRegResponseEntity>(dbContext);
+            Trips = new GeneralRepository<TripEntity>(dbContext);
             Locations = new GeneralRepository<LocationEntity>(dbContext);
-
         }
         public IRepository<T> GetDynamicRepository<T>() where T : class
         {

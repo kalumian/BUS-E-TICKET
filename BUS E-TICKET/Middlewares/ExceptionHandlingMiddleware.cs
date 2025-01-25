@@ -33,10 +33,9 @@ namespace BUS_E_TICKET.Middlewares
 
             var response = new
             {
-                Error = exception.Message,
-                StatusCode = exception.StatusCode
+                Error = exception.Message.ToString(),
+                exception.StatusCode
             };
-
             return context.Response.WriteAsJsonAsync(response);
         }
         private static Task HandleExceptionAsync(HttpContext context, Exception exception)

@@ -2,8 +2,10 @@
 using Business_Logic_Layer.Utilities;
 using Core_Layer.DTOs;
 using Core_Layer.Entities.Actors;
+using Core_Layer.Entities.Actors.ServiceProvider;
 using Core_Layer.Enums;
 using Core_Layer.Exceptions;
+using Core_Layer.Interfaces;
 using Data_Access_Layer.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -184,5 +186,36 @@ namespace Business_Logic_Layer.Services.Actors
                 throw new InvalidOperationException("Failed to update user status. " +
                     string.Join(", ", result.Errors.Select(e => e.Description)));
         }
+
+        public string GetLoggedInUserId()
+        {
+            // تحقق من أن HttpContext موجودة
+            if (_httpContextAccessor.HttpContext == null)
+                throw new InvalidOperationException("HttpContext is not available.");
+
+            // استخراج Claim الخاص بالـ User ID
+            var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userId))
+                throw new UnauthorizedAccessException("User is not authenticated.");
+
+            return userId;
+        }
+        public void EnsureOwnership<T>(int entityId) where T : class, IAccount
+        {
+            // الحصول على معرف المستخدم المسجل الدخول
+            string loggedInUserId = GetLoggedInUserId();
+
+            // جلب الكيان بناءً على ID
+            var entity = _unitOfWork.GetDynamicRepository<T>().GetById(entityId);
+
+            if (entity == null)
+                throw new NotFoundException($"{typeof(T).Name} with ID {entityId} not found.");
+
+            // التحقق من أن الكيان مملوك للمستخدم المسجل الدخول
+            if (entity.AccountID != loggedInUserId)
+                throw new UnauthorizedAccessException($"You do not have permission to access this {typeof(T).Name}.");
+        }
+
     }
 }

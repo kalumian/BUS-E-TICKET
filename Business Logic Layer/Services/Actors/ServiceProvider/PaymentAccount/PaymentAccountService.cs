@@ -6,6 +6,7 @@ using AutoMapper;
 using Core_Layer.Entities.Actors.ServiceProvider;
 using Microsoft.EntityFrameworkCore;
 using Core_Layer.Entities.Actors.ServiceProvider.PaymentAccount;
+using Core_Layer.Entities;
 
 namespace Business_Logic_Layer.Services.Payment
 {

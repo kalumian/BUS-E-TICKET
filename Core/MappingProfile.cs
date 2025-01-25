@@ -102,6 +102,18 @@ namespace Core_Layer
             // Map LocationDTO to LocationEntity
             CreateMap<LocationDTO, LocationEntity>()
                 .ForMember(dest => dest.Address, opt => opt.Ignore()); // يتم تعيين العنوان يدويًا
+
+            CreateMap<TripEntity, TripDisplayDTO>()
+            .ForMember(dest => dest.BusinessName, opt => opt.MapFrom(src => src.ServiceProvider.Business.BusinessName ?? "Unknown"))
+            .ForMember(dest => dest.BusinessLogoURL, opt => opt.MapFrom(src => src.ServiceProvider.Business.LogoURL ?? string.Empty))
+            .ForMember(dest => dest.StartLocationName, opt => opt.MapFrom(src => src.StartLocation.LocationName ?? "Unknown"))
+            .ForMember(dest => dest.StartLocationURL, opt => opt.MapFrom(src => src.StartLocation.LocationURL ?? string.Empty))
+            .ForMember(dest => dest.StartCity, opt => opt.MapFrom(src => src.StartLocation.Address.City.CityName ?? "Unknown"))
+            .ForMember(dest => dest.StartAdditionalDetails, opt => opt.MapFrom(src => src.StartLocation.Address.AdditionalDetails ?? string.Empty))
+            .ForMember(dest => dest.EndLocationName, opt => opt.MapFrom(src => src.EndLocation.LocationName ?? "Unknown"))
+            .ForMember(dest => dest.EndLocationURL, opt => opt.MapFrom(src => src.EndLocation.LocationURL ?? string.Empty))
+            .ForMember(dest => dest.EndCity, opt => opt.MapFrom(src => src.EndLocation.Address.City.CityName ?? "Unknown"))
+            .ForMember(dest => dest.EndAdditionalDetails, opt => opt.MapFrom(src => src.EndLocation.Address.AdditionalDetails ?? string.Empty));
         }
     }
 }
