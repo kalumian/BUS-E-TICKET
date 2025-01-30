@@ -36,6 +36,8 @@ builder.Services.AddScoped<PayPalService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<SPRegResponseService>();
 builder.Services.AddScoped<ManagerService>();
+builder.Services.AddScoped<InvoiceService>();
+builder.Services.AddScoped<TicketService>();
 builder.Services.AddScoped<ServiceProviderService>();
 builder.Services.AddScoped<BaseUserService>();
 builder.Services.AddScoped<BusinessService>();

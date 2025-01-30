@@ -38,7 +38,9 @@ namespace Data_Access_Layer.UnitOfWork
 
         public IRepository<SPRegResponseEntity> SPRegResponses { get; private set; }
         public IRepository<PaymentEntity> Payments { get; private set; }
+        public IRepository<InvoiceEntity> Invoices { get; private set; }
         public IRepository<ReservationEntity> Reservations { get; private set; }
+        public IRepository<TicketEntity> Tickets { get; }
 
         public UnitOfWork(AppDbContext dbContext)
         {
@@ -54,9 +56,11 @@ namespace Data_Access_Layer.UnitOfWork
             SPRegResponses = new GeneralRepository<SPRegResponseEntity>(dbContext);
             Trips = new GeneralRepository<TripEntity>(dbContext);
             Locations = new GeneralRepository<LocationEntity>(dbContext);
+            Invoices = new GeneralRepository<InvoiceEntity>(dbContext);
             Passengers = new GeneralRepository<PassengerEntity>(dbContext);
             Payments = new GeneralRepository<PaymentEntity>(dbContext);
             Reservations = new GeneralRepository<ReservationEntity>(dbContext);
+            Tickets = new GeneralRepository<TicketEntity>(dbContext);
         }
         public IRepository<T> GetDynamicRepository<T>() where T : class
         {

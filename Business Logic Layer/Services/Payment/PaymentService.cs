@@ -13,7 +13,7 @@ using PayPalCheckoutSdk.Orders;
 
 namespace Business_Logic_Layer.Services.Payment
 {
-    public class PaymentService(IUnitOfWork unitOfWork, IOptions<PayPalSettings> payPalSettings) : GeneralService(unitOfWork)
+    public class PaymentService(IUnitOfWork unitOfWork, IOptions<PayPalSettings> payPalSettings, TicketService ticketService, InvoiceService invoiceService) : GeneralService(unitOfWork)
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
@@ -51,11 +51,11 @@ namespace Business_Logic_Layer.Services.Payment
             switch (Enum)
             {
                 case EnPaymentMethod.PayPal:
-                    return new PayPalService(payPalSettings, unitOfWork);
+                    return new PayPalService(payPalSettings, unitOfWork, invoiceService, ticketService);
                 default:
                     break;
             }
-            return new PayPalService(payPalSettings, unitOfWork);
+            return new PayPalService(payPalSettings, unitOfWork, invoiceService, ticketService);
         }
        
 

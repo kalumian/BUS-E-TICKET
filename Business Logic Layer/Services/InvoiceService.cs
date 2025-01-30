@@ -16,14 +16,14 @@ namespace Business_Logic_Layer.Services
 
         public async Task<InvoiceEntity> CreateInvoiceAsync(PaymentEntity payment)
         {
-            var paymentEntity = await _unitOfWork.Payments.GetByIdAsync(payment.PaymentID) ?? throw new NotFoundException("Payment not found.");
+            _ = await _unitOfWork.Payments.GetByIdAsync(payment.PaymentID) ?? throw new NotFoundException("Payment not found.");
 
             var invoice = new InvoiceEntity
             {
                 InvoiceNumber = Guid.NewGuid().ToString(),
                 IssueDate = DateTime.Now,
                 Payment = payment,
-                PaymentID = paymentEntity.PaymentID,
+                PaymentID = payment.PaymentID,
             };
 
             await CreateEntityAsync(invoice, saveChanges: true);

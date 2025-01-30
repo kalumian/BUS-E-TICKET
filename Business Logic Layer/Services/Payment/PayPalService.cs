@@ -12,10 +12,11 @@ using PayPalCheckoutSdk.Orders;
 
 namespace Business_Logic_Layer.Services.Payment
 {
-    public class PayPalService(IOptions<PayPalSettings> payPalSettings, IUnitOfWork unitOfWork, InvoiceService invoiceService) : GeneralService(unitOfWork), IPaymentMethod
+    public class PayPalService(IOptions<PayPalSettings> payPalSettings, IUnitOfWork unitOfWork, InvoiceService invoiceService, TicketService ticketService) : GeneralService(unitOfWork), IPaymentMethod
     {
         private readonly PayPalSettings _payPalSettings = payPalSettings.Value;
         private readonly InvoiceService _invoiceService = invoiceService;
+        private readonly TicketService _ticketService = ticketService;
 
         private PayPalHttpClient GetClient()
         {
@@ -65,45 +66,45 @@ namespace Business_Logic_Layer.Services.Payment
             return result.Links[1].Href; 
         }
 
-        public async Task<bool> ExecutePaymentAsync(int reservationId)
+        public async Task<object> ExecutePaymentAsync(int reservationId)
         {
-            var payment = await _unitOfWork.Payments
+            var Payment = await _unitOfWork.Payments
              .GetAllQueryable()
              .FirstOrDefaultAsync(p => p.ReservationID == reservationId && p.PaymentStatus == EnPaymentStatus.Pending) ?? throw new NotFoundException($"Payment in Pending status for Reservation with ID {reservationId} is not found.");
             using var transaction = await _unitOfWork.BeginTransactionAsync();
             try
             {
                 var client = GetClient();
-                var request = new OrdersCaptureRequest(payment.OrderID);
+                var request = new OrdersCaptureRequest(Payment.OrderID);
                 request.RequestBody(new OrderActionRequest());
 
-                if (payment.PaymentDate.AddMinutes(5) < DateTime.UtcNow)
+                if (Payment.PaymentDate.AddMinutes(5) < DateTime.UtcNow)
                     throw new InvalidOperationException("Payment confirmation time expired.");
 
-                payment.PaymentStatus = EnPaymentStatus.Paid;
+                Payment.PaymentStatus = EnPaymentStatus.Paid;
 
-                var reservation = await _unitOfWork.Reservations.GetByIdAsync(reservationId);
-                if (reservation != null)
-                    reservation.ReservationStatus = EnReservationStatus.Completed;
+                var Reservation = await _unitOfWork.Reservations.GetByIdAsync(reservationId);
+                if (Reservation != null)
+                    Reservation.ReservationStatus = EnReservationStatus.Completed;
 
                 await _unitOfWork.SaveChangesAsync();
 
+                var Invoice = await _invoiceService.CreateInvoiceAsync(Payment);
 
+                var Ticket = await _ticketService.CreateTicketAsync(Invoice);
 
                 var response = await client.Execute(request);
                 if (response.StatusCode != System.Net.HttpStatusCode.Created)
                     throw new InvalidOperationException("Payment capture failed.");
 
-                var Invoice = await _invoiceService.CreateInvoiceAsync(payment);
-
 
                 transaction.Commit();
-                return true;
+                return new { Ticket.TicketID}; // can use DTO
             }
-            catch (Exception ex)
+            catch
             {
                 transaction.Rollback();
-                await MakePaymentFaild(payment);
+                await MakePaymentFaild(Payment);
                 await _unitOfWork.SaveChangesAsync();
 
                 throw;

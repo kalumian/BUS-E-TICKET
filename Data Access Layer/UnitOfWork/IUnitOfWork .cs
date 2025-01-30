@@ -24,6 +24,7 @@ namespace Data_Access_Layer.UnitOfWork
         IRepository<PersonEntity> People { get; }
         IUserRepository<ServiceProviderEntity> ServiceProviders { get; }
         IUserRepository<ManagerEntity> Managers { get; }
+        IRepository<TicketEntity> Tickets { get; }
         IRepository<AddressEntity> Addresses { get; }
         IRepository<LocationEntity> Locations { get; }
         IRepository<BusinessEntity> Businesses { get; }
@@ -33,6 +34,7 @@ namespace Data_Access_Layer.UnitOfWork
         IRepository<PaymentEntity> Payments { get; }
         IRepository<PassengerEntity> Passengers { get; }
         IRepository<ReservationEntity> Reservations { get; }
+        IRepository<InvoiceEntity> Invoices { get; }
         IRepository<ContactInformationEntity> ContactInformations { get; }
         public IRepository<T> GetDynamicRepository<T>() where T : class;
         EntityEntry<T> Entry<T>(T entity) where T : class;

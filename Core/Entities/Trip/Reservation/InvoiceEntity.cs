@@ -35,7 +35,7 @@ namespace Core_Layer.Entities.Trip.Reservation
 
         public required PaymentEntity Payment { get; set; }
 
-        public ICollection<TicketEntity>? Tickets { get; set; }
+        public TicketEntity? Tickets { get; set; }
 
         #endregion
     }

@@ -16,16 +16,13 @@ namespace BUS_E_TICKET.Controllers
 
             var paymentConfirmed = await payPalService.ExecutePaymentAsync(reservationId);
 
-            if (!paymentConfirmed)
-                throw new BadRequestException("Payment confirmation failed.");
-
-            return CreatedAtAction(
-                nameof(ExecutePayment),
-                new { reservationId },
-                Utilities.ResponeHelper.GetApiRespone(
+            return paymentConfirmed == null
+                ? throw new BadRequestException("Payment confirmation failed.")
+                :
+                Ok(Utilities.ResponeHelper.GetApiRespone(
                     IsSuccess: true,
                     Message: "Payment was successful. Reservation is now confirmed.",
-                    Data: new { reservationId }
+                    Data: paymentConfirmed
                 )
             );
         }

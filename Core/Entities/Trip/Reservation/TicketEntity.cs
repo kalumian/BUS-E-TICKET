@@ -17,9 +17,8 @@ namespace Core_Layer.Entities.Trip.Reservation
         public int TicketID { get; set; }
 
         [Required(ErrorMessage = "Ticket code is required.")]
-        [MaxLength(50, ErrorMessage = "Ticket code cannot exceed 50 characters.")]
-        public string TicketCode { get; set; } = string.Empty;
-
+        [MaxLength(50, ErrorMessage = "PNR cannot exceed 50 characters.")]
+        public string PNR { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Issue date is required.")]
         public DateTime IssueDate { get; set; } = DateTime.Now;
