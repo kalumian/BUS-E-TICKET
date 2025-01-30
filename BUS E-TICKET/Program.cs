@@ -1,6 +1,5 @@
 using Data_Access_Layer.Data;
 using Microsoft.EntityFrameworkCore;
-using Core_Layer;
 using Microsoft.AspNetCore.Identity;
 using Core_Layer.Entities.Actors;
 using Business_Logic_Layer.Services;
