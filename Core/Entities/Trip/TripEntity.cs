@@ -48,10 +48,10 @@ namespace Core_Layer.Entities.Trip
 
         [Required(ErrorMessage = "Available Seats Count is required.")]
         [Range(0, int.MaxValue, ErrorMessage = "Available Seats Count cannot be negative.")]
-        public short AvailableSeatsCount { get; set; }
+        public short VehicleCapacity { get; set; }
 
-        [Required(ErrorMessage = "Reserved Seats Binary is required.")]
-        public required byte[] ReservedSeatsBinary { get; set; }
+        //[Required(ErrorMessage = "Reserved Seats Binary is required.")]
+        //public required byte[] ReservedSeatsBinary { get; set; }
 
         #region Foreign Keys
 

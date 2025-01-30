@@ -1,4 +1,4 @@
-﻿using Core_Layer;
+﻿using Core_Layer.Configurations;
 using Core_Layer.Enums;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;

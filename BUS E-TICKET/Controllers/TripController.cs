@@ -1,7 +1,9 @@
-﻿using Business_Logic_Layer.Services;
+﻿using BUS_E_TICKET.Utilities;
+using Business_Logic_Layer.Services;
 using Core_Layer.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -30,12 +32,11 @@ public class TripController(TripService tripService) : ControllerBase
     public async Task<IActionResult> GetAllTrips()
     {
         var trips = await _tripService.GetAllTripsAsync();
-        return Ok(new ApiResponse
-        {
-            IsSuccess = true,
-            Message = "Trips fetched successfully.",
-            Data = trips
-        });
+        return Ok(ResponeHelper.GetApiRespone(
+            IsSuccess: true,
+            Message: "Trips fetched successfully.",
+            Data: trips
+        ));
     }
 
 }

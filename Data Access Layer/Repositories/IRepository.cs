@@ -17,6 +17,7 @@ namespace Data_Access_Layer.Repositories
         void Update(T entity);
         IEnumerable<T> GetAll();
         T? GetById(object id);
+        Task<T>? GetByIdAsync(object id);
         IEnumerable<T> Find(Expression<Func<T, bool>> predicate);
         Task<IEnumerable<T>> GetAllAsync();
         T? FirstOrDefault(Expression<Func<T, bool>> predicate);

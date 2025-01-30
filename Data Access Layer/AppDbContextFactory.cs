@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Core_Layer;
+using Core_Layer.Configurations;
 namespace Data_Access_Layer
 {
     public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>

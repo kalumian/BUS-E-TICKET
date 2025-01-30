@@ -1,5 +1,4 @@
-﻿using Core_Layer.Entities.Actors.ServiceProvider.PaymentAccount;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -20,7 +19,5 @@ namespace Core_Layer.Entities
         [Required(ErrorMessage = "CurrencyCode is required.")]
         [MaxLength(10, ErrorMessage = "CurrencyCode cannot exceed 10 characters.")]
         public required string CurrencyCode { get; set; }
-
-        public ICollection<PaymentAccountEntity>? PaymentAccounts { get; set; }
     }
 }

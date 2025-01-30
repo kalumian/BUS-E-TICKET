@@ -15,9 +15,12 @@ namespace Core_Layer.Entities.Trip.Reservation
 
         [Key]
         public int InvoiceID { get; set; }
-        [Required(ErrorMessage = "Issue date is required.")]
-        public DateTime IssueDate { get; set; } = DateTime.Now;
+        [Required(ErrorMessage = "Invoice number is required.")]
+        [StringLength(50, ErrorMessage = "Invoice number cannot exceed 50 characters.")]
+        public string InvoiceNumber { get; set; } 
 
+        [Required(ErrorMessage = "Issue date is required.")]
+        public DateTime IssueDate { get; set; } = DateTime.Now; 
         #endregion
 
         #region Foreing Key

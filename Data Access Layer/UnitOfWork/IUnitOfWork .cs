@@ -3,7 +3,9 @@ using Core_Layer.Entities.Actors;
 using Core_Layer.Entities.Actors.ServiceProvider;
 using Core_Layer.Entities.Actors.ServiceProvider.Registeration_Request;
 using Core_Layer.Entities.Locations;
+using Core_Layer.Entities.Payment;
 using Core_Layer.Entities.Trip;
+using Core_Layer.Entities.Trip.Reservation;
 using Data_Access_Layer.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -28,6 +30,9 @@ namespace Data_Access_Layer.UnitOfWork
         IRepository<SPRegRequestEntity> SPRegRequests { get; }
         IRepository<SPRegResponseEntity> SPRegResponses { get; }
         IRepository<TripEntity> Trips { get; }
+        IRepository<PaymentEntity> Payments { get; }
+        IRepository<PassengerEntity> Passengers { get; }
+        IRepository<ReservationEntity> Reservations { get; }
         IRepository<ContactInformationEntity> ContactInformations { get; }
         public IRepository<T> GetDynamicRepository<T>() where T : class;
         EntityEntry<T> Entry<T>(T entity) where T : class;

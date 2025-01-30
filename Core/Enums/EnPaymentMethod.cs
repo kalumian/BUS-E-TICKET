@@ -9,7 +9,7 @@ namespace Core_Layer.Enums
     public enum EnPaymentMethod
     {
         //CreditCard,
-        PayPal,
+        PayPal = 0,
         //BankTransfer,
         //Cash
     }

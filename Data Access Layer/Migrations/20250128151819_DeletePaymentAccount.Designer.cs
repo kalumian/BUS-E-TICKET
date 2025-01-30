@@ -4,6 +4,7 @@ using Data_Access_Layer.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data_Access_Layer.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250128151819_DeletePaymentAccount")]
+    partial class DeletePaymentAccount
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -209,10 +212,6 @@ namespace Data_Access_Layer.Migrations
                         .HasColumnType("nvarchar(15)");
 
                     b.HasKey("PersonID");
-
-                    b.HasIndex("NationalID")
-                        .IsUnique()
-                        .HasDatabaseName("IX_Person_NationalID");
 
                     b.ToTable("People");
                 });
@@ -564,23 +563,14 @@ namespace Data_Access_Layer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PaymentID"));
 
-                    b.Property<int?>("CurrencyID")
-                        .IsRequired()
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("DiscountAmount")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<bool>("IsRefundable")
                         .HasColumnType("bit");
 
-                    b.Property<string>("OrderID")
-                        .IsRequired()
-                        .HasMaxLength(300)
-                        .HasColumnType("nvarchar(300)");
-
                     b.Property<DateTime>("PaymentDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("PaymentInfoID")
+                        .HasColumnType("int");
 
                     b.Property<int>("PaymentMethod")
                         .HasColumnType("int");
@@ -592,7 +582,27 @@ namespace Data_Access_Layer.Migrations
                         .IsRequired()
                         .HasColumnType("int");
 
-                    b.Property<decimal>("TotalAmount")
+                    b.HasKey("PaymentID");
+
+                    b.HasIndex("PaymentInfoID");
+
+                    b.HasIndex("ReservationID");
+
+                    b.ToTable("Payments");
+                });
+
+            modelBuilder.Entity("Core_Layer.Entities.Payment.PaymentInfoEntity", b =>
+                {
+                    b.Property<int>("PaymentInfoID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PaymentInfoID"));
+
+                    b.Property<decimal?>("AdditionalAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("DiscountAmount")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("TripAmount")
@@ -601,13 +611,9 @@ namespace Data_Access_Layer.Migrations
                     b.Property<decimal>("VAT")
                         .HasColumnType("decimal(18,2)");
 
-                    b.HasKey("PaymentID");
+                    b.HasKey("PaymentInfoID");
 
-                    b.HasIndex("CurrencyID");
-
-                    b.HasIndex("ReservationID");
-
-                    b.ToTable("Payments");
+                    b.ToTable("PaymentInfos");
                 });
 
             modelBuilder.Entity("Core_Layer.Entities.Trip.Reservation.InvoiceEntity", b =>
@@ -1089,9 +1095,9 @@ namespace Data_Access_Layer.Migrations
 
             modelBuilder.Entity("Core_Layer.Entities.Payment.PaymentEntity", b =>
                 {
-                    b.HasOne("Core_Layer.Entities.CurrencyEntity", "Currency")
+                    b.HasOne("Core_Layer.Entities.Payment.PaymentInfoEntity", "PaymentInfo")
                         .WithMany()
-                        .HasForeignKey("CurrencyID")
+                        .HasForeignKey("PaymentInfoID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -1101,7 +1107,7 @@ namespace Data_Access_Layer.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Currency");
+                    b.Navigation("PaymentInfo");
 
                     b.Navigation("Reservation");
                 });

@@ -8,6 +8,7 @@ using Core_Layer.Entities.Actors.ServiceProvider;
 using Business_Logic_Layer.Services.Actors.ServiceProvider;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ValueGeneration;
 
 namespace Business_Logic_Layer.Services
 {
@@ -47,7 +48,6 @@ namespace Business_Logic_Layer.Services
                 var tripEntity = _mapper.Map<TripEntity>(tripDTO);
                 tripEntity.StartLocationID = startLocation.LocationID;
                 tripEntity.EndLocationID = endLocation.LocationID;
-                tripEntity.ReservedSeatsBinary = [];
                 // إنشاء الرحلة
                 var createdTrip = await CreateEntityAsync(tripEntity, saveChanges: true);
 
@@ -105,6 +105,7 @@ namespace Business_Logic_Layer.Services
         {
             var trips = _unitOfWork.Trips
               .GetAllQueryable()
+              .Include(t=> t.Currency)
               .Include(t => t.ServiceProvider)
                   .ThenInclude(sp => sp.Business)
               .Include(t => t.StartLocation)

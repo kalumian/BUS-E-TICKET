@@ -3,12 +3,14 @@ using Core_Layer.DTOs;
 using Core_Layer.Entities;
 using Core_Layer.Entities.Actors;
 using Core_Layer.Entities.Actors.ServiceProvider;
-using Core_Layer.Entities.Actors.ServiceProvider.PaymentAccount;
 using Core_Layer.Entities.Actors.ServiceProvider.Registeration_Request;
 using Core_Layer.Entities.Locations;
+using Core_Layer.Entities.Payment;
 using Core_Layer.Entities.Trip;
+using Core_Layer.Entities.Trip.Reservation;
+using Core_Layer.Enums;
 
-namespace Core_Layer
+namespace Core_Layer.Configurations
 {
     public class MappingProfile : Profile
     {
@@ -48,9 +50,9 @@ namespace Core_Layer
             // Business Mappings
             CreateMap<BusinessDTO, BusinessEntity>()
                 .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address))
-                .ForMember(dest => dest.AddressID, opt => opt.MapFrom(src => src.Address != null ? src.Address.AddressID : (int?)null))
+                .ForMember(dest => dest.AddressID, opt => opt.MapFrom(src => src.Address != null ? src.Address.AddressID : null))
                 .ForMember(dest => dest.ContactInformation, opt => opt.MapFrom(src => src.ContactInformation))
-                .ForMember(dest => dest.ContactInformationID, opt => opt.MapFrom(src => src.ContactInformation != null ? src.ContactInformation.ContactInformationID : (int?)null))
+                .ForMember(dest => dest.ContactInformationID, opt => opt.MapFrom(src => src.ContactInformation != null ? src.ContactInformation.ContactInformationID : null))
                 .ReverseMap();
 
             // Service Provider Registration Requests
@@ -76,15 +78,6 @@ namespace Core_Layer
                 .ForMember(dest => dest.Request, opt => opt.Ignore())
                 .ReverseMap();
 
-            // Payment
-            // Map between PaymentAccountDTO and PaymentAccountEntity
-            CreateMap<PaymentAccountDTO, PaymentAccountEntity>().ReverseMap();
-
-            // Map between PayPalAccountDTO and PayPalAccountEntity
-            CreateMap<PayPalAccountDTO, PayPalAccountEntity>()
-                .ForMember(dest => dest.PaymentAccount, opt => opt.Ignore())
-                .ReverseMap();
-
             // Map TripEntity to TripRegistrationDTO
             CreateMap<TripEntity, TripRegistrationDTO>()
                 .ForMember(dest => dest.StartLocation, opt => opt.MapFrom(src => src.StartLocation))
@@ -105,6 +98,7 @@ namespace Core_Layer
 
             CreateMap<TripEntity, TripDisplayDTO>()
             .ForMember(dest => dest.BusinessName, opt => opt.MapFrom(src => src.ServiceProvider.Business.BusinessName ?? "Unknown"))
+            .ForMember(dest => dest.Currency, opt => opt.MapFrom(src => src.Currency.CurrencyCode ?? "Unknown"))
             .ForMember(dest => dest.BusinessLogoURL, opt => opt.MapFrom(src => src.ServiceProvider.Business.LogoURL ?? string.Empty))
             .ForMember(dest => dest.StartLocationName, opt => opt.MapFrom(src => src.StartLocation.LocationName ?? "Unknown"))
             .ForMember(dest => dest.StartLocationURL, opt => opt.MapFrom(src => src.StartLocation.LocationURL ?? string.Empty))
@@ -114,6 +108,18 @@ namespace Core_Layer
             .ForMember(dest => dest.EndLocationURL, opt => opt.MapFrom(src => src.EndLocation.LocationURL ?? string.Empty))
             .ForMember(dest => dest.EndCity, opt => opt.MapFrom(src => src.EndLocation.Address.City.CityName ?? "Unknown"))
             .ForMember(dest => dest.EndAdditionalDetails, opt => opt.MapFrom(src => src.EndLocation.Address.AdditionalDetails ?? string.Empty));
+
+            // Reservation Mapping
+            CreateMap<ReservationEntity, CreateReservationDTO>();
+            CreateMap<CreateReservationDTO, ReservationEntity>()
+                .ForMember(dest => dest.ReservationID, opt => opt.MapFrom(src => src.ReservationID))
+                .ForMember(dest => dest.TripID, opt => opt.MapFrom(src => src.TripID))
+                .ForMember(dest => dest.CustomerID, opt => opt.MapFrom(src => src.CustomerID))
+                .ForMember(dest => dest.PassengerID, opt => opt.MapFrom(src => src.Passenger.PassengerID)) // تحويل PassengerID من PassengerDTO
+                .ForMember(dest => dest.ReservationStatus, opt => opt.MapFrom(src => EnReservationStatus.Pending)) // تعيين حالة الحجز بشكل افتراضي
+                .ForMember(dest => dest.ReservationDate, opt => opt.MapFrom(src => DateTime.UtcNow)); // تعيين تاريخ الحجز الحالي
+            // Person Mapping
+            CreateMap<PersonEntity, PersonDTO>().ReverseMap();
         }
     }
 }

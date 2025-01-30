@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Core_Layer.Entities.Actors;
 using Core_Layer.Entities.Trip;
+using Core_Layer.Entities.Payment;
 
 namespace Core_Layer.Entities.Trip.Reservation
 {
@@ -16,14 +17,14 @@ namespace Core_Layer.Entities.Trip.Reservation
         #region Primary Properties
 
         [Key]
-        public int ReservationID { get; set; }
+        public int? ReservationID { get; set; }
 
         [Required(ErrorMessage = "Reservation State is required.")]
-        public EnRegisterationRequestStatus ReservationStatus { get; set; }
+        public EnReservationStatus ReservationStatus { get; set; }
 
-        [Required(ErrorMessage = "Seat Number is required.")]
-        [Range(1, short.MaxValue, ErrorMessage = "Seat Number must be a positive number.")]
-        public short SeatNumber { get; set; }
+        //[Required(ErrorMessage = "Seat Number is required.")]
+        //[Range(1, short.MaxValue, ErrorMessage = "Seat Number must be a positive number.")]
+        //public short SeatNumber { get; set; }
 
         [Required(ErrorMessage = "Reservation Date is required.")]
         public DateTime ReservationDate { get; set; }
@@ -40,12 +41,15 @@ namespace Core_Layer.Entities.Trip.Reservation
         [ForeignKey("Passenger")]
         public int PassengerID { get; set; }
 
+        [ForeignKey("Customer")]
+        public int? CustomerID { get; set; }
+
         #endregion
 
         #region Navigation Properties
 
         public TripEntity? Trip { get; set; }
-
+        public CustomerEntity? Customer { get; set; } 
         public PassengerEntity? Passenger { get; set; }
 
         #endregion

@@ -1,11 +1,12 @@
 ﻿using Core_Layer.DTOs;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 
 namespace BUS_E_TICKET.Utilities
 {
     internal class ResponeHelper
     {
-        static public ApiResponse GetApiRespone(string Message,bool IsSuccess, object Data, List<string>? Errors = null)
+        static public ApiResponse GetApiRespone(string Message,bool IsSuccess, object Data = null, List<string> Errors = null)
         {
             return new ApiResponse() {
             IsSuccess = IsSuccess,

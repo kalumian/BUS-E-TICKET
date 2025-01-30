@@ -9,6 +9,8 @@ using Data_Access_Layer.UnitOfWork;
 using Business_Logic_Layer.Services.Actors.ServiceProvider;
 using BUS_E_TICKET.Extensions;
 using Business_Logic_Layer.Services.Payment;
+using Core_Layer.Configurations;
+using Core_Layer.Interfaces.Payment;
 
 var builder = WebApplication.CreateBuilder();
 
@@ -28,6 +30,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddIdentity<AuthoUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>();
 
 // AddScoped
+builder.Services.Configure<PayPalSettings>(builder.Configuration.GetSection("PayPal"));
+builder.Services.AddScoped<PaymentService>();
+builder.Services.AddScoped<PayPalService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<SPRegResponseService>();
 builder.Services.AddScoped<ManagerService>();
@@ -40,11 +45,15 @@ builder.Services.AddScoped<AddressService>();
 builder.Services.AddScoped<ContactInformationService>();
 builder.Services.AddScoped<CustomerService>();
 builder.Services.AddScoped<TripService>();
+builder.Services.AddScoped<ReservationService>();
 builder.Services.AddScoped<UserManager<AuthoUser>>();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
+builder.Services.AddScoped<ReservationService>();
+builder.Services.AddHostedService<ReservationBackgroundService>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddCustomJwtAuth(builder.Configuration);
-builder.Services.AddScoped<PaymentAccountService>();
+
+
 
 var app = builder.Build();
 

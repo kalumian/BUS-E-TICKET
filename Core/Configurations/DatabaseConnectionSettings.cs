@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core_Layer
+namespace Core_Layer.Configurations
 {
     public static class DatabaseConnectionSettings
     {

@@ -6,6 +6,7 @@
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
     public decimal Price { get; set; }
+    public string Currency { get; set; }
     public TimeSpan TripDuration { get; set; }
     public short TotalSeats { get; set; }
     public short AvailableSeatsCount { get; set; }

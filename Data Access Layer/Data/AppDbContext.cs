@@ -7,7 +7,6 @@ using Core_Layer.Entities.Payment;
 using Core_Layer.Entities.Actors.ServiceProvider.Registeration_Request;
 using Core_Layer.Entities.Actors.ServiceProvider;
 using Core_Layer.Entities;
-using Core_Layer.Entities.Actors.ServiceProvider.PaymentAccount;
 using Core_Layer.Entities.Trip.Reservation;
 
 namespace Data_Access_Layer.Data
@@ -29,10 +28,7 @@ namespace Data_Access_Layer.Data
         public DbSet<ReservationEntity> Reservations { get; set; }
         public DbSet<PassengerEntity> Passengers { get; set; }
         public DbSet<PaymentEntity> Payments { get; set; }
-        public DbSet<PaymentInfoEntity> PaymentInfos { get; set; }
-        public DbSet<PaymentAccountEntity> PaymentAccounts { get; set; }
         public DbSet<CurrencyEntity> Currencys { get; set; }
-        public DbSet<PayPalAccountEntity> PayPalAccounts { get; set; }
         public DbSet<InvoiceEntity> Invoices { get; set; }
         public DbSet<TicketEntity> Tickets { get; set; }
         public DbSet<BusinessEntity> Businesses { get; set; }
@@ -46,11 +42,10 @@ namespace Data_Access_Layer.Data
             .HasForeignKey<ServiceProviderEntity>(sp => sp.BusinessID)
             .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<PayPalAccountEntity>()
-           .HasIndex(p => p.AccountEmail)
-           .IsUnique()
-           .HasDatabaseName("IX_Unique_AccountEmail");
-
+            modelBuilder.Entity<PersonEntity>()
+            .HasIndex(p => p.NationalID)
+            .IsUnique()
+            .HasDatabaseName("IX_Person_NationalID");
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
                 foreach (var foreignKey in entityType.GetForeignKeys()) 
                         foreignKey.DeleteBehavior = DeleteBehavior.Restrict;

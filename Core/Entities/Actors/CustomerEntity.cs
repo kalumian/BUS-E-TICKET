@@ -1,4 +1,5 @@
 ﻿using Core_Layer.Entities.Locations;
+using Core_Layer.Entities.Trip.Reservation;
 using Core_Layer.Enums;
 using Core_Layer.Interfaces.Actors_Interfaces;
 using System;
@@ -39,6 +40,7 @@ namespace Core_Layer.Entities.Actors
 
         public PersonEntity? Person { get; set; }
         public  AddressEntity? Address { get; set; }
+        public  ReservationEntity? Reservations { get; set; }
         public ContactInformationEntity? ContactInformation { get; set; }
         public AuthoUser? Account { get; set; }
 

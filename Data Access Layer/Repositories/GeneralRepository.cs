@@ -62,6 +62,10 @@ namespace Data_Access_Layer.Repositories
         {
             return _dbSet.Find(id);
         }
+        public async Task<T?> GetByIdAsync(object id)
+        {
+            return await _dbSet.FindAsync(id);
+        }
         //public T? GetGByIds(object id)
         //{
         //    return _dbSet.Get(id);
