@@ -15,7 +15,7 @@ namespace Data_Access_Layer
         {
             var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
 
-            optionsBuilder.UseSqlServer(DatabaseConnectionSettings.DatabaseStringConnection);
+            optionsBuilder.UseNpgsql(DatabaseConnectionSettings.DatabaseStringConnection);
 
             return new AppDbContext(optionsBuilder.Options);
         }

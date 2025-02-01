@@ -34,10 +34,10 @@ namespace Business_Logic_Layer.Services.Actors
             try
             {
                 // Verify role
-                EnsureAdminRole();
+                //EnsureAdminRole();
 
                 // Verify creator exists
-                CheckEntityExist<ManagerEntity>(i => i.ManagerID == registerManagerAccountDTO.CreatedByID);
+                //CheckEntityExist<ManagerEntity>(i => i.ManagerID == registerManagerAccountDTO.CreatedByID);
 
                 AuthoUser user = await CreateUserAccountAsync(registerManagerAccountDTO.Account);
 

@@ -23,7 +23,7 @@ builder.Services.AddSwaggarWithJtwConfig();
 
 // Connection With Database
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(DatabaseConnectionSettings.DatabaseStringConnection),
+    options.UseNpgsql(DatabaseConnectionSettings.DatabaseStringConnection),
     ServiceLifetime.Scoped);
 
 // Identity Service Initilization

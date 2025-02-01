@@ -3,8 +3,8 @@ using System;
 using Data_Access_Layer.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -18,77 +18,77 @@ namespace Data_Access_Layer.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "8.0.0")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("Core_Layer.Entities.Actors.AuthoUser", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("AccountStatus")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("character varying(256)");
 
                     b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime?>("LastLoginDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("PasswordHash")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<int>("Permission")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
+                        .HasColumnType("character varying(15)");
 
                     b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime>("RegisterationDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("SecurityStamp")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("character varying(256)");
 
                     b.HasKey("Id");
 
@@ -97,8 +97,7 @@ namespace Data_Access_Layer.Migrations
 
                     b.HasIndex("NormalizedUserName")
                         .IsUnique()
-                        .HasDatabaseName("UserNameIndex")
-                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+                        .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
                 });
@@ -107,22 +106,22 @@ namespace Data_Access_Layer.Migrations
                 {
                     b.Property<int>("CustomerID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CustomerID"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("CustomerID"));
 
                     b.Property<string>("AccountID")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<int>("AddressID")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("ContactInformationID")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("PersonID")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("CustomerID");
 
@@ -141,16 +140,16 @@ namespace Data_Access_Layer.Migrations
                 {
                     b.Property<int>("ManagerID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ManagerID"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ManagerID"));
 
                     b.Property<string>("AccountID")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<int>("CreatedByID")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("ManagerID");
 
@@ -165,12 +164,12 @@ namespace Data_Access_Layer.Migrations
                 {
                     b.Property<int>("PassengerID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PassengerID"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("PassengerID"));
 
                     b.Property<int>("PersonID")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("PassengerID");
 
@@ -183,30 +182,30 @@ namespace Data_Access_Layer.Migrations
                 {
                     b.Property<int>("PersonID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PersonID"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("PersonID"));
 
                     b.Property<DateTime>("BirthDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<int>("Gender")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<string>("NationalID")
                         .IsRequired()
                         .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
+                        .HasColumnType("character varying(15)");
 
                     b.HasKey("PersonID");
 
@@ -221,39 +220,39 @@ namespace Data_Access_Layer.Migrations
                 {
                     b.Property<int>("BusinessID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BusinessID"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("BusinessID"));
 
                     b.Property<int>("AddressID")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("BusinessLicenseNumber")
                         .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("character varying(20)");
 
                     b.Property<string>("BusinessName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<int>("ContactInformationID")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("LogoURL")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
+                        .HasColumnType("character varying(15)");
 
                     b.Property<string>("WebSiteLink")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.HasKey("BusinessID");
 
@@ -269,22 +268,22 @@ namespace Data_Access_Layer.Migrations
                 {
                     b.Property<int>("SPRegRequestID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SPRegRequestID"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("SPRegRequestID"));
 
                     b.Property<int>("BusinessID")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Notes")
                         .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("character varying(500)");
 
                     b.Property<DateTime>("RequestDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("Status")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("SPRegRequestID");
 
@@ -297,26 +296,26 @@ namespace Data_Access_Layer.Migrations
                 {
                     b.Property<int>("ResponseID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ResponseID"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ResponseID"));
 
                     b.Property<int>("RequestID")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int?>("RespondedByID")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("ResponseDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ResponseText")
                         .IsRequired()
                         .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("character varying(500)");
 
                     b.Property<bool>("Result")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.HasKey("ResponseID");
 
@@ -332,17 +331,17 @@ namespace Data_Access_Layer.Migrations
                 {
                     b.Property<int>("ServiceProviderID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ServiceProviderID"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ServiceProviderID"));
 
                     b.Property<string>("AccountID")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<int?>("BusinessID")
                         .IsRequired()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("ServiceProviderID");
 
@@ -358,33 +357,33 @@ namespace Data_Access_Layer.Migrations
                 {
                     b.Property<int>("ContactInformationID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ContactInformationID"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ContactInformationID"));
 
                     b.Property<string>("Facebook")
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<string>("Instagram")
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<string>("LandLineNumber")
                         .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
+                        .HasColumnType("character varying(15)");
 
                     b.Property<string>("LinkedIn")
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<string>("MobileNumber2")
                         .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
+                        .HasColumnType("character varying(15)");
 
                     b.Property<string>("Twitter")
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.HasKey("ContactInformationID");
 
@@ -395,19 +394,19 @@ namespace Data_Access_Layer.Migrations
                 {
                     b.Property<int>("CurrencyID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CurrencyID"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("CurrencyID"));
 
                     b.Property<string>("CurrencyCode")
                         .IsRequired()
                         .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                        .HasColumnType("character varying(10)");
 
                     b.Property<string>("CurrencyName")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.HasKey("CurrencyID");
 
@@ -418,19 +417,19 @@ namespace Data_Access_Layer.Migrations
                 {
                     b.Property<int>("AddressID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AddressID"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("AddressID"));
 
                     b.Property<string>("AdditionalDetails")
                         .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
+                        .HasColumnType("character varying(250)");
 
                     b.Property<int>("CityID")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int?>("StreetID")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("AddressID");
 
@@ -445,17 +444,17 @@ namespace Data_Access_Layer.Migrations
                 {
                     b.Property<int>("CityID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CityID"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("CityID"));
 
                     b.Property<string>("CityName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<int>("RegionID")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("CityID");
 
@@ -468,14 +467,14 @@ namespace Data_Access_Layer.Migrations
                 {
                     b.Property<int>("CountryID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CountryID"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("CountryID"));
 
                     b.Property<string>("CountryName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.HasKey("CountryID");
 
@@ -486,22 +485,22 @@ namespace Data_Access_Layer.Migrations
                 {
                     b.Property<int>("LocationID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LocationID"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("LocationID"));
 
                     b.Property<int>("AddressID")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("LocationName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("LocationURL")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.HasKey("LocationID");
 
@@ -514,17 +513,17 @@ namespace Data_Access_Layer.Migrations
                 {
                     b.Property<int>("RegionID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RegionID"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("RegionID"));
 
                     b.Property<int>("CountryID")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("RegionName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.HasKey("RegionID");
 
@@ -537,17 +536,17 @@ namespace Data_Access_Layer.Migrations
                 {
                     b.Property<int>("StreetID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("StreetID"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("StreetID"));
 
                     b.Property<int>("CityID")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("StreetName")
                         .IsRequired()
                         .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
+                        .HasColumnType("character varying(150)");
 
                     b.HasKey("StreetID");
 
@@ -560,46 +559,46 @@ namespace Data_Access_Layer.Migrations
                 {
                     b.Property<int>("PaymentID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PaymentID"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("PaymentID"));
 
                     b.Property<int?>("CurrencyID")
                         .IsRequired()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<decimal>("DiscountAmount")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("numeric");
 
                     b.Property<bool>("IsRefundable")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("OrderID")
                         .IsRequired()
                         .HasMaxLength(300)
-                        .HasColumnType("nvarchar(300)");
+                        .HasColumnType("character varying(300)");
 
                     b.Property<DateTime>("PaymentDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("PaymentMethod")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("PaymentStatus")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int?>("ReservationID")
                         .IsRequired()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<decimal>("TotalAmount")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("numeric");
 
                     b.Property<decimal>("TripAmount")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("numeric");
 
                     b.Property<decimal>("VAT")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("numeric");
 
                     b.HasKey("PaymentID");
 
@@ -614,20 +613,20 @@ namespace Data_Access_Layer.Migrations
                 {
                     b.Property<int>("InvoiceID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("InvoiceID"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("InvoiceID"));
 
                     b.Property<string>("InvoiceNumber")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<DateTime>("IssueDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("PaymentID")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("InvoiceID");
 
@@ -641,30 +640,29 @@ namespace Data_Access_Layer.Migrations
                 {
                     b.Property<int?>("ReservationID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("ReservationID"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int?>("ReservationID"));
 
                     b.Property<int?>("CustomerID")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("PassengerID")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("ReservationDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("ReservationStatus")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("TripID")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("ReservationID");
 
                     b.HasIndex("CustomerID")
-                        .IsUnique()
-                        .HasFilter("[CustomerID] IS NOT NULL");
+                        .IsUnique();
 
                     b.HasIndex("PassengerID");
 
@@ -677,20 +675,20 @@ namespace Data_Access_Layer.Migrations
                 {
                     b.Property<int>("TicketID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TicketID"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("TicketID"));
 
                     b.Property<int>("InvoiceID")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("IssueDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("PNR")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.HasKey("TicketID");
 
@@ -704,47 +702,47 @@ namespace Data_Access_Layer.Migrations
                 {
                     b.Property<int>("TripID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TripID"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("TripID"));
 
                     b.Property<int>("CurrencyID")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("DriverInfo")
                         .IsRequired()
                         .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
+                        .HasColumnType("character varying(250)");
 
                     b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("EndLocationID")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<DateTime?>("EstimatedArrivalDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("numeric");
 
                     b.Property<int>("ServiceProviderID")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("StartLocationID")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<short>("TotalSeats")
                         .HasColumnType("smallint");
 
                     b.Property<TimeSpan>("TripDuration")
-                        .HasColumnType("time");
+                        .HasColumnType("interval");
 
                     b.Property<int>("TripStatus")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<short>("VehicleCapacity")
                         .HasColumnType("smallint");
@@ -752,7 +750,7 @@ namespace Data_Access_Layer.Migrations
                     b.Property<string>("VehicleInfo")
                         .IsRequired()
                         .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
+                        .HasColumnType("character varying(250)");
 
                     b.HasKey("TripID");
 
@@ -770,26 +768,25 @@ namespace Data_Access_Layer.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("NormalizedName")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("character varying(256)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedName")
                         .IsUnique()
-                        .HasDatabaseName("RoleNameIndex")
-                        .HasFilter("[NormalizedName] IS NOT NULL");
+                        .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles", (string)null);
                 });
@@ -798,19 +795,19 @@ namespace Data_Access_Layer.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("RoleId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -823,19 +820,19 @@ namespace Data_Access_Layer.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -847,17 +844,17 @@ namespace Data_Access_Layer.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ProviderKey")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ProviderDisplayName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
@@ -869,10 +866,10 @@ namespace Data_Access_Layer.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
                     b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("RoleId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.HasKey("UserId", "RoleId");
 
@@ -884,16 +881,16 @@ namespace Data_Access_Layer.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
                     b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Value")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 

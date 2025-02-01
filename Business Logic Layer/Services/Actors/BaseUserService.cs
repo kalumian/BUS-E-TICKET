@@ -55,7 +55,7 @@ namespace Business_Logic_Layer.Services.Actors
                 UserName = registerAccountDTO.UserName,
                 Email = registerAccountDTO.Email,
                 PhoneNumber = registerAccountDTO.PhoneNumber,
-                RegisterationDate = DateTime.Now,
+                RegisterationDate = DateTime.UtcNow,
                 AccountStatus = status,
             };
 
