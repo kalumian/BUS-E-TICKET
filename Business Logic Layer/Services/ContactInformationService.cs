@@ -12,10 +12,7 @@ using System.Threading.Tasks;
 
 namespace Business_Logic_Layer.Services
 {
-    public class ContactInformationService : GeneralService
+    public class ContactInformationService(IUnitOfWork unitOfWork) : GeneralService(unitOfWork)
     {
-        public ContactInformationService(IUnitOfWork unitOfWork) : base(unitOfWork)
-        {
-        }
     }
 }

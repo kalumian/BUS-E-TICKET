@@ -20,7 +20,7 @@ namespace BUS_E_TICKET.Controllers
                 ? throw new BadRequestException("Payment confirmation failed.")
                 :
                 Ok(Utilities.ResponeHelper.GetApiRespone(
-                    IsSuccess: true,
+                    StatusCode: 200,
                     Message: "Payment was successful. Reservation is now confirmed.",
                     Data: paymentConfirmed
                 )

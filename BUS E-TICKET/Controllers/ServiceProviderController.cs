@@ -22,7 +22,7 @@ namespace BUS_E_TICKET.Controllers
         public async Task<IActionResult> RegistrationRequest(SPRegRequestDTO requestDTO)
         {
             var request = await _SPRegRequestService.CreateRequestAsync(requestDTO);
-            return Ok(ResponeHelper.GetApiRespone("Service Provider Registration Request created successfully", true, new { request }));
+            return Ok(ResponeHelper.GetApiRespone(StatusCode: 200, Message: "Service Provider Registration Request created successfully",Data: new { request }));
         }
 
 
@@ -37,7 +37,6 @@ namespace BUS_E_TICKET.Controllers
 
             return Ok(new ApiResponse
             {
-                IsSuccess = true,
                 Message = "Data fetched successfully.",
                 Data = new { Requests = requests }
             });
@@ -54,7 +53,6 @@ namespace BUS_E_TICKET.Controllers
 
             return Ok(new ApiResponse
             {
-                IsSuccess = true,
                 Message = "Registration request accepted and created a Service Provider Account successfully.",
                 Data = new { ResponseID = responseId }
             });

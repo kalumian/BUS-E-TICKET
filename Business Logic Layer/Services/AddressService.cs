@@ -11,11 +11,8 @@ using System.Threading.Tasks;
 
 namespace Business_Logic_Layer.Services
 {
-    public class AddressService : GeneralService
+    public class AddressService(IUnitOfWork unitOfWork) : GeneralService(unitOfWork)
     {
-        public AddressService(IUnitOfWork unitOfWork) : base(unitOfWork)
-        {
-        }
         public async Task<int> CreateEntityAsync(AddressEntity Address, bool saveChanges = false)
         {
             

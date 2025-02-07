@@ -8,12 +8,8 @@ using Core_Layer.Exceptions;
 
 namespace Business_Logic_Layer.Services
 {
-    public class InvoiceService : GeneralService
+    public class InvoiceService(IUnitOfWork unitOfWork) : GeneralService(unitOfWork)
     {
-        public InvoiceService(IUnitOfWork unitOfWork) : base(unitOfWork)
-        {
-        }
-
         public async Task<InvoiceEntity> CreateInvoiceAsync(PaymentEntity payment)
         {
             _ = await _unitOfWork.Payments.GetByIdAsync(payment.PaymentID) ?? throw new NotFoundException("Payment not found.");

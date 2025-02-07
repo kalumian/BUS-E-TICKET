@@ -1,17 +1,14 @@
-﻿using Business_Logic_Layer.Services.Actors.ServiceProvider;
-using Business_Logic_Layer.Utilities;
+﻿using Business_Logic_Layer.Utilities;
 using Core_Layer.DTOs;
 using Core_Layer.Entities.Actors;
-using Core_Layer.Entities.Actors.ServiceProvider;
 using Core_Layer.Enums;
 using Core_Layer.Exceptions;
 using Core_Layer.Interfaces;
 using Data_Access_Layer.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq.Expressions;
 using System.Security.Claims;
 
 namespace Business_Logic_Layer.Services.Actors
@@ -108,8 +105,13 @@ namespace Business_Logic_Layer.Services.Actors
             if (user.AccountStatus != EnAccountStatus.Active)
                 throw new BadRequestException("Login failed. Your account is not active.");
 
+            var isPasswordValid = await _userManager.CheckPasswordAsync(user, loginInfo.Password);
+            if (!isPasswordValid)
+                throw new BadRequestException("Login failed. Please check your username or password.");
+
+
             // Get user role
-            var userRole = await _unitOfWork.Managers.GetUserRole(user.Id);
+            var userRole = await GetUserRoleAsync(user.Id);
 
             // Verify user role
             LoginVerificationHelper.Check(userRole);
@@ -135,6 +137,14 @@ namespace Business_Logic_Layer.Services.Actors
             return Enum.TryParse(roleClaim.Value, out EnUserRole userRole)
                 ? userRole
                 : throw new InvalidOperationException("Invalid user role.");
+        }
+
+        public async Task<EnUserRole> GetUserRoleAsync(string userId)
+        {
+            if (await _unitOfWork.Customers.AnyAsync(c => c.AccountID == userId)) return EnUserRole.Customer; 
+            if (await _unitOfWork.Managers.AnyAsync(m => m.AccountID == userId)) return EnUserRole.Admin; 
+            if (await _unitOfWork.ServiceProviders.AnyAsync(s => s.AccountID == userId)) return EnUserRole.Provider;
+            return EnUserRole.Unkown;
         }
 
         public void CheckRole(string role)
@@ -201,16 +211,13 @@ namespace Business_Logic_Layer.Services.Actors
 
             return userId;
         }
-        public void EnsureOwnership<T>(int entityId) where T : class, IAccount
+        public void EnsureOwnership<T>(int entityId) where T : class, Core_Layer.Interfaces.IAccount
         {
             // الحصول على معرف المستخدم المسجل الدخول
             string loggedInUserId = GetLoggedInUserId();
 
             // جلب الكيان بناءً على ID
-            var entity = _unitOfWork.GetDynamicRepository<T>().GetById(entityId);
-
-            if (entity == null)
-                throw new NotFoundException($"{typeof(T).Name} with ID {entityId} not found.");
+            var entity = _unitOfWork.GetDynamicRepository<T>().GetById(entityId) ?? throw new NotFoundException($"{typeof(T).Name} with ID {entityId} not found.");
 
             // التحقق من أن الكيان مملوك للمستخدم المسجل الدخول
             if (entity.AccountID != loggedInUserId)

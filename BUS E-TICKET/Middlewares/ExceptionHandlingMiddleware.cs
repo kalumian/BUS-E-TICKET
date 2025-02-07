@@ -1,4 +1,5 @@
 ﻿using Core_Layer.Exceptions;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BUS_E_TICKET.Middlewares
 {
@@ -30,12 +31,10 @@ namespace BUS_E_TICKET.Middlewares
         {
             context.Response.StatusCode = exception.StatusCode;
             context.Response.ContentType = "application/json";
-
-            var response = new
-            {
-                Error = exception.Message.ToString(),
-                exception.StatusCode
-            };
+            var response = Utilities.ResponeHelper.GetApiRespone(
+                StatusCode: Convert.ToInt16(exception.StatusCode),
+                Error: exception.Message.ToString()
+            );
             return context.Response.WriteAsJsonAsync(response);
         }
         private static Task HandleExceptionAsync(HttpContext context, Exception exception)

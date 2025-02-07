@@ -10,9 +10,9 @@ using Business_Logic_Layer.Services.Actors.ServiceProvider;
 using BUS_E_TICKET.Extensions;
 using Business_Logic_Layer.Services.Payment;
 using Core_Layer.Configurations;
-using Core_Layer.Interfaces.Payment;
 
 var builder = WebApplication.CreateBuilder();
+
 
 // Add services to the container.
 builder.Services.AddControllers().AddNewtonsoftJson();
@@ -20,7 +20,15 @@ builder.Services.AddControllers().AddNewtonsoftJson();
 // Register Swagger services for API documentation.
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggarWithJtwConfig();
-
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhost", policy =>
+    {
+        policy.WithOrigins("http://localhost:3000") 
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 // Connection With Database
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(DatabaseConnectionSettings.DatabaseStringConnection),
@@ -54,6 +62,7 @@ builder.Services.AddScoped<ReservationService>();
 builder.Services.AddHostedService<ReservationBackgroundService>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddCustomJwtAuth(builder.Configuration);
+builder.Services.AddScoped<DashboardService>();
 
 
 
@@ -71,7 +80,7 @@ if (app.Environment.IsDevelopment())
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
-
+app.UseCors("AllowLocalhost");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

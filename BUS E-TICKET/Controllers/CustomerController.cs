@@ -25,7 +25,7 @@ namespace BUS_E_TICKET.Controllers
         {
             var Customer = await _customerService.RegisterAsync(user);
 
-            return Ok(ResponeHelper.GetApiRespone("Customer registered successfully", true, new { Customer }));
+            return Ok(ResponeHelper.GetApiRespone(Message: "Customer registered successfully", Data: new { Customer }, StatusCode: 200));
         }
     }
 }

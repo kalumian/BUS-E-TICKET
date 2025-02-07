@@ -28,7 +28,7 @@ namespace BUS_E_TICKET.Controllers
             var Manager = await _managerService.RegisterAsync(User);
 
             //Result
-            return Ok(ResponeHelper.GetApiRespone("Manager registered successfully", true, new { Manager }));
+            return Ok(ResponeHelper.GetApiRespone(StatusCode: 200, Message: "registered successfully", Data: new { Manager }));
         }
 
     }

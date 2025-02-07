@@ -20,10 +20,10 @@ namespace Data_Access_Layer.UnitOfWork
 {
     public interface IUnitOfWork
     {
-        IUserRepository<CustomerEntity> Customers { get; }
+        IRepository<CustomerEntity> Customers { get; }
         IRepository<PersonEntity> People { get; }
-        IUserRepository<ServiceProviderEntity> ServiceProviders { get; }
-        IUserRepository<ManagerEntity> Managers { get; }
+        IRepository<ServiceProviderEntity> ServiceProviders { get; }
+        IRepository<ManagerEntity> Managers { get; }
         IRepository<TicketEntity> Tickets { get; }
         IRepository<AddressEntity> Addresses { get; }
         IRepository<LocationEntity> Locations { get; }

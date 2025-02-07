@@ -19,49 +19,26 @@ using System.Threading.Tasks;
 
 namespace Data_Access_Layer.UnitOfWork
 {
-    public class UnitOfWork : IUnitOfWork
+    public class UnitOfWork(AppDbContext dbContext) : IUnitOfWork
     {
-        private readonly AppDbContext _context;
-        public IUserRepository<CustomerEntity> Customers { get; private set; }
-        public IRepository<LocationEntity> Locations { get; }
-        public IUserRepository<ManagerEntity> Managers { get; private set; }
-        public IUserRepository<ServiceProviderEntity> ServiceProviders { get; private set; }
-        public IRepository <PersonEntity> People { get; private set; }
-        public IRepository<AddressEntity> Addresses { get; private set; }
-        public IRepository<TripEntity> Trips { get; private set; }
-        public IRepository<ContactInformationEntity> ContactInformations { get; private set; }
+        private readonly AppDbContext _context = dbContext;
+        public IRepository<CustomerEntity> Customers { get; private set; } = new GeneralRepository<CustomerEntity>(dbContext);
+        public IRepository<LocationEntity> Locations { get; } = new GeneralRepository<LocationEntity>(dbContext);
+        public IRepository<ManagerEntity> Managers { get; private set; } = new GeneralRepository<ManagerEntity>(dbContext);
+        public IRepository<ServiceProviderEntity> ServiceProviders { get; private set; } = new GeneralRepository<ServiceProviderEntity>(dbContext);
+        public IRepository<PersonEntity> People { get; private set; } = new GeneralRepository<PersonEntity>(dbContext);
+        public IRepository<AddressEntity> Addresses { get; private set; } = new GeneralRepository<AddressEntity>(dbContext);
+        public IRepository<TripEntity> Trips { get; private set; } = new GeneralRepository<TripEntity>(dbContext);
+        public IRepository<ContactInformationEntity> ContactInformations { get; private set; } = new GeneralRepository<ContactInformationEntity>(dbContext);
+        public IRepository<BusinessEntity> Businesses { get; private set; } = new GeneralRepository<BusinessEntity>(dbContext);
+        public IRepository<PassengerEntity> Passengers { get; private set; } = new GeneralRepository<PassengerEntity>(dbContext);
+        public IRepository<SPRegRequestEntity> SPRegRequests { get; private set; } = new GeneralRepository<SPRegRequestEntity>(dbContext);
+        public IRepository<SPRegResponseEntity> SPRegResponses { get; private set; } = new GeneralRepository<SPRegResponseEntity>(dbContext);
+        public IRepository<PaymentEntity> Payments { get; private set; } = new GeneralRepository<PaymentEntity>(dbContext);
+        public IRepository<InvoiceEntity> Invoices { get; private set; } = new GeneralRepository<InvoiceEntity>(dbContext);
+        public IRepository<ReservationEntity> Reservations { get; private set; } = new GeneralRepository<ReservationEntity>(dbContext);
+        public IRepository<TicketEntity> Tickets { get; } = new GeneralRepository<TicketEntity>(dbContext);
 
-        public IRepository<BusinessEntity> Businesses { get; private set; }
-        public IRepository<PassengerEntity> Passengers { get; private set; }
-
-        public IRepository<SPRegRequestEntity> SPRegRequests { get; private set; }
-
-        public IRepository<SPRegResponseEntity> SPRegResponses { get; private set; }
-        public IRepository<PaymentEntity> Payments { get; private set; }
-        public IRepository<InvoiceEntity> Invoices { get; private set; }
-        public IRepository<ReservationEntity> Reservations { get; private set; }
-        public IRepository<TicketEntity> Tickets { get; }
-
-        public UnitOfWork(AppDbContext dbContext)
-        {
-            _context = dbContext;
-            Customers = new UserRepository<CustomerEntity>(dbContext);
-            People = new GeneralRepository<PersonEntity>(dbContext);
-            ServiceProviders = new UserRepository<ServiceProviderEntity>(dbContext);
-            Managers = new UserRepository<ManagerEntity>(dbContext);
-            SPRegRequests = new UserRepository<SPRegRequestEntity>(dbContext);
-            Businesses = new UserRepository<BusinessEntity>(dbContext);
-            Addresses = new GeneralRepository<AddressEntity>(dbContext);
-            ContactInformations = new GeneralRepository<ContactInformationEntity>(dbContext);
-            SPRegResponses = new GeneralRepository<SPRegResponseEntity>(dbContext);
-            Trips = new GeneralRepository<TripEntity>(dbContext);
-            Locations = new GeneralRepository<LocationEntity>(dbContext);
-            Invoices = new GeneralRepository<InvoiceEntity>(dbContext);
-            Passengers = new GeneralRepository<PassengerEntity>(dbContext);
-            Payments = new GeneralRepository<PaymentEntity>(dbContext);
-            Reservations = new GeneralRepository<ReservationEntity>(dbContext);
-            Tickets = new GeneralRepository<TicketEntity>(dbContext);
-        }
         public IRepository<T> GetDynamicRepository<T>() where T : class
         {
             return new GeneralRepository<T>(_context);

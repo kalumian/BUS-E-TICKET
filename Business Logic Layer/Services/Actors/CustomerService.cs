@@ -11,21 +11,15 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Business_Logic_Layer.Services.Actors
 {
-    public class CustomerService : BaseUserService
+    public class CustomerService(
+        UserManager<AuthoUser> userManager,
+        IUnitOfWork unitOfWork,
+        IMapper mapper,
+        AddressService addressService,
+        ContactInformationService contactService, IHttpContextAccessor httpContextAccessor) : BaseUserService(userManager, unitOfWork, httpContextAccessor)
     {
-        private IMapper _mapper;
-        private AddressService _addressService;
-
-        public CustomerService(
-            UserManager<AuthoUser> userManager,
-            IUnitOfWork unitOfWork,
-            IMapper mapper,
-            AddressService addressService,
-            ContactInformationService contactService, IHttpContextAccessor httpContextAccessor) : base(userManager, unitOfWork, httpContextAccessor)
-        {
-            _mapper = mapper;
-            _addressService = addressService;
-        }
+        private readonly IMapper _mapper = mapper;
+        private readonly AddressService _addressService = addressService;
 
 
         // Main Registration Flow

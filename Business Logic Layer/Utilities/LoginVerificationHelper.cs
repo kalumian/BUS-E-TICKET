@@ -20,10 +20,10 @@ namespace Business_Logic_Layer.Utilities
                 // Create claims
                 var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.Name, user.UserName),
-            new Claim(ClaimTypes.NameIdentifier, user.Id),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim(ClaimTypes.Role, userRole.ToString())
+            new(ClaimTypes.Name, user.UserName),
+            new(ClaimTypes.NameIdentifier, user.Id),
+            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new(ClaimTypes.Role, userRole.ToString())
         };
 
                 // Create key and signing credentials

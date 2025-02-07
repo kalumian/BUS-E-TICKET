@@ -17,7 +17,7 @@ namespace BUS_E_TICKET.Controllers
             var reservation = await _reservationService.CreateReservationAsync(reservationDTO, baseApiUrl);
 
             return Ok(ResponeHelper.GetApiRespone(
-                IsSuccess: true,
+                StatusCode:200,
                 Message: "Reservation created successfully. Complete payment using the provided link.",
                 Data: reservation
             ));

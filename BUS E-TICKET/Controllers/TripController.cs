@@ -21,7 +21,6 @@ public class TripController(TripService tripService) : ControllerBase
 
         return Ok(new ApiResponse
         {
-            IsSuccess = true,
             Message = "Trip created successfully.",
             Data = createdTrip
         });
@@ -33,7 +32,7 @@ public class TripController(TripService tripService) : ControllerBase
     {
         var trips = await _tripService.GetAllTripsAsync();
         return Ok(ResponeHelper.GetApiRespone(
-            IsSuccess: true,
+            StatusCode: 200,
             Message: "Trips fetched successfully.",
             Data: trips
         ));

@@ -6,13 +6,13 @@ namespace BUS_E_TICKET.Utilities
 {
     internal class ResponeHelper
     {
-        static public ApiResponse GetApiRespone(string Message,bool IsSuccess, object Data = null, List<string> Errors = null)
+        static public ApiResponse GetApiRespone(int StatusCode, string? Message = null, object? Data = null, string? Error = null)
         {
             return new ApiResponse() {
-            IsSuccess = IsSuccess,
             Message = Message,
             Data = Data,
-            Errors = Errors
+            Error = Error,
+            StatusCode = StatusCode
             };
         }
         static public string? GetTokenIssuer(IConfiguration configuration)

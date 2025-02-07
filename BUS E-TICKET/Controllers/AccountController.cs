@@ -2,11 +2,13 @@
 using Business_Logic_Layer.Services.Actors;
 using Core_Layer.DTOs;
 using Core_Layer.Enums;
+using Core_Layer.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace BUS_E_TICKET.Controllers
 {
@@ -25,12 +27,11 @@ namespace BUS_E_TICKET.Controllers
         {
             // get configurations
             TokenConfiguration config = ResponeHelper.GetTokenConfiguration(configuration);
-
             //Try to sign In
             JwtSecurityToken Token = await _baseUserService.Login(LoginInfo, config);
-
             //Result
-            return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(Token) });
+            return Ok(ResponeHelper.GetApiRespone(StatusCode: 200, Message: "User was logined successfuly", Data: new { Token = new JwtSecurityTokenHandler().WriteToken(Token) }));
         }
+
     }
 }
