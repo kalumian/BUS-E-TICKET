@@ -18,6 +18,6 @@ namespace Core_Layer.DTOs
         public DateTime ResponseDate { get; set; } = DateTime.Now;
         public bool Result { get; set; }
         public int RequestID { get; set; }
-        public int? RespondedByID { get; set; }
+        public string? RespondedByID { get; set; }
     }
 }

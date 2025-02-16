@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Core_Layer.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -14,5 +15,6 @@ namespace Core_Layer.DTOs
         public string? Password { get; set; }
         public string? Email { get; set; }
         public string? PhoneNumber { get; set; }
+        public EnAccountStatus EnAccountStatus { get; set; }
     }
 }

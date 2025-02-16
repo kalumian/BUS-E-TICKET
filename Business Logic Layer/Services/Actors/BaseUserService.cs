@@ -8,8 +8,10 @@ using Data_Access_Layer.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Identity.Client;
+using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 
 namespace Business_Logic_Layer.Services.Actors
 {
@@ -46,6 +48,15 @@ namespace Business_Logic_Layer.Services.Actors
             // Validate input
             await ValidateAccountAsync(registerAccountDTO);
 
+            if (string.IsNullOrWhiteSpace(registerAccountDTO.Email) || !new EmailAddressAttribute().IsValid(registerAccountDTO.Email))
+            {
+                throw new BadRequestException("Invalid email format.");
+            }
+
+            if (string.IsNullOrWhiteSpace(registerAccountDTO.PhoneNumber) || !Regex.IsMatch(registerAccountDTO.PhoneNumber, @"^\+?\d{9,15}$"))
+            {
+                throw new BadRequestException("Invalid phone number format.");
+            }
             // Map DTO to AuthoUser entity
             var authoUser = new AuthoUser
             {
@@ -85,11 +96,11 @@ namespace Business_Logic_Layer.Services.Actors
         private async Task ValidateAccountAsync(RegisterAccountDTO registerAccountDTO)
         {
             if (await IsUserExisitByEmail(registerAccountDTO.Email))
-                throw new BadRequestException("A user with the same email already exists.");
+                throw new BadRequestException("the email is already used.");
             if (await IsUserExistByPhone(registerAccountDTO.PhoneNumber))
-                throw new BadRequestException("A user with the same phone number already exists.");
+                throw new BadRequestException("the phone is already used.");
             if (await IsUserExistByUsername(registerAccountDTO.UserName))
-                throw new BadRequestException("A user with the same username already exists.");
+                throw new BadRequestException("the username is already used.");
         }
         public async Task<JwtSecurityToken> Login(UserLoginDTO loginInfo, TokenConfiguration config)
         {
@@ -109,7 +120,7 @@ namespace Business_Logic_Layer.Services.Actors
             if (!isPasswordValid)
                 throw new BadRequestException("Login failed. Please check your username or password.");
 
-
+            await CheakAccountStatus(user);
             // Get user role
             var userRole = await GetUserRoleAsync(user.Id);
 
@@ -121,7 +132,14 @@ namespace Business_Logic_Layer.Services.Actors
 
             return token;
         }
+        public async Task CheakAccountStatus(AuthoUser user)
+        {
+            if (user.AccountStatus == EnAccountStatus.Deleted)
+                throw new NotFoundException("Account Was Deleted");
+            if(user.AccountStatus == EnAccountStatus.Inactive)
+                throw new NotFoundException("Account Is Inactive");
 
+        }
         public EnUserRole GetCurrentUserRole()
         {
             // Ensure HttpContext is available
@@ -156,11 +174,7 @@ namespace Business_Logic_Layer.Services.Actors
         }
         public async Task ChangeUserStatus(EnAccountStatus Status, string userID)
         {
-            var user = await _userManager.FindByIdAsync(userID);
-            if (user == null)
-            {
-                throw new NotFoundException($"User with ID '{userID}' not found.");
-            }
+            var user = await _userManager.FindByIdAsync(userID) ?? throw new NotFoundException($"User with ID '{userID}' not found.");
             user.AccountStatus = Status;
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)

@@ -15,7 +15,7 @@ namespace Core_Layer.Entities.Locations
 
         [Required(ErrorMessage = "Region Name is required.")]
         [StringLength(100, ErrorMessage = "Region Name cannot exceed 100 characters.")]
-        public required string RegionName { get; set; }
+        public string RegionName { get; set; }
         #region Foreign Keys
 
         [ForeignKey("Country")]
@@ -26,7 +26,7 @@ namespace Core_Layer.Entities.Locations
 
         #region Navigation Properties
 
-        public required CountryEntity Country { get; set; }
+        public CountryEntity? Country { get; set; }
 
         public IEnumerable<CityEntity>? Cities { get; set; }
 

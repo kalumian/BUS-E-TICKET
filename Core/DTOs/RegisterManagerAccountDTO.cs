@@ -10,6 +10,6 @@ namespace Core_Layer.DTOs
     public class RegisterManagerAccountDTO
     {
         public required RegisterAccountDTO Account { get; set; }    
-        public required int CreatedByID { get; set; }
+        public required string CreatedByID { get; set; }
     }
 }

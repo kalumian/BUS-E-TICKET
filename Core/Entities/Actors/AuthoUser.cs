@@ -13,6 +13,7 @@ namespace Core_Layer.Entities.Actors
 {
     public class AuthoUser : IdentityUser
     {
+
         [DataType(DataType.DateTime)]
         [Display(Name = "Last Login Date")]
         public DateTime? LastLoginDate { get; set; }

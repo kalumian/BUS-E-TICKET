@@ -27,16 +27,13 @@ namespace Business_Logic_Layer.Services.Actors.ServiceProvider
         private readonly BaseUserService _baseUserService = baseUserService;
         private readonly ServiceProviderService _serviceProviderService = serviceProviderService;
 
-        public async Task<SPRegRequestDTO> CreateRequestAsync(SPRegRequestDTO requestDTO)
+        public async Task<SPRegRequestDTO> CreateApplicationAsync(SPRegRequestDTO requestDTO)
         {
             using var transaction = await _unitOfWork.BeginTransactionAsync();
             try
             {
                 // Check for existing approved or pending requests
                 ValidateExistingRequests(requestDTO);
-
-                // Validate uniqueness of user information
-                await ValidateUserInformationAsync(requestDTO);
 
                 // Map DTOs to entities
                 var contactInformation = _mapper.Map<ContactInformationEntity>(requestDTO.Business.ContactInformation);
@@ -65,16 +62,6 @@ namespace Business_Logic_Layer.Services.Actors.ServiceProvider
                 throw;
             }
 
-        }
-        private async Task ValidateUserInformationAsync(SPRegRequestDTO requestDTO)
-        {
-            if (await _serviceProviderService.IsUserInformationDuplicate(
-                    requestDTO.ServiceProvider.Account.Email,
-                    requestDTO.ServiceProvider.Account.PhoneNumber,
-                    requestDTO.ServiceProvider.Account.UserName))
-            {
-                throw new BadRequestException("Email, phone number, or username is already in use.");
-            }
         }
 
         private void ValidateExistingRequests(SPRegRequestDTO requestDTO)
@@ -114,7 +101,7 @@ namespace Business_Logic_Layer.Services.Actors.ServiceProvider
             CheckCreatedState<SPRegRequestEntity>(request.SPRegRequestID);
         }
 
-        public List<SPRegRequestDTO> GetAllRegistrationRequests(EnRegisterationRequestStatus? status = null)
+        public List<SPRegApplicationDisplayDTO> GetAllRegistrationApplication(EnRegisterationRequestStatus? status = null)
         {
             // Step 1: Ensure the user has the correct role
             _baseUserService.CheckRole(EnUserRole.Admin.ToString());
@@ -129,9 +116,21 @@ namespace Business_Logic_Layer.Services.Actors.ServiceProvider
             var requests = query.ToList();
             if (requests.Count == 0) return [];
 
-            return _mapper.Map<List<SPRegRequestDTO>>(requests);
+            return _mapper.Map<List<SPRegApplicationDisplayDTO>>(requests);
         }
+        public async Task<SPRegApplicationDisplayDTO> GetRegistertionApplicationByIDAsync(int id)
+        {
+            // Step 1: Ensure the user has the correct role
+            _baseUserService.CheckRole(EnUserRole.Admin.ToString());
 
+            // Step 2: Build the query with includes
+            var query = BuildRegistrationRequestQuery();
+
+            // Step 4: Execute query and map results
+            var requests = await query.FirstOrDefaultAsync(i => i.SPRegRequestID == id) ?? throw new NotFoundException("Is Not Found");
+
+            return _mapper.Map<SPRegApplicationDisplayDTO>(requests);
+        }
         private IQueryable<SPRegRequestEntity> BuildRegistrationRequestQuery()
         {
             return _unitOfWork.SPRegRequests.GetAllQueryable()

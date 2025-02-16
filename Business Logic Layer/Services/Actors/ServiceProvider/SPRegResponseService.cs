@@ -20,7 +20,7 @@ namespace Business_Logic_Layer.Services.Actors.ServiceProvider {
         private readonly IMapper _mapper = mapper;
         private  readonly ServiceProviderService _ServiceProviderService = serviceProviderService;
 
-        public async Task<SPRegResponseDTO> AcceptRegistrationRequestAsync(SPRegResponseDTO response)
+        public async Task<SPRegResponseDTO> ReviewRegistrationApplicationAsync(SPRegResponseDTO response)
         {
             using var transaction = await _unitOfWork.BeginTransactionAsync();
             try
@@ -32,7 +32,9 @@ namespace Business_Logic_Layer.Services.Actors.ServiceProvider {
                 var requestEntity = await GetRequestEntityAsync(response.RequestID);
 
                 // Validate the existence of related entities
-                await ValidateEntitiesExistenceAsync(response);
+                var managerExists = await _unitOfWork.Managers.FirstOrDefaultAsync(m => m.AccountID == response.RespondedByID) ??
+                    throw new NotFoundException($"Manager with ID {response.RespondedByID} not found.");
+                response.RespondedByID = managerExists.ManagerID.ToString();
 
                 // Validate the request status
                 ValidateRequestStatus(requestEntity);
@@ -58,12 +60,6 @@ namespace Business_Logic_Layer.Services.Actors.ServiceProvider {
                 await transaction.RollbackAsync();
                 throw;
             }
-        }
-        private async Task ValidateEntitiesExistenceAsync(SPRegResponseDTO response)
-        {
-            var managerExists = await _unitOfWork.Managers.ExistsAsync(m => m.ManagerID == response.RespondedByID);
-            if (!managerExists)
-                throw new NotFoundException($"Manager with ID {response.RespondedByID} not found.");
         }
         private async Task<SPRegRequestEntity> GetRequestEntityAsync(int requestId)
         {

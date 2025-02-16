@@ -31,20 +31,27 @@ namespace BUS_E_TICKET.Middlewares
         {
             context.Response.StatusCode = exception.StatusCode;
             context.Response.ContentType = "application/json";
+
+            // التحقق من وجود InnerException قبل الوصول إليها
+            var innerExceptionMessage = exception.InnerException?.Message ?? "";
+
+            // إنشاء استجابة تحتوي على رسالة الخطأ
             var response = Utilities.ResponeHelper.GetApiRespone(
                 StatusCode: Convert.ToInt16(exception.StatusCode),
-                Error: exception.Message.ToString()
+                Error: exception.Message.ToString() + " " + innerExceptionMessage
             );
+
             return context.Response.WriteAsJsonAsync(response);
         }
         private static Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
             context.Response.StatusCode = StatusCodes.Status500InternalServerError;
             context.Response.ContentType = "application/json";
+            var innerExceptionMessage = exception.InnerException?.Message ?? "";
 
             var response = new
             {
-                Error = "An unexpected error occurred." + exception.Message,
+                Error = "An unexpected error occurred." + exception.Message + " " + innerExceptionMessage,
                 StatusCode = 500
             };
 
