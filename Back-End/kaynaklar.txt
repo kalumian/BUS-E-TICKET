@@ -1,0 +1,66 @@
+[1] World Economic Forum, "The Global Information Technology Report 2013: Growth and Jobs in a Hyperconnected World," Chapter 1.2, 2013. [Online]. Available: https://www3.weforum.org/docs/GITR/2013/GITR_Chapter1.2_2013.pdf. [Accessed: Dec. 15, 2024].
+
+[2] P. Gupta and A. Gupta, "Exploring the impact of Software-as-a-Service (SaaS) on human resource management," 2022. [Online]. Available: https://consensus.app/papers/exploring-the-impact-of-software-as-a-service-saas-on-human-gupta-gupta/6bcccd3decf35147ac25ae2dec7f85f5/. [Accessed: Dec. 15, 2024].
+
+[3] L. Zhao and F. Guo, "The value creation of B2B2C e-business mode based on SaaS," 2023. [Online]. Available: https://consensus.app/papers/the-value-creation-of-b2b2c-ebusiness-mode-based-on-saas-zhao-guo/0727695188315c4cbcbcc2304c418f1a/. [Accessed: Dec. 15, 2024].
+
+[4] D. Teodorovic and M. Janić, "Public Transportation Systems," *Transportation Engineering*, 2022. [Online]. Available: https://consensus.app/papers/public-transportation-systems-teodorovic-janić/bcf329c3afbb53b8a9bf67d5325015d6/. [Accessed: Dec. 15, 2024].
+
+[5] D. L. Johnson, N. Hayman, and P. Veitch, "The evolution of a reliable transport network," IEEE Commun. Mag., vol. 37, pp. 52-57, 1999. [Online]. Available: https://consensus.app/papers/the-evolution-of-a-reliable-transport-network-johnson-hayman/d697961c3f6a521dafb5bbe2a0a255f3/. [Accessed: Dec. 15, 2024].
+
+[6] R. Buehler, J. Pucher, and O. Dümmler, "Verkehrsverbund: The evolution and spread of fully integrated regional public transport in Germany, Austria, and Switzerland," Int. J. Sustain. Transp., vol. 13, pp. 36-50, 2019. [Online]. Available: https://consensus.app/papers/verkehrsverbund-the-evolution-and-spread-of-fully-buehler-pucher/c38fbdc7161d57808a8842e043a4765f/. [Accessed: Dec. 15, 2024].
+
+[7] W. Kraft and D. Eng., "Opportunities and challenges for integrated transportation," 2001. [Online]. Available: https://consensus.app/papers/opportunities-and-challenges-for-integrated-kraft-eng/5c4942acf0765273bee9dbc96de8a6df/. [Accessed: Dec. 15, 2024].
+
+[8] الهيئة العامة للإحصاء, "ارتفاع عدد ركاب حافلات النقل العام في المملكة خلال عام 2022م," 2023. [Online]. Available: https://www.stats.gov.sa/ar/news/502. [Accessed: Dec. 15, 2024].
+
+[9] "وزير النقل يدشن مشروع النقل الجماعي بين المدن في السعودية," صحيفة الجزيرة, 2023. [Online]. Available: https://www.al-jazirah.com/2023/20231018/ec2.htm?utm_source=chatgpt.com. [Accessed: Dec. 15, 2024].
+[10] "أسماء وأقام شركات النقل الجماعي في السعودية 2024," موقع خَزنة, 2024. [Online]. Available: https://post.5aznh.com/mass-transportation-companies-ksa. [Accessed: Dec. 15, 2024].
+
+[11] "O-Bilet and EnUcuz: Digital integration in Turkish intercity transportation," 2023. [Online]. Available: https://www.o-bilet.com. [Accessed: Dec. 15, 2024].
+
+[12] "Booking.com: Enhancing global transportation integration," 2024. [Online]. Available: https://www.booking.com. [Accessed: Dec. 15, 2024].
+
+[13] IEEE, "Stakeholder Analysis in Software Project Management," IEEE Transactions on Software Engineering, vol. 46, no. 3, pp. 256-269, Mar. 2020. DOI: 10.1109/TSE.2020.2966432.
+
+[14] Backlinko, "SaaS Statistics: Growth Trends and Adoption," 2023. [Online]. Available: https://backlinko.com/saas-statistics?utm_source=chatgpt.com. [Accessed: Dec. 15, 2024].
+
+[15] Grand View Research, "B2C E-Commerce Market Size, Share & Trends Analysis Report," 2023. [Online]. Available: https://www.grandviewresearch.com/industry-analysis/b2c-e-commerce-market?utm_source=chatgpt.com. [Accessed: Dec. 15, 2024].
+
+[16] Backlinko, "Shopify Growth and Adoption Statistics," 2023. [Online]. Available: https://backlinko.com/saas-statistics?utm_source=chatgpt.com. [Accessed: Dec. 15, 2024].
+
+[17] Capital One Shopping, "Shopify Statistics: Latest Trends & Data," 2023. [Online]. Available: https://capitaloneshopping.com/research/shopify-statistics/?utm_source=chatgpt.com. [Accessed: Dec. 15, 2024].
+
+[18] D. L. Johnson, N. Hayman, and P. Veitch, "The evolution of a reliable transport network," IEEE Commun. Mag., 1999.
+
+[19] R. C. Martin, Clean Code: A Handbook of Agile Software Craftsmanship, Prentice Hall, 2008.
+
+[20] W. Kraft and D. Eng., "Opportunities and challenges for integrated transportation," 2001.
+
+[21] Micr. Docs, "Entity Framework Core Overview," Microsoft, 2024. [Online]. Available: https://learn.microsoft.com/en-us/ef/core/.
+
+[22] Micr, "Introduction to ASP.NET Core Identity," Microsoft Docs, 2024. [Online]. Available: https://learn.microsoft.com/en-us/aspnet/core/security/authentication/identity.
+
+[23] M. Fowler, Patterns of Enterprise Application Architecture, Addison-Wesley, 2002.
+
+[24] E. Gamma, R. Helm, R. Johnson, and J. Vlissides, Design Patterns: Elements of Reusable Object-Oriented Software, Addison-Wesley, 1994.
+
+[25] Microsoft Documentation, “EF Core Overview,” 2023. [Online]. Available:
+
+[26] E. Rahman, SQL Server 2019 Administration Inside Out, Microsoft Press, 2019.
+
+[27] Micr, "Next.js Documentation," 2024. [Online]. Available: https://nextjs.org/docs.
+
+[28] React Documentation, "React: A JavaScript Library for Building User Interfaces," 2024. [Online]. Available: https://reactjs.org/docs/getting-started.html.
+
+[29] Redux Documentation, "Redux for State Management," 2024. [Online]. Available: https://redux.js.org/.
+
+[30] Micr, "TypeScript Documentation," 2024. [Online]. Available: https://www.typescriptlang.org/docs/.
+
+[31] Micr, "Bootstrap Documentation," 2024. [Online]. Available: https://getbootstrap.com/docs/.
+
+[32] W3C, "CSS & HTML Overview," 2024. [Online]. Available: https://www.w3.org/.
+
+[33] Google Developers, "PWA Overview," 2024. [Online]. Available: https://developers.google.com/web/progressive-web-apps.
+
+
