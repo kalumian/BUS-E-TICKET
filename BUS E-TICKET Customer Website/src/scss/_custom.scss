@@ -1,0 +1,263 @@
+.ticket {
+    .ticket-container {
+      background: #fff;
+      border: 1px solid #dee2e6;
+      border-radius: 8px;
+  
+      @media print {
+        border: none;
+      }
+    }
+  
+    .company-logo {
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+    }
+  
+    .route-info, .time-info, .vehicle-info {
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      height: 100%;
+    }
+  
+    .ticket-header {
+      border-bottom: 2px dashed #dee2e6;
+      padding-bottom: 20px;
+    }
+  
+    @media print {
+      body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+    }
+  }
+  
+
+  .Invoice {
+    .invoice-container {
+        background: #fff;
+        border: 1px solid #dee2e6;
+        border-radius: 12px;
+      }
+      
+      .company-logo {
+        width: 70px;
+        height: 70px;
+        object-fit: contain;
+      }
+      
+      .invoice-header {
+        border-bottom: 2px solid #e9ecef;
+        padding-bottom: 1.5rem;
+      }
+      
+      .info-box {
+        transition: all 0.2s ease;
+      }
+      
+      .info-box:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.08) !important;
+      }
+      
+      .amount-box {
+        transition: all 0.2s ease;
+      }
+      
+      .amount-box:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.08) !important;
+      }
+      
+      @media print {
+        .invoice-container {
+          border: none;
+        }
+        
+        .info-box, .amount-box {
+          break-inside: avoid;
+        }
+      }
+  }
+  .SearchBooking {
+    .trip-info {
+        position: relative;
+        transition: all 0.3s ease;
+      }
+      
+      .trip-info:hover {
+        background-color: #f8f9fa !important;
+        transform: translateY(-2px);
+      }
+      
+      .shadow-sm {
+        transition: all 0.3s ease;
+      }
+      
+      .shadow-sm:hover {
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.08) !important;
+      }
+      .booking-card {
+        transition: all 0.3s ease;
+      }
+      
+      .booking-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.08) !important;
+      }
+      
+      .route-indicator {
+        min-width: 12px;
+      }
+      
+      @media (max-width: 768px) {
+        .border-start {
+          border-left: none !important;
+          border-top: 1px solid #dee2e6;
+          margin-top: 1rem;
+          padding-top: 1rem;
+        }
+      }
+  }
+
+  .Contact {
+    .project-card, .developer-card {
+        transition: all 0.3s ease;
+        overflow: hidden;
+      }
+      
+      .project-card:hover, .developer-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.1) !important;
+      }
+      
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+      }
+      
+      .feature-item {
+        text-align: center;
+        padding: 1.5rem;
+        border-radius: 8px;
+        background: #f8f9fa;
+        transition: all 0.3s ease;
+      }
+      
+      .feature-item:hover {
+        background: #fff;
+        transform: translateY(-5px);
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.05);
+      }
+      
+      .feature-item i {
+        font-size: 2rem;
+        color: var(--cui-primary);
+      }
+      
+      .developer-avatar {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: #f8f9fa;
+        transition: all 0.3s ease;
+      }
+      
+      .developer-avatar:hover {
+        transform: scale(1.05);
+      }
+      
+      .tech-stack {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+      
+      .badge {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+      }
+      
+      @media (max-width: 768px) {
+        .features-grid {
+          grid-template-columns: 1fr;
+          gap: 1rem;
+        }
+      }
+  }
+
+  .About{
+    .contact-info {
+        font-size: 0.9rem;
+      }
+      
+      .contact-info div {
+        margin-bottom: 0.5rem;
+      }
+      
+      .project-card {
+        transition: all 0.3s ease;
+        border: 1px solid rgba(0,0,0,0.1);
+      }
+      
+      .project-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.08);
+      }
+      
+      .social-links a {
+        font-size: 1.5rem;
+        color: var(--cui-primary);
+        transition: all 0.3s ease;
+      }
+      
+      .social-links a:hover {
+        color: var(--cui-primary-darker);
+        transform: translateY(-2px);
+      }
+      
+      .bg-indigo {
+        background-color: #6610f2;
+      }
+      
+      .bg-teal {
+        background-color: #20c997;
+      }
+      .tech-stack {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+      
+      .tech-stack .badge {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+        transition: all 0.2s ease;
+      }
+      
+      .tech-stack .badge:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      
+      .bg-pink {
+        background-color: #e83e8c;
+      }
+      
+      .bg-indigo {
+        background-color: #6610f2;
+      }
+      
+      .bg-teal {
+        background-color: #20c997;
+      }
+  }
