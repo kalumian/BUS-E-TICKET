@@ -83,14 +83,14 @@ const _nav: NavItem[] = [
     component: CNavItem,
     name: <Translation>{(t) => t('My Trips')}</Translation>,
     to: '/trips',
-    icon: <FaBus className="nav-icon" />,  // أيقونة العربة
+    icon: <FaBus className="nav-icon" />, 
     allowedRoles: [EnUserRole.Provider],
   },
   {
     component: CNavItem,
     name: 'Add New Trip',
     to: '/trips/add',
-    icon: <FaPlus className="nav-icon" />,  // أيقونة الباص
+    icon: <FaPlus className="nav-icon" />, 
     allowedRoles: [EnUserRole.Provider],
   },
   {
@@ -102,14 +102,14 @@ const _nav: NavItem[] = [
     component: CNavItem,
     name: <Translation>{(t) => t('All Bookings List')}</Translation> ,
     to: '/bookings',
-    icon: <IoIosList className="nav-icon" />,  // أيقونة قائمة الحجز
+    icon: <IoIosList className="nav-icon" />,  
     allowedRoles: [EnUserRole.Admin],
   },
   {
     component: CNavItem,
     name: <Translation>{(t) => t('All Bookings List')}</Translation> ,
     to: '/',
-    icon: <IoIosList className="nav-icon" />,  // أيقونة قائمة الحجز
+    icon: <IoIosList className="nav-icon" />, 
     allowedRoles: [EnUserRole.Provider],
   },
   {
@@ -120,37 +120,11 @@ const _nav: NavItem[] = [
     allowedRoles: [EnUserRole.Admin],
   },
   {
-    component: CNavTitle,
-    name: <Translation>{(t) => t('Others')}</Translation>,
-    allowedRoles: [EnUserRole.Admin, EnUserRole.Provider]
-  },
-  {
     component: CNavItem,
     name: <Translation>{(t) => t('Payments')}</Translation>,
-    to: '/',
-    icon: <FaRegCreditCard className="nav-icon" />,  // أيقونة المدفوعات
-    allowedRoles: [EnUserRole.Admin]
-  },
-  {
-    component: CNavItem,
-    name: <Translation>{(t) => t('Payments')}</Translation>,
-    to: '/',
-    icon: <FaRegCreditCard className="nav-icon" />,  // أيقونة المدفوعات
-    allowedRoles: [EnUserRole.Provider]
-  },
-  {
-    component: CNavItem,
-    name: 'Tickets',
-    to: '/',
-    icon: <FaTicketAlt  className="nav-icon" />,  // أيقونة التذاكر
-    allowedRoles: [EnUserRole.Admin],
-  },
-  {
-    component: CNavItem,
-    name: 'Tickets',
-    to: '/',
-    icon: <FaTicketAlt  className="nav-icon" />,  // أيقونة التذاكر
-    allowedRoles: [EnUserRole.Provider],
+    to: '/Payments',
+    icon: <FaRegCreditCard className="nav-icon" />, 
+    allowedRoles: [EnUserRole.Provider, EnUserRole.Admin]
   },
   
 ]
