@@ -26,7 +26,7 @@ const _nav: NavItem[] = [
     component: CNavItem,
     name: <Translation>{(t) => t('dashboard')}</Translation>,
     to: '/dashboard',
-    icon: <IoIosAnalytics className="nav-icon" />,  // أيقونة تحليلية جديدة
+    icon: <IoIosAnalytics className="nav-icon" />,
     allowedRoles: [EnUserRole.Admin]
   },
   {
@@ -38,21 +38,21 @@ const _nav: NavItem[] = [
     component: CNavItem,
     name: <Translation>{(t) => t('Managers')}</Translation>,
     to: '/account/managers',
-    icon: <IoIosPeople className="nav-icon" />,  // أيقونة الأشخاص
+    icon: <IoIosPeople className="nav-icon" />,
     allowedRoles: [EnUserRole.Admin]
   },
   {
     component: CNavItem,
     name: <Translation>{(t) => t('Service Providers')}</Translation>,
     to: '/account/service-providers',
-    icon: <IoIosContacts className="nav-icon" />,  // أيقونة جهات الاتصال
+    icon: <IoIosContacts className="nav-icon" />, 
     allowedRoles: [EnUserRole.Admin]
   },
   {
     component: CNavItem,
     name: <Translation>{(t) => t('Customers')}</Translation>,
     to: '/account/customers',
-    icon: <IoIosPersonAdd className="nav-icon" />,  // أيقونة إضافة شخص
+    icon: <IoIosPersonAdd className="nav-icon" />,
     allowedRoles: [EnUserRole.Admin]
   },
   {
@@ -64,7 +64,7 @@ const _nav: NavItem[] = [
     component: CNavItem,
     name: <Translation>{(t) => t('Registration Applications')}</Translation>,
     to: '/account/registration-applications',
-    icon: <IoIosList className="nav-icon" />,  // أيقونة القائمة
+    icon: <IoIosList className="nav-icon" />, 
     allowedRoles: [EnUserRole.Admin]
   },
   {
@@ -76,15 +76,8 @@ const _nav: NavItem[] = [
     component: CNavItem,
     name: <Translation>{(t) => t('All Trips List')}</Translation>,
     to: '/trips',
-    icon: <FaBus className="nav-icon" />,  // أيقونة السيارة
-    allowedRoles: [EnUserRole.Admin]
-  },
-  {
-    component: CNavItem,
-    name: <Translation>{(t) => t('My Trips')}</Translation>,
-    to: '/trips',
-    icon: <FaBus className="nav-icon" />, 
-    allowedRoles: [EnUserRole.Provider],
+    icon: <FaBus className="nav-icon" />,
+    allowedRoles: [EnUserRole.Admin, EnUserRole.Provider]
   },
   {
     component: CNavItem,
@@ -103,21 +96,14 @@ const _nav: NavItem[] = [
     name: <Translation>{(t) => t('All Bookings List')}</Translation> ,
     to: '/bookings',
     icon: <IoIosList className="nav-icon" />,  
-    allowedRoles: [EnUserRole.Admin],
-  },
-  {
-    component: CNavItem,
-    name: <Translation>{(t) => t('All Bookings List')}</Translation> ,
-    to: '/',
-    icon: <IoIosList className="nav-icon" />, 
-    allowedRoles: [EnUserRole.Provider],
+    allowedRoles: [EnUserRole.Admin, EnUserRole.Provider],
   },
   {
     component: CNavItem,
     name: <Translation>{(t) => t('Passengers')}</Translation> ,
     to: '/Passengers',
     icon: <IoIosPeople className="nav-icon" />,  
-    allowedRoles: [EnUserRole.Admin],
+    allowedRoles: [EnUserRole.Admin, EnUserRole.Provider],
   },
   {
     component: CNavItem,

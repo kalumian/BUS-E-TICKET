@@ -15,11 +15,12 @@ using Microsoft.EntityFrameworkCore;
 using System.Reflection.PortableExecutable;
 using Core_Layer.Entities;
 
-public class ReservationService(IUnitOfWork unitOfWork,PersonService personService,PaymentService paymentService, PasengerService pasengerService) : GeneralService(unitOfWork)
+public class ReservationService(IUnitOfWork unitOfWork,PersonService personService,PaymentService paymentService, PasengerService pasengerService, TripService tripService) : GeneralService(unitOfWork)
 {
     private readonly PaymentService _paymentService = paymentService;
     private readonly PersonService _personService = personService;
     private readonly PasengerService _pasengerService = pasengerService;
+    private readonly TripService _tripService= tripService;
 
     public async Task<object> CreateReservationAsync(CreateReservationDTO reservationDTO, string baseUrl)
     {
@@ -30,7 +31,7 @@ public class ReservationService(IUnitOfWork unitOfWork,PersonService personServi
             var trip = await _unitOfWork.Trips.GetByIdAsync(reservationDTO.TripID)
                 ?? throw new NotFoundException($"Trip with ID {reservationDTO.TripID} not found.");
 
-            if (IsThereAbilableSeat(trip))
+            if (_tripService.IsThereAbilableSeat(trip.TripID, trip.VehicleCapacity))
                 throw new BadRequestException("No available seats for this trip.");
 
             var person = await _personService.GetAndUpdateOrCreatePersonWithContactAsync(reservationDTO.Passenger.Person);
@@ -69,15 +70,7 @@ public class ReservationService(IUnitOfWork unitOfWork,PersonService personServi
         }
     }
 
-    private bool IsThereAbilableSeat(TripEntity trip)
-    {
-        var ReservationsCount = _unitOfWork.Reservations.GetAll()
-            .Where(i => i.TripID == trip.TripID && (i.ReservationStatus == EnReservationStatus.Completed || i.ReservationStatus == EnReservationStatus.Pending))
-            .Count();
-        var tripCapacity = trip.VehicleCapacity;
-
-        return ReservationsCount < tripCapacity;
-    }
+ 
 
 
 

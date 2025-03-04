@@ -25,11 +25,10 @@ namespace BUS_E_TICKET.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UserLogin([FromBody] UserLoginDTO LoginInfo)
         {
-            // get configurations
             TokenConfiguration config = ResponeHelper.GetTokenConfiguration(configuration);
-            //Try to sign In
+
             JwtSecurityToken Token = await _baseUserService.Login(LoginInfo, config);
-            //Result
+
             return Ok(ResponeHelper.GetApiRespone(StatusCode: 200, Message: "User was logined successfuly", Data: new { Token = new JwtSecurityTokenHandler().WriteToken(Token) }));
         }
 

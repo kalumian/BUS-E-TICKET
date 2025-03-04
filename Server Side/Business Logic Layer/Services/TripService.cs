@@ -161,6 +161,15 @@ namespace Business_Logic_Layer.Services
 
             return _mapper.Map<List<TripDisplayDTO>>(trips);
         }
-
+        public bool IsThereAbilableSeat(int TripID, int VehicleCapacity)
+        {
+            return GetTripBookingsCount(TripID) < VehicleCapacity;
+        }
+        private int GetTripBookingsCount(int TripID)
+        {
+            return _unitOfWork.Reservations.GetAll()
+                .Where(i => i.TripID == TripID && (i.ReservationStatus == EnReservationStatus.Completed || i.ReservationStatus == EnReservationStatus.Pending))
+                .Count(); ;
+        }
     }
 }
