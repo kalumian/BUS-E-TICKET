@@ -161,5 +161,4 @@ npm start
 ```
 The application should now be accessible via the local development server.
 vbnet
-نسخ
 تحرير
