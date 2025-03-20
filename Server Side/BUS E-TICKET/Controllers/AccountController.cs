@@ -14,9 +14,9 @@ namespace BUS_E_TICKET.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AccountController(BaseUserService baseUserService, IConfiguration configuration) : ControllerBase
+    public class AccountController(UserService baseUserService, IConfiguration configuration) : ControllerBase
     {
-        private readonly BaseUserService _baseUserService = baseUserService;
+        private readonly UserService _baseUserService = baseUserService;
         private readonly IConfiguration configuration = configuration;
 
         [HttpPost("Login")]

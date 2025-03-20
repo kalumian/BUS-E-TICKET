@@ -6,7 +6,7 @@ import P_Error from "src/components/P_Error";
 import { RootState } from "src/store";
 import { fetchData } from "src/Services/apiService";
 import { GetSPApplicationById } from "src/Services/spapplicationService";
-import { ApplicationReview, RegisterationApplication } from "src/Interfaces/applicationInterface";
+import { ApplicationReview, RegisterationApplication, SPRegApplicationDisplayDTO } from "src/Interfaces/applicationInterface";
 import CIcon from '@coreui/icons-react';
 import { CCard, CCardHeader, CCardBody, CListGroup, CListGroupItem, CBadge, CButton, CRow, CCol } from '@coreui/react';
 import {
@@ -24,7 +24,7 @@ const SPApplicationDetails = () => {
   const { id } = useParams();
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState(false);
-  const [ServiceProviderApplication, setServiceProviderApplication] = useState<RegisterationApplication | null>(null);
+  const [ServiceProviderApplication, setServiceProviderApplication] = useState<SPRegApplicationDisplayDTO | null>(null);
   const [response, setResponse] = useState<ApplicationReview | null>(null);
   const [fetchMessage, setFetchMessage] = useState('');
   const [fetchError, setFetchError] = useState('');
@@ -138,8 +138,8 @@ const SPApplicationDetails = () => {
                         <CListGroupItem>
                           <div className="d-flex justify-content-between align-items-center">
                             <strong>Status:</strong>
-                            <CBadge color={ServiceProviderApplication?.applicationStatus === 1 ? "warning" : "success"}>
-                              {ServiceProviderApplication?.applicationStatus === 1 ? "Pending" : "Completed"}
+                            <CBadge color={ServiceProviderApplication?.review?.result  == null ? "warning" : "success"}>
+                              {ServiceProviderApplication?.review?.result == null ? "Pending" : "Reviewed"}
                             </CBadge>
                           </div>
                         </CListGroupItem>

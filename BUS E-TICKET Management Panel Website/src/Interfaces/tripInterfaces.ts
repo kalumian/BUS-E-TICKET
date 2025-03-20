@@ -26,7 +26,7 @@ export interface TripDisplayDTO {
   currency?: string;
   tripDuration?: string;
   totalSeats?: number;
-  availableSeatsCount?: number;
+  bookedSeatCount?: number;
   tripStatus?: string;
 
   businessName?: string;

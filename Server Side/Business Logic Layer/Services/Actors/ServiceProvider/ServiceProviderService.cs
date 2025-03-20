@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace Business_Logic_Layer.Services.Actors.ServiceProvider
 {
-    public class ServiceProviderService(UserManager<AuthoUser> userManager, IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor) : BaseUserService(userManager, unitOfWork, httpContextAccessor)
+    public class ServiceProviderService(UserManager<AuthoUser> userManager, IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor) : UserService(userManager, unitOfWork, httpContextAccessor)
     {
         private IMapper _mapper = mapper;
 
@@ -61,7 +61,6 @@ namespace Business_Logic_Layer.Services.Actors.ServiceProvider
             if (user.AccountStatus != EnAccountStatus.Inactive)
                 throw new InvalidOperationException("Service Provider Account cannot be deleted unless it is inactive.");
 
-            // حذف الحساب
             DeleteEntity(serviceProvider);
             await _userManager.DeleteAsync(user);
         }
@@ -77,43 +76,28 @@ namespace Business_Logic_Layer.Services.Actors.ServiceProvider
         }
         public async Task<List<ServiceProviderDTO>> GetAllServiceProvidersAsync()
         {
-            try
-            {
-                var serviceProviders = await _unitOfWork.ServiceProviders
-                    .GetAllQueryable()
-                     .Include(sp => sp.Account)
-                    .Include(sp => sp.Business).ThenInclude(b => b.Address).ThenInclude(a => a.Street).ThenInclude(a => a.City).ThenInclude(c => c.Region).ThenInclude(r => r.Country)
-                    .Include(sp => sp.Business).ThenInclude(b => b.Address).ThenInclude(a => a.City).ThenInclude(c=> c.Region).ThenInclude(r => r.Country)
-                    .Include(sp => sp.Business).ThenInclude(b => b.ContactInformation)
-                    .ToListAsync();
-
-                return _mapper.Map<List<ServiceProviderDTO>>(serviceProviders);
-            }
-            catch (Exception ex)
-            {
-                throw new NotFoundException("Failed to retrieve service providers, " + ex.Message);
-            }
+            var serviceProviders = await _unitOfWork.ServiceProviders
+                .GetAllQueryable()
+                    .Include(sp => sp.Account)
+                .Include(sp => sp.Business).ThenInclude(b => b.Address).ThenInclude(a => a.Street).ThenInclude(a => a.City).ThenInclude(c => c.Region).ThenInclude(r => r.Country)
+                .Include(sp => sp.Business).ThenInclude(b => b.Address).ThenInclude(a => a.City).ThenInclude(c=> c.Region).ThenInclude(r => r.Country)
+                .Include(sp => sp.Business).ThenInclude(b => b.ContactInformation)
+                .ToListAsync();
+            return _mapper.Map<List<ServiceProviderDTO>>(serviceProviders);
         }
 
         public async Task<ServiceProviderDTO> GetServiceProviderByID(string id)
         {
-            try
-            {
-                var serviceProvider = await _unitOfWork.ServiceProviders
-                    .GetAllQueryable()
-                    .Include(sp => sp.Account)
-                    .Include(sp => sp.Business).ThenInclude(b => b.Address).ThenInclude(a => a.Street).ThenInclude(a => a.City).ThenInclude(c => c.Region).ThenInclude(r => r.Country)
-                    .Include(sp => sp.Business).ThenInclude(b => b.Address).ThenInclude(a => a.City).ThenInclude(c => c.Region).ThenInclude(r => r.Country)
-                    .Include(sp => sp.Business).ThenInclude(b => b.ContactInformation)
-                    .Where(sp => sp.AccountID == id)
-                    .FirstOrDefaultAsync();
+            var serviceProvider = await _unitOfWork.ServiceProviders
+                .GetAllQueryable()
+                .Include(sp => sp.Account)
+                .Include(sp => sp.Business).ThenInclude(b => b.Address).ThenInclude(a => a.Street).ThenInclude(a => a.City).ThenInclude(c => c.Region).ThenInclude(r => r.Country)
+                .Include(sp => sp.Business).ThenInclude(b => b.Address).ThenInclude(a => a.City).ThenInclude(c => c.Region).ThenInclude(r => r.Country)
+                .Include(sp => sp.Business).ThenInclude(b => b.ContactInformation)
+                .Where(sp => sp.AccountID == id)
+                .FirstOrDefaultAsync();
 
-                return _mapper.Map<ServiceProviderDTO>(serviceProvider);
-            }
-            catch (Exception ex)
-            {
-                throw new NotFoundException("Failed to retrieve service provider, " + ex.Message);
-            }
+            return _mapper.Map<ServiceProviderDTO>(serviceProvider);
         }
     }
 }

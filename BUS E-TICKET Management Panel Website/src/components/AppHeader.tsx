@@ -27,17 +27,13 @@ import {
   cifEs,
   cifPl,
 } from '@coreui/icons';
-
 import { AppBreadcrumb } from './index';
-
 import {
   AppHeaderDropdown,
-  AppHeaderDropdownMssg,
-  AppHeaderDropdownNotif,
-  AppHeaderDropdownTasks,
 } from './header';
 
 import type { RootState } from './../store';
+import TranslateButton from './TranslateButton';
 
 const AppHeader = () => {
   const headerRef = useRef<HTMLDivElement>(null);
@@ -92,22 +88,7 @@ const AppHeader = () => {
               <CIcon icon={cilLanguage} size="lg" />
             </CDropdownToggle>
             <CDropdownMenu>
-              <CDropdownItem
-                active={i18n.language === 'en'}
-                className="d-flex align-items-center"
-                as="button"
-                onClick={() => i18n.changeLanguage('en')}
-              >
-                <CIcon className="me-2" icon={cifGb} size="lg" /> English
-              </CDropdownItem>
-              <CDropdownItem
-                active={i18n.language === 'tr'}
-                className="d-flex align-items-center"
-                as="button"
-                onClick={() => i18n.changeLanguage('tr')}
-              >
-                <CIcon className="me-2" icon={cifPl} size="lg" /> Turkish
-              </CDropdownItem>
+              <TranslateButton/>
             </CDropdownMenu>
           </CDropdown>
           <CDropdown variant="nav-item" placement="bottom-end">

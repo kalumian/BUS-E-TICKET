@@ -49,7 +49,7 @@ const Passengers = () => {
       <CCardHeader className="bg-light">
         <div className="d-flex justify-content-between align-items-center">
           <h3 className="mb-0">
-            <CIcon icon={cilPeople} className="me-2" />
+            <CIcon icon={cilPeople} className="me-2" size='xl'/>
             Passengers List
           </h3>
         </div>

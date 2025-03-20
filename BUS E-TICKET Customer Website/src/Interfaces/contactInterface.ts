@@ -1,5 +1,5 @@
 export default interface ContactInformation {
-    contactInformationID?: number;
+    contactInformationID: number | null;
     phoneNumber?: string;
     email?: string;
     instagram?: string;

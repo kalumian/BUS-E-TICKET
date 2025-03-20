@@ -1,20 +1,17 @@
 import { useState } from 'react';
 import PersonForm from '../components/PersonForm';
-import CreateBookingDTO from '../Interfaces/bookingInterface';
-import { Passenger } from '../Interfaces/passengerInterface';
 import EnPaymentMethod from '../Enums/EnPaymentMethod';
 import { CCard, CCardBody, CCardHeader, CForm, CFormInput, CFormCheck, CButton, CRow, CCol, CFormSelect } from '@coreui/react';
-import EnGender from 'src/Enums/EnGender';
 import LoadingWrapper from './LoadingWrapper';
 import { fetchData } from 'src/Services/apiService';
 import { createBooking } from 'src/Services/bookingService';
 import P_Error from './P_Error';
-import { useNavigate } from 'react-router-dom';
 import ContactInformationForm from './ContactInformationForm';
 import { EnInputMode } from 'src/Enums/EnInputMode';
 import ContactInformation from 'src/Interfaces/contactInterface';
 import { GetPersonByNationalID } from 'src/Services/personService';
 import { Person } from 'src/Interfaces/personInterface';
+import { CAlert } from '@coreui/react-pro';
 
 const TripBooking = ({TripID} : {TripID? : number}) => {
   const PersonIni  : Person = {} 
@@ -24,24 +21,30 @@ const TripBooking = ({TripID} : {TripID? : number}) => {
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-
+  const [paymentLink, setPaymentLink] = useState("");
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     fetchData(async () => {
+      setError("")
+      setPaymentLink("")
         if (TripID === undefined) {
           setError('TripID is required');
           setLoading(false);
           return;
         }
+        console.log(person.nationalID);
+        
         const res = await createBooking({
           tripID: TripID,
-          passenger: {passengerID: 0, person: {...person, contactInformation: contactInfo}},
+          passenger: {passengerID: 0, person: {...person, contactInformation: {...contactInfo, contactInformationID: null}, personID:null}},
           paymentMethod: paymentMethod
         })
+        
         setTimeout(() => {
           window.open(res.data.paymentLink);
         }, 100);
+        setPaymentLink(res.data.paymentLink)
       }, undefined, setError, setLoading);
   };
   const handlePersonInformation = (e: React.FocusEvent<HTMLInputElement>) => {
@@ -52,6 +55,7 @@ const TripBooking = ({TripID} : {TripID? : number}) => {
      setPerson({...res.data});
      setContactInfo({...res.data.contactInformation});
     }, undefined, undefined, setLoading);
+    
   };
   return (
     <LoadingWrapper loading={loading}>
@@ -119,7 +123,11 @@ const TripBooking = ({TripID} : {TripID? : number}) => {
           </CCol>
         </CRow>
       )}
+      sb-vgnf037324672@personal.example.com  
+      A=Q*Uu64
+
     <P_Error text={error} />
+    {paymentLink && <CAlert color='info'>If you are not automatically redirected to the payment gateway, please click the following link to complete your payment: <a target="_blank" href={paymentLink}>Click Here</a></CAlert>}
     </LoadingWrapper>
   );
 };

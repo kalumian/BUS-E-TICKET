@@ -24,7 +24,8 @@ import {
   cilMoney,
   cilPeople,
   cilMap,
-  cilUser
+  cilUser,
+  cilInfo
 } from '@coreui/icons';
 
 
@@ -49,9 +50,7 @@ const TripDetails = () => {
     }
   }, [id]);
 
-  const handleGoBack = () => {
-    navigate("/trips");
-  };
+
 
   return (
     <>
@@ -64,14 +63,33 @@ const TripDetails = () => {
                   <CIcon icon={cilCarAlt} className="me-2" />
                   Trip Details
                 </h3>
+             <div>
+             <CButton 
+                  color="info" 
+                  variant="ghost"
+                  onClick={()=>navigate("/trips")}
+                >
+                  <CIcon icon={cilArrowCircleLeft} className="me-2" />
+                  Trips
+                </CButton>
+                    <CButton
+                  color="success"
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => navigate(`/bookings/${tripDetails?.tripID}`)}
+                >
+                  <CIcon icon={cilInfo} className="me-1" />
+                  Bookings
+                </CButton>
                 <CButton 
                   color="primary" 
                   variant="ghost"
-                  onClick={handleGoBack}
+                  onClick={()=>navigate(-1)}
                 >
                   <CIcon icon={cilArrowCircleLeft} className="me-2" />
-                  Back to Trips
+                  Back
                 </CButton>
+             </div>
               </div>
             </CCardHeader>
             <CCardBody>
@@ -141,7 +159,7 @@ const TripDetails = () => {
                           </div>
                           <div>
                             <CBadge color="info" className="me-2">
-                              Available: {tripDetails?.availableSeatsCount}
+                              Available: {tripDetails?.totalSeats} / {tripDetails?.bookedSeatCount}
                             </CBadge>
                             <CBadge color="secondary">
                               Total: {tripDetails?.totalSeats}

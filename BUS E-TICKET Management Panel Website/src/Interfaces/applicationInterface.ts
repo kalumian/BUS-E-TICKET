@@ -8,7 +8,7 @@ export interface RegisterationApplication {
     notes : string;
     business : Business;
     serviceProvider: ServiceProvider;
-    response? : Response;
+    response? : ApplicationReview;
 }
 
 export interface ApplicationReview {

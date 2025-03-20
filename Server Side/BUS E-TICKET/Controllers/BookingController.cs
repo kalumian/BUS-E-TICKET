@@ -27,9 +27,8 @@ namespace BUS_E_TICKET.Controllers
         [HttpGet("{pnr}")]
         public async Task<IActionResult> GetReservationByPNR(string pnr)
         {
-            var reservation = await _reservationService.GetReservationByPNRAsync(pnr);
-
-            if (reservation == null) throw new NotFoundException("Booking not found for the provided PNR.");
+            var reservation = await _reservationService.GetReservationByPNRAsync(pnr) ??
+                throw new NotFoundException("Booking not found for the provided PNR.");
 
 
             return Ok(ResponeHelper.GetApiRespone(

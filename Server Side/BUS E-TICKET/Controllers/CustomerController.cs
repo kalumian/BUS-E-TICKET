@@ -10,14 +10,9 @@ namespace BUS_E_TICKET.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CustomerController : ControllerBase
+    public class CustomerController(CustomerService customerService) : ControllerBase
     {
-        private readonly CustomerService _customerService;
-
-        public CustomerController(CustomerService customerService)
-        {
-            _customerService = customerService;
-        }
+        private readonly CustomerService _customerService = customerService;
 
         [HttpPost("Register")]
         [ProducesResponseType(StatusCodes.Status200OK)]

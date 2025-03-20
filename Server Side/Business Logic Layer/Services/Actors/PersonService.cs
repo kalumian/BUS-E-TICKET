@@ -14,29 +14,26 @@ using System.Threading.Tasks;
 
 namespace Business_Logic_Layer.Services.Actors
 {
-    public class PersonService(IUnitOfWork unitOfWork, IMapper mapper) : GeneralService(unitOfWork)
+    public class PersonService(IUnitOfWork unitOfWork, IMapper mapper, ContactInformationService contactInformationService) : GeneralService(unitOfWork)
     {
         private readonly IMapper _mapper = mapper;
+        private readonly ContactInformationService _contactInformationService = contactInformationService;
         public async Task<PersonEntity> GetAndUpdateOrCreatePersonWithContactAsync(PersonDTO personDTO)
         {
             var personEntity = await _unitOfWork.People.GetAllQueryable().FirstOrDefaultAsync(p => p.NationalID == personDTO.NationalID);
 
             if (personEntity == null)
             {
-                ContactInformationEntity contactInformationEntity = new() { PhoneNumber = personDTO.ContactInformation.PhoneNumber, Email = personDTO.ContactInformation.Email };
-                personEntity = _mapper.Map<PersonEntity>(personDTO);
-                personEntity.ContactInformation = contactInformationEntity;
-                await CreateEntityAsync(personEntity);
+                personEntity = await CreateEntityAsync(personDTO);
             }
             else
             {
-                _mapper.Map(personDTO, personEntity);
-                UpdateEntity(personEntity);
+                personDTO.PersonID = personEntity.PersonID;
+                UpdateEntity(personEntity, personDTO);
 
-                var contactInformationEntity = await _unitOfWork.ContactInformations.GetAllQueryable().Include(c => c.Person).FirstOrDefaultAsync(i=> i.ContactInformationID == personDTO.ContactInformation.ContactInformationID);
-                _mapper.Map(personDTO.ContactInformation, contactInformationEntity);
-
-                UpdateEntity(contactInformationEntity);
+                var contactInformationEntity = await _unitOfWork.ContactInformations.GetAllQueryable().Include(c => c.Person).FirstOrDefaultAsync(i=> i.ContactInformationID == personEntity.ContactInformationID);
+                personDTO.ContactInformation.ContactInformationID = contactInformationEntity.ContactInformationID;
+                _contactInformationService.UpdateEntity(contactInformationEntity, personDTO.ContactInformation);
 
             }
 
@@ -48,5 +45,18 @@ namespace Business_Logic_Layer.Services.Actors
             return _mapper.Map<PersonDTO>(personEntity);
         }
 
+        public async Task<PersonEntity> CreateEntityAsync(PersonDTO personDTO)
+        {
+            
+            var personEntity = _mapper.Map<PersonEntity>(personDTO);
+            personEntity.ContactInformation = await _contactInformationService.CreateEntityAsync(personDTO.ContactInformation);
+            await CreateEntityAsync(personEntity, saveChanges: true);
+            return personEntity;
+        }
+
+        public void UpdateEntity(PersonEntity personEntity,PersonDTO personDTO) {
+            _mapper.Map(personDTO, personEntity);
+            UpdateEntity(personEntity);
+        }
     }
 }

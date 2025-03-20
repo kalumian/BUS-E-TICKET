@@ -13,9 +13,9 @@ using System.Text.RegularExpressions;
 
 namespace Business_Logic_Layer.Services.Actors
 {
-    public class ManagerService : BaseUserService
+    public class ManagerService : UserService
     {
-        private IMapper _mapper;
+        private readonly IMapper _mapper;
 
         public ManagerService(UserManager<AuthoUser> userManager, IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(userManager, unitOfWork, httpContextAccessor)
         {
@@ -35,11 +35,13 @@ namespace Business_Logic_Layer.Services.Actors
                 AuthoUser user = await CreateUserAccountAsync(registerManagerAccountDTO.Account);
 
                 registerManagerAccountDTO.CreatedByID = ManagerCreatrer.ManagerID.ToString();
+
                 // Map and set the manager entity
                 var manager = _mapper.Map<ManagerEntity>(registerManagerAccountDTO);
                 manager.Account = user;
+
                 // Add manager entity
-                await CreateEntityAsync(manager, saveChanges: false);
+                await CreateEntityAsync(manager);
 
                 // Save all changes
                 await _unitOfWork.SaveChangesAsync();
@@ -56,39 +58,25 @@ namespace Business_Logic_Layer.Services.Actors
         }
         public async Task<List<ManagerDTO>> GetAllManagersAsync()
         {
-            try
-            {
-                var managers = await _unitOfWork.Managers
-                      .GetAllQueryable()
-                      .Include(m => m.Account)
-                      .Include(m => m.CreatedBy)
-                      .ThenInclude(c=> c.CreatedBy.Account)
-                      .ToListAsync();
+            var managers = await _unitOfWork.Managers
+                    .GetAllQueryable()
+                    .Include(m => m.Account)
+                    .Include(m => m.CreatedBy)
+                    .ThenInclude(c=> c.CreatedBy.Account)
+                    .ToListAsync();
 
-                return _mapper.Map<List<ManagerDTO>>(managers);
-            }
-            catch (Exception ex)
-            {
-                throw new NotFoundException("Failed to retrieve manager accounts, " + ex.Message);
-            }
+            return _mapper.Map<List<ManagerDTO>>(managers);
         }     
         public async Task<ManagerDTO> GetManagerByID(string id)
         {
-            try
-            {
-                var manager = await _unitOfWork.Managers
-                   .GetAllQueryable()
-                   .Include(m => m.CreatedBy).ThenInclude(c => c.Account)
-                   .Include(c => c.Account)
-                   .Where(m => m.AccountID == id)
-                   .FirstOrDefaultAsync();
+            var manager = await _unitOfWork.Managers
+                .GetAllQueryable()
+                .Include(m => m.CreatedBy).ThenInclude(c => c.Account)
+                .Include(c => c.Account)
+                .Where(m => m.AccountID == id)
+                .FirstOrDefaultAsync();
 
-                return _mapper.Map<ManagerDTO>(manager);
-            }
-            catch (Exception ex)
-            {
-                throw new NotFoundException("Failed to retrieve manager accounts, " + ex.Message);
-            }
+            return _mapper.Map<ManagerDTO>(manager);
         }
 
         public async Task<ManagerDTO> UpdateManagerAsync(string id, RegisterManagerAccountDTO updateDTO)
@@ -106,15 +94,10 @@ namespace Business_Logic_Layer.Services.Actors
                 manager.Account.PhoneNumber = updateDTO.Account.PhoneNumber;
                 manager.Account.AccountStatus = updateDTO.Account.EnAccountStatus; // Update status
 
-                if (string.IsNullOrWhiteSpace(manager.Account.Email) || !new EmailAddressAttribute().IsValid(manager.Account.Email))
-                {
-                    throw new BadRequestException("Invalid email format.");
-                }
+                
+                Utilities.ValidationHelper.ValidatieEmail(manager.Account.Email);
+                Utilities.ValidationHelper.ValidatieNumber(manager.Account.PhoneNumber);
 
-                if (string.IsNullOrWhiteSpace(manager.Account.PhoneNumber) || !Regex.IsMatch(manager.Account.PhoneNumber, @"^\+?\d{9,15}$"))
-                {
-                    throw new BadRequestException("Invalid phone number format.");
-                }
                 await _unitOfWork.SaveChangesAsync();
                 await transaction.CommitAsync();
 

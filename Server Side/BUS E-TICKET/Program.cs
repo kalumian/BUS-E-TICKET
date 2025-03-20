@@ -48,7 +48,7 @@ builder.Services.AddScoped<ManagerService>();
 builder.Services.AddScoped<InvoiceService>();
 builder.Services.AddScoped<TicketService>();
 builder.Services.AddScoped<ServiceProviderService>();
-builder.Services.AddScoped<BaseUserService>();
+builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<BusinessService>();
 builder.Services.AddScoped<SPRegRequestService>();
 builder.Services.AddScoped<PersonService>();

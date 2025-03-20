@@ -39,7 +39,7 @@ const CustomerForm = React.lazy(() => import('./views/pages/Accounts/Customers/C
 
 
 const routes: Route[] = [
-  { path: '/', element: Home, name: <Translation>{(t) => t('home')}</Translation>, allowedRoles: [EnUserRole.Provider, EnUserRole.Admin] },
+  { path: '/', element: Dashboard, name: <Translation>{(t) => t('Dashboard')}</Translation>, allowedRoles: [EnUserRole.Provider, EnUserRole.Admin] },
   {
     path: '/dashboard',
     name: <Translation>{(t) => t('dashboard')}</Translation>,
@@ -143,13 +143,13 @@ const routes: Route[] = [
     path: '/passenger/:id',
     name: <Translation>{(t) => t("Passenger Details")}</Translation>,
     element: PassengerForm,
-    allowedRoles: [EnUserRole.Admin]
+    allowedRoles: [EnUserRole.Admin, EnUserRole.Provider]
   },
   {
     path: '/bookings',
     name: <Translation>{(t) => t("Bookings List")}</Translation>,
     element: Bookings,
-    allowedRoles: [EnUserRole.Admin]
+    allowedRoles: [EnUserRole.Admin, EnUserRole.Provider]
   },
   {
     path: '/booking/:pnr',
@@ -161,7 +161,7 @@ const routes: Route[] = [
     path: '/bookings/:id',
     name: <Translation>{(t) => t("Trip Bookings")}</Translation>,
     element: Bookings,
-    allowedRoles: [EnUserRole.Admin]
+    allowedRoles: [EnUserRole.Admin, EnUserRole.Provider]
   },
   { path: '/ticket/:id', name: <Translation>{(t) => t('Ticket Information')}</Translation>, allowedRoles: [EnUserRole.Admin, EnUserRole.Provider], element:Ticket},
   { path: '/invoice/:id', name: <Translation>{(t) => t('Invoice Information')}</Translation>, allowedRoles: [EnUserRole.Admin, EnUserRole.Provider], element:Invoice},

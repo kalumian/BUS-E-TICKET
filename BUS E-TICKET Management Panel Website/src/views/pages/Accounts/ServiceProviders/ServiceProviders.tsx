@@ -49,7 +49,7 @@ const ServiceProviderAccounts = () => {
       <CCardHeader className="bg-light">
         <div className="d-flex justify-content-between align-items-center">
           <h3 className="mb-0">
-            <CIcon icon={cilBuilding} className="me-2" />
+            <CIcon icon={cilBuilding} className="me-2" size='xl'/>
             Service Provider Accounts
           </h3>
         </div>

@@ -11,7 +11,7 @@ public class DashboardController(DashboardService dashboardService) : Controller
 
     [HttpGet("stats")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Provider")]
     public IActionResult GetStats()
     {
         var stats = _dashboardService.GetDashboardStats();

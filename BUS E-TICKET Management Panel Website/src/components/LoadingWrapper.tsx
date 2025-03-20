@@ -8,7 +8,7 @@ interface LoadingWrapperProps {
 
 const LoadingWrapper: React.FC<LoadingWrapperProps> = ({ loading, children }) => {
     if (loading) {
-        return <div className="d-flex justify-content-center"><CSpinner variant="grow" color="primary"/></div>;
+        return <div className="d-flex justify-content-center"><CSpinner variant="grow" color="dark"/></div>;
     }
     return <>{children}</>;
 };

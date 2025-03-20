@@ -20,11 +20,11 @@ using System.Threading.Tasks;
 
 namespace Business_Logic_Layer.Services.Actors.ServiceProvider
 {
-    public class SPRegRequestService(IUnitOfWork unitOfWork, IMapper mapper, AddressService addressService, BaseUserService baseUserService, ServiceProviderService serviceProviderService) : GeneralService(unitOfWork)
+    public class SPRegRequestService(IUnitOfWork unitOfWork, IMapper mapper, AddressService addressService, UserService baseUserService, ServiceProviderService serviceProviderService) : GeneralService(unitOfWork)
     {
         private readonly IMapper _mapper = mapper;
         private readonly AddressService _addressService = addressService;
-        private readonly BaseUserService _baseUserService = baseUserService;
+        private readonly UserService _baseUserService = baseUserService;
         private readonly ServiceProviderService _serviceProviderService = serviceProviderService;
 
         public async Task<SPRegRequestDTO> CreateApplicationAsync(SPRegRequestDTO requestDTO)
@@ -72,11 +72,6 @@ namespace Business_Logic_Layer.Services.Actors.ServiceProvider
                 .FirstOrDefault(r =>
                     r.Business.BusinessLicenseNumber == requestDTO.Business.BusinessLicenseNumber &&
                     (r.Status == EnRegisterationRequestStatus.Approved || r.Status == EnRegisterationRequestStatus.Pending));
-
-            if (existingRequest != null)
-            {
-                throw new BadRequestException("An active, approved, or pending request with the same BusinessLicenseNumber already exists.");
-            }
         }
 
         private async Task ValidateAndSaveEntitiesAsync(

@@ -22,7 +22,6 @@ namespace Core_Layer.Configurations
             CreateMap<RegisterManagerAccountDTO, RegisterAccountDTO>();
 
             // Person and Address Mappings
-            CreateMap<PersonEntity, PersonDTO>().ReverseMap();
             CreateMap<ContactInformationEntity, ContactInformationDTO>().ReverseMap();
             CreateMap<AddressEntity, AddressDTO>().ReverseMap();
 
@@ -111,7 +110,9 @@ namespace Core_Layer.Configurations
             .ForMember(dest => dest.EndLocationName, opt => opt.MapFrom(src => src.EndLocation.LocationName ?? "Unknown"))
             .ForMember(dest => dest.EndLocationURL, opt => opt.MapFrom(src => src.EndLocation.LocationURL ?? string.Empty))
             .ForMember(dest => dest.EndCity, opt => opt.MapFrom(src => src.EndLocation.Address.City.CityName ?? "Unknown"))
-            .ForMember(dest => dest.EndAdditionalDetails, opt => opt.MapFrom(src => src.EndLocation.Address.AdditionalDetails ?? string.Empty));
+            .ForMember(dest => dest.BookedSeatCount, opt => opt.MapFrom(src => src.Reservations.Where(i=> i.ReservationStatus == EnReservationStatus.Completed || i.ReservationStatus == EnReservationStatus.Pending).Count()))
+            .ForMember(dest => dest.EndAdditionalDetails, opt => opt.MapFrom(src => src.EndLocation.Address.AdditionalDetails ?? string.Empty))
+            .ReverseMap();
 
             // Reservation Mapping
             CreateMap<ReservationEntity, CreateReservationDTO>();
@@ -122,8 +123,6 @@ namespace Core_Layer.Configurations
                 .ForMember(dest => dest.PassengerID, opt => opt.MapFrom(src => src.Passenger.PassengerID))
                 .ForMember(dest => dest.ReservationStatus, opt => opt.MapFrom(src => EnReservationStatus.Pending))
                 .ForMember(dest => dest.ReservationDate, opt => opt.MapFrom(src => DateTime.UtcNow));
-            // Person Mapping
-            CreateMap<PersonEntity, PersonDTO>().ReverseMap();
 
             CreateMap<ManagerEntity, ManagerDTO>()
              .ForMember(dest => dest.AccountID, opt => opt.MapFrom(src => src.AccountID))
@@ -151,16 +150,8 @@ namespace Core_Layer.Configurations
             .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address)) // Address
             .ForMember(dest => dest.ContactInformation, opt => opt.MapFrom(src => src.ContactInformation));// ContactInformation
 
-        // Mapping for ContactInformationEntity to ContactInformationDTO
-        CreateMap<ContactInformationEntity, ContactInformationDTO>()
-            .ForMember(dest => dest.ContactInformationID, opt => opt.MapFrom(src => src.ContactInformationID))
-            .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber))
-            .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
-            .ForMember(dest => dest.Instagram, opt => opt.MapFrom(src => src.Instagram))
-            .ForMember(dest => dest.Twitter, opt => opt.MapFrom(src => src.Twitter))
-            .ForMember(dest => dest.Facebook, opt => opt.MapFrom(src => src.Facebook))
-            .ForMember(dest => dest.LinkedIn, opt => opt.MapFrom(src => src.LinkedIn))
-            .ForMember(dest => dest.LandLineNumber, opt => opt.MapFrom(src => src.LandLineNumber));
+            // Mapping for ContactInformationEntity to ContactInformationDTO
+            CreateMap<ContactInformationEntity, ContactInformationDTO>().ReverseMap();
 
         // Mapping for AuthoUser to AccountDTO
         CreateMap<AuthoUser, AccountDTO>()
@@ -177,6 +168,7 @@ namespace Core_Layer.Configurations
             CreateMap<SPRegRequestEntity, SPRegApplicationDisplayDTO>()
                 .ForMember(dest => dest.BusinessName, opt => opt.MapFrom(src => src.Business.BusinessName))
                 .ForMember(dest => dest.BusinessPhoneNumber, opt => opt.MapFrom(src => src.Business.ContactInformation.PhoneNumber ))
+                .ForMember(dest => dest.BusinessEmail, opt => opt.MapFrom(src => src.Business.ContactInformation.Email))
                 .ForMember(dest => dest.ServiceProviderPhoneNumber, opt => opt.MapFrom(src => src.Business.ServiceProvider.Account.PhoneNumber))
                 .ForMember(dest => dest.ServiceProviderEmail, opt => opt.MapFrom(src => src.Business.ServiceProvider.Account.Email))
                 .ForMember(dest => dest.AccountID, opt => opt.MapFrom(src => src.Business.ServiceProvider.Account.Id))
@@ -192,7 +184,7 @@ namespace Core_Layer.Configurations
                  .ForMember(dest => dest.NationalID, opt => opt.MapFrom(src => src.NationalID))
                  .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
                  .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName))
-                 .ForMember(dest => dest.BirthDate, opt => opt.MapFrom(src => src.BirthDate.HasValue ? DateTime.SpecifyKind(src.BirthDate.Value, DateTimeKind.Utc) : DateTime.MinValue))
+                 .ForMember(dest => dest.BirthDate, opt => opt.MapFrom(src => DateTime.SpecifyKind(src.BirthDate.Value, DateTimeKind.Utc)))
                  .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => src.Gender))
                  .ForMember(dest => dest.ContactInformationID, opt => opt.MapFrom(src => src.PersonID ?? 0))
                  .ReverseMap();
@@ -204,8 +196,6 @@ namespace Core_Layer.Configurations
            .ForMember(dest => dest.Person, opt => opt.MapFrom(src => src.Person))
            .ReverseMap(); // يدعم التحويل العكسي أيضًا
 
-            CreateMap<PersonEntity, PersonDTO>()
-                .ReverseMap();
 
         }
     }

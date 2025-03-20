@@ -21,7 +21,8 @@ import {
   cilPeople,
   cilInfo,
   cilPlus,
-  cilBuilding
+  cilBuilding,
+  cilAirplaneMode
 } from '@coreui/icons';
 import { GetAllTrips } from 'src/Services/tripService';
 import LoadingWrapper from 'src/components/LoadingWrapper';
@@ -52,7 +53,7 @@ const Trips = () => {
       <CCardHeader className="bg-light">
         <div className="d-flex justify-content-between align-items-center">
           <h3 className="mb-0">
-            <CIcon icon={cilBuilding} className="me-2" />
+            <CIcon icon={cilAirplaneMode} className="me-2" size='xl'/>
             Trips Management
           </h3>
         {user?.Role === UserRole.Provider && <>
@@ -72,7 +73,7 @@ const Trips = () => {
             <CTableHead>
               <CTableRow className="bg-light">
                 <CTableHeaderCell>
-                  <CIcon icon={cilBrush} className="me-2" />
+                  <CIcon icon={cilBuilding} className="me-2" />
                   Company
                 </CTableHeaderCell>
                 <CTableHeaderCell>
@@ -96,8 +97,7 @@ const Trips = () => {
                 <CTableRow key={trip.tripID} className="align-middle">
                   <CTableDataCell>
                     <div className="d-flex align-items-center">
-                      <CIcon icon={cilBrush} className="me-2 text-primary" />
-                      {trip.businessName}
+                     {trip.businessName}
                     </div>
                   </CTableDataCell>
                   <CTableDataCell>
@@ -126,7 +126,7 @@ const Trips = () => {
                     <CBadge color="success">{trip.tripDuration}</CBadge>
                   </CTableDataCell>
                   <CTableDataCell>
-                    <CBadge color="primary">{trip.totalSeats} seats</CBadge>
+                    <CBadge color="primary">{trip.totalSeats} / {trip.bookedSeatCount} seats</CBadge>
                   </CTableDataCell>
                   <CTableDataCell>
                     <CButton

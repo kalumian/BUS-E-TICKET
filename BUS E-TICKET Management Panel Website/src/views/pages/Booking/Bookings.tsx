@@ -17,13 +17,9 @@ import {
 import CIcon from '@coreui/icons-react';
 import {
   cilCalendar,
-  cilCash,
-  cilPeople,
-  cilCarAlt,
   cilUser,
   cilInfo,
   cilLocationPin,
-  cilArrowCircleLeft
 } from '@coreui/icons';
 import { RootState } from 'src/store';
 import { BookingDTO } from 'src/Interfaces/bookingInterface';
@@ -67,7 +63,7 @@ const Bookings = () => {
       <CCardHeader className="bg-light">
         <div className="d-flex justify-content-between align-items-center">
           <h3 className="mb-0">
-            <CIcon icon={cilCalendar} className="me-2" />
+            <CIcon icon={cilCalendar} className="me-2" size='xl'/>
             {id ? 'Trip Bookings' : 'All Bookings'}
           </h3>
         </div>
@@ -142,6 +138,15 @@ const Bookings = () => {
                       >
                         <CIcon icon={cilInfo} className="me-1" />
                         Booking Info
+                      </CButton>
+                      <CButton
+                        color="primary"
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => navigate(`/trips/${booking.tripID}`)}
+                      >
+                        <CIcon icon={cilInfo} className="me-1" />
+                        Trip Info
                       </CButton>
                     </CTableDataCell>
                   </CTableRow>

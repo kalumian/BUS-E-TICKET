@@ -140,7 +140,7 @@ const TripBooking = () => {
                             <div className="text-muted">Available Seats</div>
                           </div>
                           <div className="h5 mb-0">
-                            {trip.availableSeatsCount} / {trip.totalSeats}
+                             {(trip.totalSeats  && trip.bookedSeatCount) &&  trip.totalSeats - trip.bookedSeatCount}
                           </div>
                         </div>
                       </div>

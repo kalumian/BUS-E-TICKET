@@ -9,7 +9,7 @@
     public string Currency { get; set; }
     public TimeSpan TripDuration { get; set; }
     public short TotalSeats { get; set; }
-    public short AvailableSeatsCount { get; set; }
+    public short BookedSeatCount { get; set; }
     public string TripStatus { get; set; } = string.Empty;
 
     public string BusinessName { get; set; } = string.Empty;

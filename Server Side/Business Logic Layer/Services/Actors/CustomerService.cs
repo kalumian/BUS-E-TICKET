@@ -19,7 +19,7 @@ namespace Business_Logic_Layer.Services.Actors
         IMapper mapper,
         AddressService addressService,
         PersonService personService,
-        ContactInformationService contactService, IHttpContextAccessor httpContextAccessor) : BaseUserService(userManager, unitOfWork, httpContextAccessor)
+        ContactInformationService contactService, IHttpContextAccessor httpContextAccessor) : UserService(userManager, unitOfWork, httpContextAccessor)
     {
         private readonly IMapper _mapper = mapper;
         private readonly PersonService _personService = personService;

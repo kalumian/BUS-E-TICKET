@@ -102,14 +102,7 @@ namespace Business_Logic_Layer.Services
         {
             var query = _unitOfWork.Trips.GetAllQueryable();
 
-            // تطبيق شرط فلترة providerId إذا كان موجودًا قبل إضافة Includes
-            if (!string.IsNullOrEmpty(providerId))
-            {
-                if (await _unitOfWork.ServiceProviders.AnyAsync(i=>i.AccountID == providerId))
-                {
-                    query = query.Where(t => t.ServiceProvider.AccountID == providerId);
-                }
-            }
+
 
             query = query
                 .Include(t => t.Currency)
@@ -120,8 +113,15 @@ namespace Business_Logic_Layer.Services
                         .ThenInclude(a => a.City)
                 .Include(t => t.EndLocation)
                     .ThenInclude(el => el.Address)
-                        .ThenInclude(a => a.City);
-
+                        .ThenInclude(a => a.City)
+                .Include(t => t.Reservations);
+            if (!string.IsNullOrEmpty(providerId))
+            {
+                if (await _unitOfWork.ServiceProviders.AnyAsync(i => i.AccountID == providerId))
+                {
+                    query = query.Where(t => t.ServiceProvider.AccountID == providerId);
+                }
+            }
             var trips = await query.ToListAsync();
             return _mapper.Map<List<TripDisplayDTO>>(trips);
         }
@@ -137,6 +137,7 @@ namespace Business_Logic_Layer.Services
                 .Include(t => t.EndLocation)
                     .ThenInclude(el => el.Address)
                         .ThenInclude(a => a.City)
+                 .Include(t => t.Reservations)
                 .FirstOrDefaultAsync(t => t.TripID == tripId);
 
             return _mapper.Map<TripDisplayDTO>(trip);

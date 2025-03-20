@@ -23,11 +23,6 @@ namespace Business_Logic_Layer.Services.Actors
                 passenger = new PassengerEntity { Person = person };
                 await CreateEntityAsync(passenger);
             }
-            else
-            {
-
-            }
-
             return passenger;
         }
         public IEnumerable<PassengerDTO> GetAll()

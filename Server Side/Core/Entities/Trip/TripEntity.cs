@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using Core_Layer.Enums;
 using Core_Layer.Entities.Actors.ServiceProvider;
+using Core_Layer.Entities.Trip.Reservation;
 
 namespace Core_Layer.Entities.Trip
 {
@@ -73,6 +74,8 @@ namespace Core_Layer.Entities.Trip
         public LocationEntity? StartLocation { get; set; }
         public LocationEntity? EndLocation { get; set; }
         public CurrencyEntity? Currency { get; set; }
+        public IEnumerable<ReservationEntity>? Reservations { get; set; }
+
 
         #endregion
     }

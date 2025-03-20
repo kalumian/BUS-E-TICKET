@@ -15,13 +15,13 @@ using Microsoft.EntityFrameworkCore;
 using System.Reflection.PortableExecutable;
 using Core_Layer.Entities;
 
-public class ReservationService(IUnitOfWork unitOfWork,PersonService personService,PaymentService paymentService, PasengerService pasengerService, TripService tripService) : GeneralService(unitOfWork)
+public class ReservationService(IUnitOfWork unitOfWork,PersonService personService,PaymentService paymentService, PasengerService pasengerService, TripService tripService, UserService userService) : GeneralService(unitOfWork)
 {
     private readonly PaymentService _paymentService = paymentService;
     private readonly PersonService _personService = personService;
     private readonly PasengerService _pasengerService = pasengerService;
     private readonly TripService _tripService= tripService;
-
+    private readonly UserService _userService = userService;    
     public async Task<object> CreateReservationAsync(CreateReservationDTO reservationDTO, string baseUrl)
     {
         using var transaction = await _unitOfWork.BeginTransactionAsync();
@@ -88,8 +88,9 @@ public class ReservationService(IUnitOfWork unitOfWork,PersonService personServi
         var previousBooking = await _unitOfWork.Reservations.GetAllQueryable()
         .FirstOrDefaultAsync(r => booking.TripID == r.TripID && r.Passenger.Person.NationalID == booking.Passenger.Person.NationalID &&
         (r.ReservationStatus == EnReservationStatus.Pending));
+        if (previousBooking == null) return;
 
-        previousBooking.ReservationStatus = EnReservationStatus.Failed;
+         previousBooking.ReservationStatus = EnReservationStatus.Failed;
         _unitOfWork.Reservations.Update(previousBooking);
 
     }
@@ -137,6 +138,7 @@ public class ReservationService(IUnitOfWork unitOfWork,PersonService personServi
     public async Task<IEnumerable<BookingDTO>> GetAllReservationsAsync()
     
     {
+
         var tickets = await _unitOfWork.Tickets.GetAllQueryable()
             .Include(t => t.Invoice)
                 .ThenInclude(i => i.Payment)
@@ -157,8 +159,21 @@ public class ReservationService(IUnitOfWork unitOfWork,PersonService personServi
                     .ThenInclude(p => p.Reservation)
                         .ThenInclude(r => r.Passenger)
                             .ThenInclude(r => r.Person)
-            .ToListAsync();
+                            .ToListAsync();
 
+        if(_userService.GetCurrentUserRole() == EnUserRole.Provider)
+        {
+            string ProviderID = _userService.GetCurrentUserID();
+            tickets = tickets .Where(i =>
+                i.Invoice != null &&
+                i.Invoice.Payment != null &&
+                i.Invoice.Payment.Reservation != null &&
+                i.Invoice.Payment.Reservation.Trip != null &&
+                i.Invoice.Payment.Reservation.Trip.ServiceProvider != null &&
+                i.Invoice.Payment.Reservation.Trip.ServiceProvider.AccountID == ProviderID
+            )
+            .ToList();
+        }
         return tickets.Select(ticket => new BookingDTO
         {
             BookingID = ticket.Invoice?.Payment?.Reservation?.ReservationID,

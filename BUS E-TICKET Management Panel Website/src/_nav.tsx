@@ -27,7 +27,7 @@ const _nav: NavItem[] = [
     name: <Translation>{(t) => t('dashboard')}</Translation>,
     to: '/dashboard',
     icon: <IoIosAnalytics className="nav-icon" />,
-    allowedRoles: [EnUserRole.Admin]
+    allowedRoles: [EnUserRole.Admin, EnUserRole.Provider]
   },
   {
     component: CNavTitle,
@@ -103,7 +103,7 @@ const _nav: NavItem[] = [
     name: <Translation>{(t) => t('Passengers')}</Translation> ,
     to: '/Passengers',
     icon: <IoIosPeople className="nav-icon" />,  
-    allowedRoles: [EnUserRole.Admin, EnUserRole.Provider],
+    allowedRoles: [EnUserRole.Admin],
   },
   {
     component: CNavItem,
